@@ -1,0 +1,27 @@
+{
+  "name": "formicido",
+  "version": "0.0.1",
+  "description": "Site monitor like an ant",
+  "main": "index.js",
+  "dependencies": {
+    "cucumber": "^2.0.0-rc.7",
+    "express": "^4.14.1"
+  },
+  "devDependencies": {
+    "cucumber": "^2.0.0-rc.7",
+    "webdriverio": "^4.6.2"
+  },
+  "scripts": {
+    "test": "cucumberjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/goofballLogic/formicido.git"
+  },
+  "author": "goofballLogic",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/goofballLogic/formicido/issues"
+  },
+  "homepage": "https://github.com/goofballLogic/formicido#readme"
+}
