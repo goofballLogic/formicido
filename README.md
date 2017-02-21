@@ -1,3 +1,5 @@
+![BrowserStack Status](https://www.browserstack.com/automate/badge.svg?badge_key=MXhLQkgwWGVXMVFFNUFFMEkvSS9ISmVqc09ZcmhCWWQzZUNONGNPNVI1az0tLVdmOXRGL3U4dHZDbDRzU2U3YTR2b3c9PQ==--cc4b03112e0b703b72eb48f8b9d908ada31fbbea)
+
 # formicido
 Site monitor like an ant
 
