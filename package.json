@@ -4,15 +4,23 @@
   "description": "Site monitor like an ant",
   "main": "index.js",
   "dependencies": {
+    "body-parser": "^1.16.1",
     "cucumber": "^2.0.0-rc.7",
-    "express": "^4.14.1"
+    "express": "^4.14.1",
+    "pug": "^2.0.0-beta11",
+    "shortid": "^2.2.6"
   },
   "devDependencies": {
     "cucumber": "^2.0.0-rc.7",
+    "nodemon": "^1.11.0",
     "webdriverio": "^4.6.2"
   },
   "scripts": {
-    "test": "cucumberjs"
+    "start": "node app",
+    "watch": "nodemon --watch src app",
+    "test": "cucumberjs",
+    "browserstack-local": "./BrowserStackLocal --key $BROWSERSTACK_ACCESS_KEY --verbose --debug-utility --force-local --only-automate",
+    "install-browserstack-local": "wget https://www.browserstack.com/browserstack-local/BrowserStackLocal-linux-x64.zip ; unzip ./BrowserStackLocal-linux-x64.zip ; rm BrowserStackLocal-linux-x64.zip"
   },
   "repository": {
     "type": "git",

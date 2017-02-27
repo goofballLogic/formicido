@@ -1,0 +1,23 @@
+extends layout
+    
+mixin field( fieldDef )
+    label
+        span(class="label-text")
+            = fieldDef.label
+        input(type=fieldDef.type name=fieldDef.name)
+    
+mixin fields( fieldDefs )
+    each fieldDef in fieldDefs
+        +field( fieldDef )
+
+block headers
+    script(src="/public/js/step.js")
+    
+block content
+    h1= step.stepName
+    form(method="POST", class="variables")
+        +fields( step.shape )
+        button= "Run"
+    div
+        textarea(id="code", readonly)
+    include partials/browser

@@ -1,7 +1,9 @@
 module.exports = {
     app: {
         
-        port: 8123
+        host: "localhost",
+        port: 8123,
+        origin: process.env.ORIGIN
         
     },
     test: {
