@@ -5,11 +5,12 @@ defineSupportCode( function( { Given, When, Then } ) {
     Given( "I have opened formicido", function () {
     
         const { app } = this.config;
-        return this.client.url( `http://${app.host}:${app.port}/` ).getTitle().then( title => {
+        const url = `http://${app.host}:${app.port}/`;
+        return this.client.url( url ).waitUntil( 
             
-            console.log( title );
-            
-        } );
+            () => this.client.getUrl().then( actualUrl => actualUrl === url ) 
+        
+        );
         
     } );
     

@@ -27,5 +27,28 @@ class EmbeddedBrowser {
             
     }
     
+    navigateTo( url ) {
+        
+        const { port } = this.world.config.test;
+        url = url.replace( /\$\{root\}/g, `http://localhost:${port}` );
+        const { client } = this.world;
+        return client.setValue( "#embedded-browser-controls > input", url )
+            .then( () => client.click( "#embedded-browser-controls button" ) )
+            .then( () => client.frame( "embedded-browser" ) )
+            .then( () => client.waitUntil( () => client.execute( "return location.href;" ).then( result => result.value === url ), 5000 ) )
+            .then( 
+                
+                () => client.frame( null ),
+                err => {
+                    
+                    client.frame( null );
+                    throw err;
+                    
+                }
+                
+            );
+        
+    }
+    
 }
 module.exports = EmbeddedBrowser;

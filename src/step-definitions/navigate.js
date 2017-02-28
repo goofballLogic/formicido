@@ -1,4 +1,8 @@
-class Navigate {
+const fs = require( "fs" );
+const js = fs.readFileSync( __dirname + "/scripts/navigate.js" ).toString();
+const StepBase = require( "./step-base" );
+
+class Navigate extends StepBase {
     
     static get stepName() { return "Navigate"; }
     static get shape() { return [ 
@@ -7,25 +11,15 @@ class Navigate {
         
     ]; }
     
+    constructor() { super( js ); }
+    
     consume( variables ) {
         
-        this.url = variables.url;
-        return Promise.resolve();
-        
-    }
-    
-    script() {
-        
-        return [
-            
-            "function waiter() { frame.removeEventListener( 'load', waiter ); done(); }",
-            "frame.addEventListener('load', waiter);",
-            `frame.setAttribute( "src", "${this.url}" );`
-        
-        ];
+        this.args.url = variables.url;
         
     }
     
 }
 
+console.log( new Navigate().sci );
 module.exports = Navigate;

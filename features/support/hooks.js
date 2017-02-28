@@ -5,6 +5,12 @@ const config = require( "../config" );
 const webdriverio = require( "webdriverio" );
 const World = require( "./world" );
 
+function defaultBuild() {
+    
+    return `dev ${new Date().toDateString()}`;
+    
+}
+
 defineSupportCode( function( { setWorldConstructor, setDefaultTimeout, registerHandler, Before } ) {
 
     setWorldConstructor( World );
@@ -25,6 +31,7 @@ defineSupportCode( function( { setWorldConstructor, setDefaultTimeout, registerH
                     os: "Windows",
                     os_version: "8",
                     project: "Formicido",
+                    build: process.env.BROWSERSTACK_BUILD || defaultBuild(),
                     "browserstack.local": true,
                     "browserstack.debug": true
     
@@ -51,7 +58,7 @@ defineSupportCode( function( { setWorldConstructor, setDefaultTimeout, registerH
         return Promise.all( [
           
           index( config.app ),
-          testServer( config.test ),
+          testServer( config.test, config.app ),
           initBrowserStack()
           
         ] );

@@ -3,7 +3,7 @@ module.exports = {
         
         host: "localhost",
         port: 8123,
-        origin: process.env.ORIGIN
+        origin: "http://localhost:8123"
         
     },
     test: {

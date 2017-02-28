@@ -30,13 +30,42 @@ body, input, textarea, select, option {
     margin: 10px 0;
     font-family: monospace;
     color: #333;
+    border: solid 1px #CCC;
+    border-radius: 3px;
+    
+}
+#embedded-browser-container {
+
+    margin: 10px 0 0 0;
+    box-shadow: 0 0 10px 0 #aaaaaa;
+    
+}
+#embedded-browser-controls {
+    
+    padding: 0;
+    margin: 0;
+    display: flex;
+    
+}
+#embedded-browser-controls input {
+    
+    flex: 1;
+    border: 0;
+    padding: 0 10px;
+    background-color: #EEEEEE;
+    
+}
+#embedded-browser-controls button {
+    
+    margin: 0;
+    border: none;
     
 }
 #embedded-browser {
 
     width: 100%;
-    min-height: 400px;
-
+    min-height: 600px;
+    border: none;
     
 }
 .errors {
@@ -91,8 +120,8 @@ label .label-text,
 label input {
     
     padding: 0 10px;
-    line-height: 2em;
-    height: 2em;
+    line-height: 2.5em;
+    height: 2.5em;
     
     
 }
@@ -106,6 +135,8 @@ label input {
 button {
     
     margin: 10px 0;
-    height: 2em;
+    padding: 0 10px;
+    height: 2.5em;
+    min-width: 100px;
     
 }

@@ -1,0 +1,11 @@
+extends layout
+
+append headers
+    script(src="/public/js/embedded-browser.js")
+    
+append content
+    div(id="embedded-browser-container")
+        form(id="embedded-browser-controls", method="POST")
+            input(type="url", name="location")
+            button GO
+        iframe(id="embedded-browser")

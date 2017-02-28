@@ -65,9 +65,22 @@ class FormWorker{
         
             const { label } = fieldValue;
             const { port } = this.world.config.test;
-            const relativePath = fieldValue[ "relative-path" ];
-            const url = fieldValue.URL || `http://localhost:${port}${relativePath}`;
-            result = result.then( () => this.fill( label, url ) );
+            if ( "relative-path" in fieldValue ) {
+            
+                const relativePath = fieldValue[ "relative-path" ];
+                const url = fieldValue.URL || `http://localhost:${port}${relativePath}`;
+                result = result.then( () => this.fill( label, url ) );
+                
+            } else if ( "value" in fieldValue ) {
+                
+                const value = fieldValue[ "value" ];
+                result = result.then( () => this.fill( label, value ) );
+                
+            } else {
+                
+                throw new Error( "Unknown configuration: " + JSON.stringify( fieldValue ) );
+                
+            }
             
         } );
         return result;

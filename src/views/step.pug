@@ -1,4 +1,4 @@
-extends layout
+extends layout-with-browser
     
 mixin field( fieldDef )
     label
@@ -10,14 +10,14 @@ mixin fields( fieldDefs )
     each fieldDef in fieldDefs
         +field( fieldDef )
 
-block headers
+append headers
     script(src="/public/js/step.js")
     
-block content
+prepend content
     h1= step.stepName
     form(method="POST", class="variables")
-        +fields( step.shape )
+        +fields( step.class.shape )
         button= "Run"
+    div(id="outcome")        
     div
         textarea(id="code", readonly)
-    include partials/browser

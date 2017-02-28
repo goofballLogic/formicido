@@ -1,11 +1,13 @@
 const express = require( "express" );
 const stepDefinitions = require( "./domain/step-definitions" );
 const bodyParser = require( "body-parser" );
+const fs = require( "fs" );
 
-const origins = {};
+const agentjs = fs.readFileSync( __dirname + "/scripts/agent.js" );
 
 module.exports = function( config ) {
 
+    const configuredAgentJS = agentjs.toString().replace( /\$\{origin\}/g, config.origin );
     const app = express();
     
     app.use( "/public", express.static( __dirname + "/../public" ) );
@@ -17,7 +19,7 @@ module.exports = function( config ) {
     
         res.set( "cache-control", "no-cache" );
         res.type( "text/javascript" );
-        res.send( `window.addEventListener("message", function(e){ console.log(e.origin,'${config.origin}');if(e.origin!=='${config.origin}'){return};eval(e.data); });` );
+        res.send( configuredAgentJS );
         
     } );
     
@@ -33,23 +35,46 @@ module.exports = function( config ) {
         
     } );
     
-    app.get( "/steps/:step", ( req, res ) => {
+    app.get( "/steps/:slug", ( req, res ) => {
         
-        const { step } = req.params;
-        res.render( "step", { step: stepDefinitions[ step ] } );
+        const { slug } = req.params;
+        const step = stepDefinitions[ slug ];
+        if ( !step ) { 
+            
+            res.status( 404 );
+            res.send( "Not found" );
+            
+        } else {
+            
+            res.render( "step", { step } );
+            
+        }
         
     } );
     
-    app.post( "/steps/:step", bodyParser.json(), bodyParser.urlencoded(), ( req, res ) => {
+    app.post( "/steps/:slug", bodyParser.json(), bodyParser.urlencoded(), ( req, res ) => {
         
-        const { step } = req.params;
-        const StepDef = stepDefinitions[ step ];
-        if ( !StepDef ) { throw new Error( "Step not recognised" ); }
-        const instance = new StepDef();
-        Promise.resolve()
-            .then( () => instance.consume( req.body ) )
-            .then( () => [].concat( instance.script() ).join( "\n" ) )
-            .then( script => res.send( { script } ) );
+        const { slug } = req.params;
+        const step = stepDefinitions[ slug ];
+        if ( !step ) {
+
+            res.status( 404 );
+            res.send( "Not found" );
+            
+        } else {
+
+            const instance = new step.class();
+            Promise.resolve()
+                .then( () => instance.consume( req.body ) )
+                .then( script => res.send( instance.script() ) )
+                .catch( err => {
+                    
+                    console.error( err );
+                    res.status( 500 ).send( "The server failed processing your request." );
+                    
+                } );
+                
+        }
             
     } );
     
