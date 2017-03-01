@@ -4,7 +4,7 @@ return Promise.resolve().then( function() {
     
     // get original location
     var script = "reply( null, document.location.toString() );";
-    return remote( script );
+    return remote( script, 500 );
         
 } ).then( function( originalLocation ) {
 

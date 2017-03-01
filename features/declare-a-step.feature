@@ -26,3 +26,14 @@ Feature: Declare a step
       And I click the "Run" button and wait for the "run-complete" event
      Then the frame's text should contain "The Charge of the Light Brigade"
       And the outcome should be "Complete."
+
+  Scenario: Failed step should be detectable
+     When I follow the "Click then wait for new location" link
+      And I enter form values
+        | label          | value         |
+        | Query selector | .im-not-there |
+      And I click the "Run" button and wait for the "run-complete" event
+     Then the outcome should contain "Complete"
+      And the outcome should contain "Timed out"
+      And the outcome should contain "Error"
+      
