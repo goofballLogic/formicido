@@ -1,3 +1,19 @@
+
+function handleAgentLoaded() {
+    
+    document.querySelector( "#debug" ).innerHTML = "Agent loaded";
+    
+}
+if ( document.querySelector( "#debug" ) ) { 
+    
+    handleAgentLoaded();
+    
+} else {
+    
+    window.addEventListener( "load", handleAgentLoaded );
+    
+}
+
 window.addEventListener( "message", function( e ) { 
     
     var debugOutput = document.querySelector( "#debug" );

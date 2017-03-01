@@ -9,7 +9,7 @@ return Promise.resolve().then( function() {
 } ).then( function( originalLocation ) {
 
     // click
-    var script = "document.querySelector(" + JSON.stringify( querySelector ) + ").click(); reply();";
+    var script = "reply(); document.querySelector(" + JSON.stringify( querySelector ) + ").click();";
     return remote( script, 200 ).then( function() {
             
         // while new location is empty or equal original location (timeout 5s)
@@ -17,7 +17,7 @@ return Promise.resolve().then( function() {
         return poll( 250, 5000, function() {
 
             // get new location                
-            return remote( script ).then( function( newLocation ) { 
+            return remote( script, 200 ).then( function( newLocation ) { 
                     
                 return newLocation && ( newLocation !== originalLocation );
                     

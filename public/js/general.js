@@ -6,6 +6,11 @@
     
     }
     
+    function notify( detail ) {
+        
+        document.dispatchEvent( new CustomEvent( "info-message", { detail: detail } ) );
+        
+    }
     var inboxSubscribers = [];
     
     function notifySubscribers( received ) {
@@ -37,13 +42,13 @@
         return new Promise( ( resolve, reject ) => {
 
             var correlationId = uuid();
-            console.log( "Start", correlationId );                        
             var isActive = true;
             function receiveReply( received ) {
 
                 if ( isActive && received && received.data && received.data.cid === correlationId ) {
 
-                    console.log( "Handling reply", correlationId, received );                        
+                    notify( "Reply to: " + correlationId );
+                    console.log( correlationId, received );
                     isActive = false;
                     inboxSubscribers.splice( inboxSubscribers.indexOf( receiveReply ), 1 );
                     var data = received.data;
@@ -62,19 +67,19 @@
 
             }
             inboxSubscribers.push( receiveReply );
+            notify( "Remoting: " + correlationId );
             frame.contentWindow.postMessage( { cid: correlationId, js: js }, "*" );
             setTimeout( function() {
                 
                 if ( !isActive ) { return; }
                 isActive = false;
-                console.log( "Timed out", correlationId );                        
+                notify( "Timed out: " + correlationId );
                 inboxSubscribers.splice( inboxSubscribers.indexOf( receiveReply ), 1 );
                 reject( new Error( "Timed out" ) );
                 
             }, timeout || 5000 );
             
         } );
-        frame.contentWindow.postMessage( js, "*" );
         
     }
             
@@ -82,16 +87,15 @@
     function poll( interval, timeout, testScript ) {
         
         return new Promise( ( resolve, reject ) => {
-
+            
+            var isActive = true;
             function task() {
                    
-                console.log( "Evaluating poll script" );
-                testScript().then(
-                    
-                    result => {
+                testScript()
+                    .catch( err => { console.log( err ); return false; } )
+                    .then( result => {
                         
                         if ( !isActive ) { return; }
-                        console.log( "Polling got", result );
                         if ( result ) { 
                             
                             resolve();
@@ -99,25 +103,14 @@
                             
                         } else {
                             
-                            console.log( "Scheduling another poll" );
+                            notify( "Scheduling another poll" );
                             setTimeout( task, interval );
                             
                         }
-                        
-                    },
-                    err => {
-                        
-                        if ( !isActive ) { return; }
-                        isActive = false;
-                        console.log( "Polling script reject" );
-                        reject( err );
-                        
-                    }
-                    
-                );
+                            
+                    } );
                 
             }
-            var isActive = true;
             setTimeout( task, interval );
             setTimeout( function() {
                 

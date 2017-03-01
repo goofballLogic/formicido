@@ -68,7 +68,7 @@ body, input, textarea, select, option {
     border: none;
     
 }
-.errors {
+.infos {
     
     overflow-x: hidden;
     position: absolute;
@@ -77,19 +77,23 @@ body, input, textarea, select, option {
     padding: 10px;
     
 }
-.errors li {
+.infos li {
     
+    font-size: 85%;
     border-radius: 5px;
-    padding: 20px;
-    background-color: rgba( 255, 0, 0, 0.5 );
+    padding: 10px 20px;
+    list-style: none;
     max-width: 400px;
-    color: #550000;
+    color: #555500;
+    background-color: rgba( 255, 255, 200, 0.3 );
+    margin-bottom: 5px;
     
 }
-.errors li {
-
-    list-style: none;
-
+.infos .error {
+    
+    background-color: rgba( 255, 0, 0, 0.5 );
+    color: #550000;
+    
 }
 .goes {
     

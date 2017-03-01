@@ -1,22 +1,30 @@
-function displayErrorNotification( e ) {
+function displayNotification( e, isError ) {
     
-    var errBlock = document.createElement( "li" );
+    var infoBlock = document.createElement( "li" );
+    infoBlock.className = isError ? "error" : "";
     var timeBlock = document.createElement( "time" );
     timeBlock.innerHTML = new Date().toLocaleDateString();
     var messageBlock = document.createElement( "div" );
     messageBlock.innerHTML = e.detail;
-    errBlock.appendChild( timeBlock );
-    errBlock.appendChild( messageBlock );
-    errBlock.classList.add( "goes" );
-    document.querySelector( ".errors" ).appendChild( errBlock );
+    infoBlock.appendChild( timeBlock );
+    infoBlock.appendChild( messageBlock );
+    infoBlock.classList.add( "goes" );
+    document.querySelector( ".infos" ).appendChild( infoBlock );
     setTimeout( function() {
         
-        errBlock.classList.add( "going" );
-        setTimeout( function() { errBlock.remove(); }, 500 );
+        infoBlock.classList.add( "going" );
+        setTimeout( function() { infoBlock.remove(); }, 500 );
         
     }, 5000 );
     
 }
 
+function displayErrorNotification( e ) { 
+    
+    displayNotification( e, true );
+    
+}
+
 document.addEventListener( "fetch-error", displayErrorNotification );
 document.addEventListener( "agent-error", displayErrorNotification );
+document.addEventListener( "info-message", displayNotification );

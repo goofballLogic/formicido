@@ -15,6 +15,7 @@ Feature: Declare a step
       And I click the "Run" button and wait for the "run-complete" event
      Then the frame's location should be "${root}/hello-world"
       And the frame's text should contain "Hello world"
+      And the outcome should be "Complete."
 
   Scenario: Click then wait for location to change
      When I follow the "Click then wait for new location" link
@@ -24,3 +25,4 @@ Feature: Declare a step
         | Query selector | .link-to-poem |
       And I click the "Run" button and wait for the "run-complete" event
      Then the frame's text should contain "The Charge of the Light Brigade"
+      And the outcome should be "Complete."
