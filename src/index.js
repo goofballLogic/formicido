@@ -1,7 +1,11 @@
 const express = require( "express" );
-const stepDefinitions = require( "./domain/step-definitions" );
 const bodyParser = require( "body-parser" );
 const fs = require( "fs" );
+const shortid = require( "shortid" );
+
+const stepDefinitions = require( "./domain/step-definitions" );
+const pathDefinitions = require( "./domain/path-definitions" );
+const paths = require( "./domain/paths" );
 
 const agentjs = fs.readFileSync( __dirname + "/scripts/agent.js" );
 
@@ -11,6 +15,12 @@ module.exports = function( config ) {
     const app = express();
     
     app.use( "/public", express.static( __dirname + "/../public" ) );
+    app.use( ( req, res, next ) => {
+       
+       console.log( req.url );
+       next();
+       
+    } );
     
     app.set( "view engine", "pug" );
     app.set( "views", __dirname + "/views" );
@@ -45,7 +55,7 @@ module.exports = function( config ) {
             res.send( "Not found" );
             
         } else {
-            
+
             res.render( "step", { step } );
             
         }
@@ -76,6 +86,87 @@ module.exports = function( config ) {
                 
         }
             
+    } );
+    
+    app.get( "/paths", ( req, res ) => {
+
+        res.render( "paths", { paths: [], newId: shortid() } );
+        
+    } );
+    
+    app.get( "/paths/:slug", ( req, res ) => {
+        
+        const { slug } = req.params;
+        pathDefinitions.lookup( slug )
+            .then( path => res.render( "path", { path, slug, stepDefinitions } ) );
+            
+    } );
+    
+    app.post( "/paths/:pathId/add-step", bodyParser.json(), bodyParser.urlencoded(), ( req, res ) => {
+        
+        const { pathId } = req.params;
+        const newStep = stepDefinitions[ req.body[ "new-step" ] ];
+        if ( !newStep ) { 
+            
+            res.status( 400 ).send( "Invalid" );
+            
+        } else {
+
+            const stepSlug = newStep.slug;
+            const stepId = shortid();
+            res.redirect( `/paths/${pathId}/step/${stepSlug}/${stepId}` );
+            
+        }
+        
+    } );
+    
+    app.post( "/paths/:pathId/run", ( req, res ) => {
+        
+        const { pathId } = req.params;
+        paths.fetchOrCreate( pathId )
+            .then( path => res.send( path.script() ) )
+            .catch( err => {
+                    
+                console.error( err );
+                res.status( 500 ).send( "The server failed processing your request." );
+                
+            } );
+        
+    } );
+    
+    app.get( "/paths/:pathId/step/:stepSlug/:stepId", ( req, res ) => {
+        
+        const { stepSlug } = req.params;
+        const step = stepDefinitions[ stepSlug ];
+        const testRunsUrl = `/steps/${stepSlug}`;
+        res.render( "add-step", { step, testRunsUrl } );
+        
+    } );
+    
+    app.post( "/paths/:pathId/step/:stepSlug/:stepId", bodyParser.json(), bodyParser.urlencoded(), ( req, res ) => {
+    
+        const { pathId, stepSlug, stepId } = req.params;
+        paths.fetchOrCreate( pathId )
+            .then( path => path.fetchOrCreate( stepId, stepSlug )
+                .then( pathStep => {
+                
+                    pathStep.consume( req.body );
+                    path.save();
+            
+                } )
+            )
+            .then( 
+                
+                () => res.redirect( `/paths/${pathId}` ),
+                e => {
+                    
+                    console.error( e );
+                    res.status( 500 ).send( e.message );
+                    
+                }
+                
+            );
+
     } );
     
     return new Promise( ( resolve, reject ) => {

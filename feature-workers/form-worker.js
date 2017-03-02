@@ -30,6 +30,30 @@ function completeDocumentWaiter( waiterId, done ) {
     
 }
 
+function waitingForNewURL( client, invokeAction ) {
+    
+    return client.getUrl().then( originalUrl =>
+        invokeAction().then( () => 
+            client.waitUntil( () =>
+                client.getUrl().then( maybeNewUrl => maybeNewUrl !== originalUrl ), 
+                5000 
+            ) 
+        )
+    );
+    
+}
+
+function waitingForEvent( client, eventName, invokeAction ) {
+    
+    const waiterId = shortid();
+    client.timeoutsAsyncScript( 5000 );
+    return client.execute( initDocumentWaiter, waiterId, eventName ).then( () =>
+        invokeAction().then( () =>
+            client.executeAsync( completeDocumentWaiter, waiterId ) 
+        )
+    );
+        
+}
 class FormWorker{
     
     constructor( world ) {
@@ -41,13 +65,22 @@ class FormWorker{
     clickButtonToEvent( buttonText, eventName ) {
         
         const { client } = this.world;       
-        const waiterId = shortid();
-        client.timeoutsAsyncScript( 5000 );
-        return client
-            .execute( initDocumentWaiter, waiterId, eventName )
-            .then( () => client.click( `button=${buttonText}` ) )
-            .then( () => client.executeAsync( completeDocumentWaiter, waiterId ) );
+        return waitingForEvent( client, eventName, () => client.click( `button=${buttonText}` ) );
         
+    }
+    
+    clickButtonToNewURL( buttonText ) {
+        
+        const { client } = this.world;
+        return waitingForNewURL( client, () => client.click( `button=${buttonText}` ) );
+
+    }
+
+    clickLinkToNewURL( linkText ) {
+        
+        const { client } = this.world;
+        return waitingForNewURL( client, () => client.click( `=${linkText}` ) );
+
     }
     
     fill( label, value ) {
@@ -85,6 +118,13 @@ class FormWorker{
         } );
         return result;
         
+    }
+    
+    selectLabelledDropdownOptionByText( label, optionText ) {
+        
+        const { client } = this.world;
+        return client.click( `//*[contains(@class, "label-text") and normalize-space()="${label}"]/parent::label//option[normalize-space()="${optionText}"]` );
+
     }
     
 }

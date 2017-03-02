@@ -14,7 +14,8 @@ class Navigate extends StepBase {
     constructor() { super( js ); }
     
     consume( variables ) {
-        
+
+console.log( variables );       
         this.args.url = variables.url;
         
     }

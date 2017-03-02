@@ -1,7 +1,9 @@
 
 function handleAgentLoaded() {
     
-    document.querySelector( "#debug" ).innerHTML = "Agent loaded";
+    
+    var debugOutput = document.querySelector( "#debug" );
+    debugOutput.innerHTML = "Agent loaded";
     
 }
 if ( document.querySelector( "#debug" ) ) { 

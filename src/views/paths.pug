@@ -1,0 +1,10 @@
+extends layout
+    
+block content    
+    h1 Paths
+    a(href="/paths/" + newId) Create
+    ul
+        each def in paths
+            li
+                a(href="/paths/" + def.slug)= def.name
+    

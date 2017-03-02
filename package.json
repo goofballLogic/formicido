@@ -16,10 +16,10 @@
     "webdriverio": "^4.6.2"
   },
   "scripts": {
-    "start": "node app",
-    "watch": "nodemon --watch src app",
-    "test": "cucumberjs",
-    "browserstack-local": "./BrowserStackLocal --key $BROWSERSTACK_ACCESS_KEY --verbose --debug-utility --force-local --only-automate",
+    "start": ". ./env.sh; . ~/.nvm/nvm.sh; nvm use 6.4; node app",
+    "watch": ". ./env.sh; . ~/.nvm/nvm.sh; nvm use 6.4; nodemon --watch src app",
+    "test": ". ./env.sh; cucumberjs",
+    "browserstack-local": ". ./env.sh; ./BrowserStackLocal --key $BROWSERSTACK_ACCESS_KEY --verbose --debug-utility --force-local --only-automate",
     "install-browserstack-local": "wget https://www.browserstack.com/browserstack-local/BrowserStackLocal-linux-x64.zip ; unzip ./BrowserStackLocal-linux-x64.zip ; rm BrowserStackLocal-linux-x64.zip"
   },
   "repository": {

@@ -32,4 +32,22 @@ defineSupportCode( function( { Given, When, Then } ) {
     
     } );
     
+    When( "I click the {buttonText:stringInDoubleQuotes} button and wait for( the) URL to change", function ( buttonText ) {
+    
+       return this.formWorker.clickButtonToNewURL( buttonText );
+    
+    } );
+
+    When( "I click the {linkText:stringInDoubleQuotes} link and wait for URL to change", function ( linkText ) {
+    
+       return this.formWorker.clickLinkToNewURL( linkText );
+    
+    } );
+    
+    When( "I select {optionText:stringInDoubleQuotes} from the {labelText:stringInDoubleQuotes} dropdown", function( optionText, labelText ) {
+
+        return this.formWorker.selectLabelledDropdownOptionByText( labelText, optionText );
+
+    } );
+    
 } );

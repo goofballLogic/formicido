@@ -36,4 +36,3 @@ Feature: Declare a step
      Then the outcome should contain "Complete"
       And the outcome should contain "Timed out"
       And the outcome should contain "Error"
-      

@@ -1,0 +1,29 @@
+extends layout-with-browser
+
+append headers
+    script(src="/public/js/path.js")
+    
+prepend content
+    h2= path.name
+    form(method="POST", class="via-ajax")
+        label
+            span(class="label-text")
+                | Name
+            input(name="path-name")
+        button= "Save"
+
+    form(method="POST", action="/paths/" + slug + "/add-step")            
+        label
+            span(class="label-text")
+                | Add a new step
+            select(name="new-step")
+                option
+                each step in stepDefinitions
+                    option(value=step.slug) #{step.name}
+        button= "Configure..."
+
+    form(method="POST", action="/paths/" + slug + "/run", class="via-ajax")
+        button= "Run"
+    div(id="outcome")        
+    div
+        textarea(id="code", readonly)

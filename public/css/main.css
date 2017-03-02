@@ -68,6 +68,22 @@ body, input, textarea, select, option {
     border: none;
     
 }
+nav {
+    
+    background-color: #EEE;
+    
+}
+nav a {
+    
+    display: inline-block;
+    padding: 10px 20px;
+    
+}
+a:active {
+    
+    background-color: white;
+    
+}
 .infos {
     
     overflow-x: hidden;
@@ -112,6 +128,11 @@ label {
     display: block;
     
 }
+label + label {
+    
+    margin-top: 10px;
+    
+}
 label .label-text {
     
     min-width: 200px;
@@ -121,7 +142,8 @@ label .label-text {
     
 }
 label .label-text,
-label input {
+label input,
+label select {
     
     padding: 0 10px;
     line-height: 2.5em;
@@ -129,18 +151,30 @@ label input {
     
     
 }
-label input {
+label input,
+label select {
     
     min-width: 400px;
     border: solid 1px #EEEEEE;
+    background-color: white;
     
 }
-
 button {
     
     margin: 10px 0;
     padding: 0 10px;
     height: 2.5em;
     min-width: 100px;
+    
+}
+button + button {
+    
+    margin-left: 10px;
+    
+}
+fieldset {
+    
+    padding: 0;
+    border: 0;
     
 }

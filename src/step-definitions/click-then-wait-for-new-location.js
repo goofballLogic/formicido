@@ -1,8 +1,11 @@
 const fs = require( "fs" );
-const script = fs.readFileSync( __dirname + "/scripts/click-then-wait-for-new-location.js" ).toString();
+const js = fs.readFileSync( __dirname + "/scripts/click-then-wait-for-new-location.js" ).toString();
+const StepBase = require( "./step-base" );
 
-class ClickThenWaitForNewLocation {
+class ClickThenWaitForNewLocation extends StepBase {
     
+    constructor() { super( js ); }
+
     static get stepName() { return "Click then wait for new location"; }
     static get shape() { return [
         
@@ -11,14 +14,8 @@ class ClickThenWaitForNewLocation {
     ] }
     
     consume( variables ) {
-        
-        this.selector = variables[ "query-selector" ][ 0 ];
-        
-    }
-    
-    script() {
-        
-        return { script, args: { querySelector: this.selector } };
+     
+        this.args.selector = variables[ "query-selector" ][ 0 ];
         
     }
     

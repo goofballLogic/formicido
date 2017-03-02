@@ -17,7 +17,9 @@ prepend content
     h2= step.name
     form(method="POST", class="via-ajax")
         +fields( step.class.shape )
-        button= "Run"
+        button(type="button", class="redirect-form", value=testRunsUrl) Run
+        button Add step
+            
     div(id="outcome")        
     div
         textarea(id="code", readonly)
