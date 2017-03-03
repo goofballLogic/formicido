@@ -19,8 +19,10 @@
     "start": ". ./env.sh; . ~/.nvm/nvm.sh; nvm use 6.4; node app",
     "watch": ". ./env.sh; . ~/.nvm/nvm.sh; nvm use 6.4; nodemon --watch src app",
     "test": ". ./env.sh; cucumberjs",
+    "run-test-server": ". ./env.sh; . ~/.nvm/nvm.sh; nvm use 6.4; node fixtures/test-server/app",
     "browserstack-local": ". ./env.sh; ./BrowserStackLocal --key $BROWSERSTACK_ACCESS_KEY --verbose --debug-utility --force-local --only-automate",
     "install-browserstack-local": "wget https://www.browserstack.com/browserstack-local/BrowserStackLocal-linux-x64.zip ; unzip ./BrowserStackLocal-linux-x64.zip ; rm BrowserStackLocal-linux-x64.zip"
+
   },
   "repository": {
     "type": "git",

@@ -1,21 +1,83 @@
+document.addEventListener( "click", function( e ) {
+    
+    if ( !( e.target && e.target.classList.contains( "clear-button" ) ) ) { return; }
+    var elements = document.querySelectorAll( e.target.getAttribute( "data-selectors" ) );
+    elements.forEach( ele => {
+        
+        if ( ele.innerHTML ) { ele.innerHTML = ""; }
+        if ( ele.value ) { ele.value = ""; }
+        
+    } );
+        
+} );
+
 document.addEventListener( "fetch-result", function( e ) {
     
-    var json = e.detail;
-    document.querySelector( "#code" ).innerHTML = JSON.stringify( json, null, 3 );
+    var outcome = document.querySelector( "#outcome" );
+    outcome.innerHTML = "";
+    function recordOutcome( html ) { if ( outcome ) { outcome.innerHTML += "<br />" + html; } }
+    var transcript = document.querySelector( "#transcript" );
+    transcript.innerHTML = "";
     
-    document.querySelector( "#outcome" ).innerHTML = "Running step 1...";
-    function recordOutcome( outcomeEvent ) {
+    var json = e.detail;
+    if ( json.length < 1 ) { 
         
-        document.removeEventListener( "run-complete", recordOutcome );
-        document.querySelector( "#outcome" ).innerHTML = "Step 1 complete.";
-        if ( outcomeEvent.detail.err ) {
+        recordOutcome( "Done. (no steps to run)" );
         
-            document.querySelector( "#outcome" ).innerHTML += " " + outcomeEvent.detail.err;
+    } else {
+    
+        var steps = json.map( x => {
+            
+            var s = document.createElement( "li" );
+            s.innerHTML = x.description;
+            transcript.appendChild( s );
+            return s;
+            
+        } );
+        
+        var bookmark = 0;
+        function nextStep() {
+            
+            if ( bookmark < steps.length ) { 
+                
+                steps[ bookmark ].classList.add( "step-running" );
+                document.dispatchEvent( new CustomEvent( "run-script", { detail: json[ bookmark ] } ) );
+                bookmark++;
+            
+            } else {
+                
+                pathComplete();
+                
+            }
+                
+        }
+        
+        function pathStepComplete( outcomeEvent ) {
+            
+            var step = steps[ bookmark - 1 ];
+            if ( outcomeEvent.detail.err ) {
+                
+                recordOutcome( "Step " + bookmark + " error: " + outcomeEvent.detail.err );
+                step.classList.add( "step-error" );
+                
+            } else {
+                
+                step.classList.add( "step-success" );
+                
+            }
+            nextStep();
             
         }
         
+        document.addEventListener( "run-complete", pathStepComplete );
+        function pathComplete() {
+            
+            document.removeEventListener( "run-complete", pathStepComplete );
+            
+        }
+    
+        nextStep();
+        
     }
-    document.addEventListener( "run-complete", recordOutcome );
-    document.dispatchEvent( new CustomEvent( "run-script", { detail: json[ 0 ] } ) );
 
 } );

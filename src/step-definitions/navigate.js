@@ -15,7 +15,6 @@ class Navigate extends StepBase {
     
     consume( variables ) {
 
-console.log( variables );       
         this.args.url = variables.url;
         
     }

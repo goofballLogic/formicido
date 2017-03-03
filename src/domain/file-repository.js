@@ -88,17 +88,40 @@ class FileRepository {
         
     }
     
-    fetchOrCreate( objectId, defaultObject ) {
+    fetchOr( objectId, handleNotExists ) {
         
-        return this.fetch( objectId )
+         return this.fetch( objectId )
             .catch( e => {
                 
-                if ( !( e && e.code === "ENOENT" ) ) { throw e; }
-                var filePath = this.objectPath( objectId );
-                return FileRepository.write( filePath, FileRepository.serialize( defaultObject ) )
-                    .then( () => this.fetch( objectId ) );
+                if ( !( e && e.code === "ENOENT" ) ) { 
+                    
+                    throw e; 
+                    
+                } else {
+                
+                    return handleNotExists();
+                    
+                }
                 
             } );
+            
+    }
+    
+    fetchOrDefault( objectId, defaultObject ) {
+        
+        return this.fetchOr( objectId, () => defaultObject );
+
+    }
+    
+    fetchOrCreate( objectId, defaultObject ) {
+    
+        return this.fetchOr( objectId, () => {
+            
+            const filePath = this.objectPath( objectId );
+            return FileRepository.write( filePath, FileRepository.serialize( defaultObject ) )
+                .then( () => this.fetch( objectId ) );
+                
+        } );
         
     }
     

@@ -4,7 +4,6 @@ const fs = require( "fs" );
 const shortid = require( "shortid" );
 
 const stepDefinitions = require( "./domain/step-definitions" );
-const pathDefinitions = require( "./domain/path-definitions" );
 const paths = require( "./domain/paths" );
 
 const agentjs = fs.readFileSync( __dirname + "/scripts/agent.js" );
@@ -94,12 +93,41 @@ module.exports = function( config ) {
         
     } );
     
-    app.get( "/paths/:slug", ( req, res ) => {
+    app.get( "/paths/:pathId", ( req, res ) => {
         
-        const { slug } = req.params;
-        pathDefinitions.lookup( slug )
-            .then( path => res.render( "path", { path, slug, stepDefinitions } ) );
+        const { pathId } = req.params;
+        const decorateDescription = desc => Object.assign( desc, { "url": `/paths/${pathId}/step/${desc.slug}/${desc.id}` } );
+        paths.fetchOrDefault( pathId )
+            .then( path => [ path, path.stepDescriptions().map( decorateDescription ) ] )
+            .then( ( [ path, descriptions ] ) => res.render( "path", { 
+                
+                path, 
+                pathId, 
+                stepDefinitions, 
+                steps: descriptions 
+                
+            } ) );
             
+    } );
+    
+    app.post( "/paths/:pathId", bodyParser.json(), bodyParser.urlencoded(), ( req, res ) => {
+        
+        const { pathId } = req.params;
+        paths.fetchOrCreate( pathId )
+            .then( path => {
+                
+                path.consume( req.body );
+                path.save();
+                res.redirect( `/paths/${pathId}` );
+                
+            } )
+            .catch( err => {
+                    
+                console.error( err );
+                res.status( 500 ).send( "The server failed processing your request." );
+                
+            } );
+        
     } );
     
     app.post( "/paths/:pathId/add-step", bodyParser.json(), bodyParser.urlencoded(), ( req, res ) => {

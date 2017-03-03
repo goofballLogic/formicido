@@ -9,6 +9,20 @@ const Path = require( "./path" );
 
 Object.assign( module.exports, {
 
+    fetch( pathId ) {
+
+        return repo.fetch( pathId )
+            .then( data => new Path( data ) );
+
+    },
+    
+    fetchOrDefault( pathId ) {
+        
+        return repo.fetchOrDefault( pathId, { id: pathId } )
+            .then( data => new Path( data ) );
+        
+    },
+    
     fetchOrCreate( pathId ) {
 
         return repo.fetchOrCreate( pathId, { id: pathId } )

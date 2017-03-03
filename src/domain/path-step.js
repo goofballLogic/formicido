@@ -32,6 +32,18 @@ class PathStep {
          
     }
     
+    describe() {
+        
+        return { 
+            id: this.data.id,
+            name: this.step.name,
+            slug: this.step.slug,
+            description: this.step.description,
+            args: this.data.args
+        };
+        
+    }
+    
     serialize() {
         
         return this.data;

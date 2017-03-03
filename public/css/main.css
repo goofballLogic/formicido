@@ -178,3 +178,92 @@ fieldset {
     border: 0;
     
 }
+
+#transcript li::after {
+
+    display: inline-block;    
+    margin-left: 10px;
+    content: "Pending";   
+    
+}
+.step-error {
+    
+    color: #770000;
+    
+}
+.step-success {
+    
+    color: #007700;
+    
+}
+#transcript .step-running::after {
+    
+    content: "Running";
+    
+}
+#transcript .step-error::after {
+    
+    content: "✘";
+    
+}
+#transcript .step-success::after {
+    
+    content: "✔";
+    
+}
+.steps {
+
+    list-style: none;
+    padding: 0;
+    max-width: 500px;
+    counter-reset: step-index;
+    
+}
+.steps > li {
+    
+    display: flex;
+    background-color: #EEE;
+    min-height: 50px;
+    flex-wrap: wrap;
+    
+}
+.steps > li .step-url,
+.steps > li:before {
+    
+    width: 50px;
+    text-align: center;
+    
+}
+.steps > li:before {
+    
+    align-self: center;
+    content: counter(step-index);
+    counter-increment: step-index;
+    
+    
+}
+.steps > li > * {
+    
+    align-self: center;
+    
+}
+.steps > li .step-body {
+    
+    flex: 2 2 0;
+    border-left: 1px solid white;
+    border-right: 1px solid white;
+    min-height: 50px;
+    padding: 10px;
+    
+
+}
+.steps > li + li {
+    
+    margin-top: 5px;
+    
+}
+.step-args {
+    
+    padding: 0;
+    list-style: none;
+}

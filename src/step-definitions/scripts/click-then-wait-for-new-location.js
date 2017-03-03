@@ -1,4 +1,4 @@
-/*global remote, poll, querySelector */
+/*global remote, poll, selector */
 
 return Promise.resolve().then( function() {
     
@@ -9,7 +9,7 @@ return Promise.resolve().then( function() {
 } ).then( function( originalLocation ) {
 
     // click
-    var script = "reply(); document.querySelector(" + JSON.stringify( querySelector ) + ").click();";
+    var script = "reply(); document.querySelector(" + JSON.stringify( selector ) + ").click();";
     return remote( script, 200 ).then( function() {
             
         // while new location is empty or equal original location (timeout 5s)

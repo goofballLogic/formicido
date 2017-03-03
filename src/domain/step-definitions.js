@@ -6,6 +6,7 @@ const stepDefinitions = fs.readdirSync( stepDefRoot )
     .map( x => require( `${stepDefRoot}/${x}` ) )
     .map( x => ( {
 
+        "description": x.stepDescription || "No description provided",
         "name": x.stepName,
         "slug": x.stepName.toLowerCase().replace( /\W/g, "-" ),
         "class": x
