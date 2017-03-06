@@ -33,13 +33,15 @@ defineSupportCode( function( { setWorldConstructor, setDefaultTimeout, registerH
                     project: "Formicido",
                     build: process.env.BROWSERSTACK_BUILD || defaultBuild(),
                     "browserstack.local": true,
-                    "browserstack.debug": true
+                    "browserstack.debug": true,
+                    resolution: "1280x1024"
     
                 },
                 host: 'hub.browserstack.com',
                 port: 80,
                 user: process.env.BROWSERSTACK_USERNAME,
-                key: process.env.BROWSERSTACK_ACCESS_KEY
+                key: process.env.BROWSERSTACK_ACCESS_KEY,
+
     
             } );
             return browserStackClient.init();

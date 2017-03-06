@@ -5,12 +5,13 @@ function initDocumentWaiter( waiterId, eventName ) {
     window[ waiterId ] = true;
     function waiter() {
 
+        document.dispatchEvent( new CustomEvent( "info-message", { detail: "Path complete event waiter received" } ) );
         document.removeEventListener( eventName, waiter );
-        document.querySelector( "textarea" ).innerHTML += "Got it!";
         delete window[ waiterId ];
         
         
     }
+    document.dispatchEvent( new CustomEvent( "info-message", { detail: "Adding waiter for " + eventName } ) );
     document.addEventListener( eventName, waiter );
 
 }
@@ -46,7 +47,7 @@ function waitingForNewURL( client, invokeAction ) {
 function waitingForEvent( client, eventName, invokeAction ) {
     
     const waiterId = shortid();
-    client.timeoutsAsyncScript( 5000 );
+    client.timeoutsAsyncScript( 15000 );
     return client.execute( initDocumentWaiter, waiterId, eventName ).then( () =>
         invokeAction().then( () =>
             client.executeAsync( completeDocumentWaiter, waiterId ) 

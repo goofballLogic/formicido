@@ -12,6 +12,12 @@ module.exports = function( config ) {
 
     const configuredAgentJS = agentjs.toString().replace( /\$\{origin\}/g, config.origin );
     const app = express();
+    const handleErrors = res => err => {
+                    
+        console.error( err );
+        res.status( 500 ).send( "The server failed processing your request." );
+                    
+    };
     
     app.use( "/public", express.static( __dirname + "/../public" ) );
     app.use( ( req, res, next ) => {
@@ -76,12 +82,7 @@ module.exports = function( config ) {
             Promise.resolve()
                 .then( () => instance.consume( req.body ) )
                 .then( script => res.send( instance.script() ) )
-                .catch( err => {
-                    
-                    console.error( err );
-                    res.status( 500 ).send( "The server failed processing your request." );
-                    
-                } );
+                .catch( handleErrors( res ) );
                 
         }
             
@@ -89,7 +90,11 @@ module.exports = function( config ) {
     
     app.get( "/paths", ( req, res ) => {
 
-        res.render( "paths", { paths: [], newId: shortid() } );
+        paths.listRecent( 10 ).then( paths => 
+
+            res.render( "paths", { paths, newId: shortid() } )
+            
+        ).catch( handleErrors( res ) );
         
     } );
     
@@ -106,7 +111,8 @@ module.exports = function( config ) {
                 stepDefinitions, 
                 steps: descriptions 
                 
-            } ) );
+            } ) )
+            .catch( handleErrors( res ) );
             
     } );
     
@@ -121,12 +127,7 @@ module.exports = function( config ) {
                 res.redirect( `/paths/${pathId}` );
                 
             } )
-            .catch( err => {
-                    
-                console.error( err );
-                res.status( 500 ).send( "The server failed processing your request." );
-                
-            } );
+            .catch( handleErrors( res ) );
         
     } );
     
@@ -153,12 +154,7 @@ module.exports = function( config ) {
         const { pathId } = req.params;
         paths.fetchOrCreate( pathId )
             .then( path => res.send( path.script() ) )
-            .catch( err => {
-                    
-                console.error( err );
-                res.status( 500 ).send( "The server failed processing your request." );
-                
-            } );
+            .catch( handleErrors( res ) );
         
     } );
     
@@ -193,7 +189,8 @@ module.exports = function( config ) {
                     
                 }
                 
-            );
+            )
+            .catch( handleErrors( res ) );
 
     } );
     

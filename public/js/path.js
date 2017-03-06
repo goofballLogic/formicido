@@ -73,6 +73,8 @@ document.addEventListener( "fetch-result", function( e ) {
         function pathComplete() {
             
             document.removeEventListener( "run-complete", pathStepComplete );
+            document.dispatchEvent( new CustomEvent( "info-message", { detail: "Path run complete" } ) );
+            document.dispatchEvent( new CustomEvent( "path-complete", { detail: json } ) );
             
         }
     

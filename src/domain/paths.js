@@ -34,6 +34,25 @@ Object.assign( module.exports, {
         
         return repo.save( path.id, path.serialize() );
         
+    },
+    
+    listRecent( maxNumber ) {
+
+        return repo.listRecent( maxNumber ).then( objects => {
+
+            return Promise.all( objects.map( o => this.fetch( o.id ) ) ).then( fetched => {
+
+                return fetched.map( x => Object.assign( 
+                    
+                    objects.find( o => o.id == x.id ),
+                    { name: x.name || "(unnamed)" }
+                
+                ) );
+
+            } );
+
+        } );
+
     }
     
 } );

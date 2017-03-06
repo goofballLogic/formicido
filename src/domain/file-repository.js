@@ -1,5 +1,6 @@
 const fs = require( "fs" );
 const path = require( "path" );
+const asy = require( "async" );
 
 const config = require( "../../config" );
 const fileRepositoryRoot = config.repo.root;
@@ -9,7 +10,6 @@ fs.statSync( fileRepositoryRoot );
 // http://stackoverflow.com/a/24311711/275501
 function mkdirSync( path ) {
 
-console.log( path );  
   try {
       
       fs.mkdirSync( path );
@@ -20,6 +20,36 @@ console.log( path );
     
   }
   
+}
+
+function analyseFile( file, callback ) {
+    
+    fs.stat( file, ( e, stats ) => {
+
+        if ( e ) { callback( e ); } else {
+
+            callback( null, Object.assign( { file }, stats ) );
+            
+        }
+        
+    } );
+
+}
+
+function readDirBy( filePath, ordering, callback ) {
+
+    const onlyJSON = x => /\.json$/.test( x );
+    const asFullPath = x => path.resolve( filePath, x );
+    
+    asy.waterfall( [
+       
+       ( next ) => fs.readdir( filePath, next ),
+       ( files, next ) => next( null, files.filter( onlyJSON ).map( asFullPath ) ),
+       ( filePaths, next ) => asy.map( filePaths, analyseFile, next ),
+       ( fileInfo, next ) => next( null, ordering( fileInfo ) )
+       
+    ], callback );
+
 }
 
 class FileRepository {
@@ -123,6 +153,39 @@ class FileRepository {
                 
         } );
         
+    }
+    
+    listRecent( maxNumber ) {
+    
+        const asObjectDescriptor = stats => ( {
+            
+            id: /([^\/]*)\.json$/.exec( stats.file )[ 1 ],
+            modified: stats.mtime,
+            created: stats.ctime
+            
+        } );
+        
+        return new Promise( ( resolve, reject ) => {
+            
+            readDirBy( this.partitionPath, files =>
+            
+                [].concat( files ).sort( ( a, b ) => 
+                    
+                    b.mtime.getTime() - a.mtime.getTime() 
+                
+                )
+            , ( e, sortedFiles ) => {
+                
+                if ( e ) { reject( e ); } else {
+                    
+                    resolve( sortedFiles.slice( 0, maxNumber ).map( x => asObjectDescriptor( x ) ) );
+                    
+                }
+                
+            } );
+            
+        } );
+
     }
     
     save( objectId, obj ) {

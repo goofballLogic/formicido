@@ -8,7 +8,7 @@ return Promise.resolve().then( function() {
         
 } ).then( function( originalLocation ) {
 
-    // click
+    // reply before click so that we don't have a race condition due to the browser window navigating away
     var script = "reply(); document.querySelector(" + JSON.stringify( selector ) + ").click();";
     return remote( script, 200 ).then( function() {
             
