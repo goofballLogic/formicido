@@ -20,9 +20,25 @@ class Path {
         
     }
     
-    fetchOrCreate( stepId, step ) {
+    remove( stepId ) {
+        
+        this.steps = this.steps.filter( s => s.data.id !== stepId );
+        return Promise.resolve();
 
-        const found = this.steps.find( s => s.id === stepId );
+    }
+    
+    fetch( stepId ) {
+
+        const found = this.steps.find( s => s.data.id === stepId );
+        return found 
+            ? Promise.resolve( found )
+            : Promise.reject( "Not found" );
+
+    }
+    
+    fetchOrCreate( stepId, step ) {
+    
+        const found = this.steps.find( s => s.data.id === stepId );
         if ( found ) { 
 
             return found;

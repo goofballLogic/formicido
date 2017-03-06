@@ -4,6 +4,19 @@ class Step{
     
     constructor( world ) { this.world = world; }
     
+    clickStepLinkToURL( linkLabel, stepNumber ) {
+        
+        return this.world.formWorker.clickSelectorToNewURL( `//*[@class="steps"]/li[${stepNumber}]//a[normalize-space()="${linkLabel}"]` );    
+        
+    }
+    
+    expectStepCount( expected ) {
+        
+        const { client } = this.world;
+        return client.elements( ".steps > li" ).then( found => assert.equal( found.value.length, expected ) );
+        
+    }
+    
     expectPathStepsSuccess() {
         
         const { client } = this.world;

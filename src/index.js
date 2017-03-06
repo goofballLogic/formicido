@@ -101,7 +101,12 @@ module.exports = function( config ) {
     app.get( "/paths/:pathId", ( req, res ) => {
         
         const { pathId } = req.params;
-        const decorateDescription = desc => Object.assign( desc, { "url": `/paths/${pathId}/step/${desc.slug}/${desc.id}` } );
+        const decorateDescription = desc => Object.assign( desc, { 
+            
+            "url": `/paths/${pathId}/step/${desc.slug}/${desc.id}`,
+            "deleteUrl": `/paths/${pathId}/step/${desc.slug}/${desc.id}/delete`
+            
+        } );
         paths.fetchOrDefault( pathId )
             .then( path => [ path, path.stepDescriptions().map( decorateDescription ) ] )
             .then( ( [ path, descriptions ] ) => res.render( "path", { 
@@ -167,6 +172,17 @@ module.exports = function( config ) {
         
     } );
     
+    app.get( "/paths/:pathId/step/:stepSlug/:stepId/delete", ( req, res ) => {
+        
+        const { pathId, stepId } = req.params;
+        paths.fetch( pathId ).then( path => 
+            path.fetch( stepId ).then( step => 
+                res.render( "delete-step", { step: step.describe() } )
+            )
+        ).catch( handleErrors( res ) );
+            
+    } );
+    
     app.post( "/paths/:pathId/step/:stepSlug/:stepId", bodyParser.json(), bodyParser.urlencoded(), ( req, res ) => {
     
         const { pathId, stepSlug, stepId } = req.params;
@@ -175,23 +191,23 @@ module.exports = function( config ) {
                 .then( pathStep => {
                 
                     pathStep.consume( req.body );
-                    path.save();
+                    return path.save();
             
                 } )
             )
-            .then( 
-                
-                () => res.redirect( `/paths/${pathId}` ),
-                e => {
-                    
-                    console.error( e );
-                    res.status( 500 ).send( e.message );
-                    
-                }
-                
-            )
+            .then( () => res.redirect( `/paths/${pathId}` ) )
             .catch( handleErrors( res ) );
 
+    } );
+    
+    app.post( "/paths/:pathId/step/:stepSlug/:stepId/delete", bodyParser.json(), bodyParser.urlencoded(), ( req, res ) => {
+        
+        const { pathId, stepId } = req.params;
+        paths.fetch( pathId )
+            .then( path => path.remove( stepId ).then( () => path.save() ) )
+            .then( () => res.redirect( `/paths/${pathId}` ) )
+            .catch( handleErrors( res ) );
+        
     } );
     
     return new Promise( ( resolve, reject ) => {

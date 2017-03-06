@@ -84,6 +84,13 @@ class FormWorker{
 
     }
     
+    clickSelectorToNewURL( selector ) {
+        
+        const { client } = this.world;
+        return waitingForNewURL( client, () => client.click( selector ) );
+        
+    }
+    
     fill( label, value ) {
       
         const { client } = this.world;

@@ -20,7 +20,9 @@ prepend content
                                 li
                                     span(class="arg-name") #{arg}
                                     span(class="arg-values") #{step.args[arg]}
-                    a(class="step-url", href=step.url) Edit
+                    div(class="step-links")
+                        a(class="step-url", href=step.url) Edit
+                        a(class="delete-step-url", href=step.deleteUrl) Delete
                             
         button= "Save"
 

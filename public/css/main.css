@@ -133,7 +133,7 @@ label + label {
     margin-top: 10px;
     
 }
-label .label-text {
+label .label-text, .arg .arg-label {
     
     min-width: 200px;
     background-color: #EEEEEE;
@@ -143,16 +143,19 @@ label .label-text {
 }
 label .label-text,
 label input,
-label select {
+label select,
+.arg .arg-values,
+.arg .arg-label {
     
     padding: 0 10px;
     line-height: 2.5em;
     height: 2.5em;
-    
+    display: inline-block;
     
 }
 label input,
-label select {
+label select,
+.arg .arg-values{
     
     min-width: 400px;
     border: solid 1px #EEEEEE;
@@ -256,6 +259,15 @@ fieldset {
     padding: 10px;
     
 
+}
+.steps > li .step-links {
+    
+    max-width: 100px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
 }
 .steps > li + li {
     
