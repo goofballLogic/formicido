@@ -10,22 +10,22 @@ prepend content
             span(class="label-text")
                 | Name
             input(name="path-name",value=path.name)
-        ol(class="steps")
-            each step in steps
-                li
-                    div(class="step-body")
-                        span(class="step-name") #{step.name}
-                        ul(class="step-args")
-                            each arg in Object.keys( step.args )
-                                li
-                                    span(class="arg-name") #{arg}
-                                    span(class="arg-values") #{step.args[arg]}
-                    div(class="step-links")
-                        a(class="step-url", href=step.url) Edit
-                        a(class="delete-step-url", href=step.deleteUrl) Delete
-                            
         button= "Save"
 
+    ol(class="steps")
+        each step in steps
+            li
+                div(class="step-body")
+                    span(class="step-name") #{step.name}
+                    ul(class="step-args")
+                        each arg in Object.keys( step.args )
+                            li
+                                span(class="arg-name") #{arg}
+                                span(class="arg-values") #{step.args[arg]}
+                div(class="step-links")
+                    a(class="step-url", href=step.url) Edit
+                    a(class="delete-step-url", href=step.deleteUrl) Delete
+                    
     form(method="POST", action="/paths/" + path.id + "/add-step")            
         label
             span(class="label-text")

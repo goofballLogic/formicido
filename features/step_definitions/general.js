@@ -50,4 +50,10 @@ defineSupportCode( function( { Given, When, Then } ) {
 
     } );
     
+    When( "I click the {buttonText:stringInDoubleQuotes} button and wait for the page to reload", function( buttonText ) {
+
+        return this.formWorker.clickButtonToReload( buttonText );
+        
+    } );
+    
 } );

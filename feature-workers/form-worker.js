@@ -44,6 +44,29 @@ function waitingForNewURL( client, invokeAction ) {
     
 }
 
+function taintPage( taint ) {
+    
+    document.body.setAttribute( "data-" + taint, "true" );
+    
+}
+
+function taintRemoved( client, taint ) {
+    
+    return client.getAttribute( "body", "data-" + taint ).then( found => console.log( found ) || !found.value ).catch( e => false );
+    
+}
+function waitingForPageToReload( client, invokeAction ) {
+    
+    const taint = shortid();
+    return client.execute( taintPage, taint ).then( () =>
+        invokeAction().then( () =>
+            client.waitUntil( () =>
+                taintRemoved( client, taint ) 
+            )
+        )
+    );
+            
+}
 function waitingForEvent( client, eventName, invokeAction ) {
     
     const waiterId = shortid();
@@ -67,6 +90,13 @@ class FormWorker{
         
         const { client } = this.world;       
         return waitingForEvent( client, eventName, () => client.click( `button=${buttonText}` ) );
+        
+    }
+    
+    clickButtonToReload( buttonText, expectedMessage ) {
+        
+        const { client } = this.world;
+        return waitingForPageToReload(client, () => client.click( `button=${buttonText}` ) );
         
     }
     
