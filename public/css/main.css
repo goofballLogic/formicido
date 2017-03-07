@@ -142,7 +142,7 @@ label .label-text, .arg .arg-label {
     
 }
 label .label-text,
-label input,
+label input:not([type="checkbox"]),
 label select,
 .arg .arg-values,
 .arg .arg-label {
@@ -153,7 +153,7 @@ label select,
     display: inline-block;
     
 }
-label input,
+label input:not([type="checkbox"]),
 label select,
 .arg .arg-values{
     
@@ -162,6 +162,59 @@ label select,
     background-color: white;
     
 }
+input[type="checkbox"] {
+    
+    display: none;
+    
+}
+.checkbox-list {
+    
+    max-width: 500px;
+    max-height: 700px;
+    padding: 10px;
+    overflow-y: auto;
+    
+}
+.checkbox-list label {
+    
+    margin: 0;
+    cursor: pointer;
+    
+}
+.checkbox-label {
+
+    margin: 0;
+    padding: 10px 5px;
+    display: block;
+    
+}
+.checkbox-label:hover {
+    
+    background-color: #EEEEFF;
+    
+}
+.checkbox-label:before,
+.checkbox-label:after {
+    
+    content: "";
+    width: 1em;
+    margin-right: 1em;
+    display: inline-block;
+    text-align: center;
+    
+}
+.checkbox-label:before {
+    
+    content: "\00a0";
+    border: dotted 1px silver;
+    
+}
+input[type="checkbox"]:checked + .checkbox-label:before {
+    
+    content: "✔";
+    
+}
+
 button {
     
     margin: 10px 0;
@@ -278,4 +331,83 @@ fieldset {
     
     padding: 0;
     list-style: none;
+}
+.paths {
+    
+    list-style: none;
+    padding: 0;
+    
+}
+.paths li {
+    
+    display: inline-block;
+    margin: 0 10px 10px 0;    
+}
+.paths a {
+    
+    display: inline-block;
+    padding: 10px;
+    background-color: #EEE;
+    border: solid 1px silver;
+    text-decoration: none;
+    
+}
+.paths a:hover {
+    
+    background-color: white;
+    
+}
+
+.paths .path-name {
+
+    font-size: 1.2em;
+    display: block;
+
+}
+
+article p {
+    
+    max-width: 800px;
+    line-height: 1.25em;
+    font-size: 1.1em;
+    padding: 10px 0 0 10px;
+    
+}
+
+select.paths {
+    
+    height: auto;
+    display: block;
+    
+}
+select.paths option {
+    
+    margin: 5px;
+    padding: 10px;
+    
+}
+select.paths option {
+    
+    background-color: white;
+    
+}
+
+select.paths option:checked {
+    
+    background-color: #EEE;
+    
+}
+select.paths option:before {
+    
+    content: "\00a0";
+    display: inline-block;
+    width: 2em;
+    text-align: center;
+    
+}
+
+select.paths option:checked:before {
+    
+    content: "✔";
+        
 }

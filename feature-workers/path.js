@@ -1,12 +1,40 @@
 const assert = require( "assert" );
+const path = require( "path" );
+const fs = require( "fs" );
 
-class Step{
+class Path {
     
     constructor( world ) { this.world = world; }
     
     clickStepLinkToURL( linkLabel, stepNumber ) {
         
         return this.world.formWorker.clickSelectorToNewURL( `//*[@class="steps"]/li[${stepNumber}]//a[normalize-space()="${linkLabel}"]` );    
+        
+    }
+    
+    createWellKnownPath( pathId ) {
+
+        const fileStorePath = path.resolve( __dirname, `../data/paths/${pathId}.json` );                
+        const pristinePath = path.resolve( __dirname, `../feature-data-pristine/path--${pathId}.json` );
+        return new Promise( ( resolve, reject ) => {
+        
+            fs.readFile( pristinePath, ( readError, data ) => {
+                
+                if ( readError ) { reject( readError ); } else {
+        
+                    fs.writeFile( fileStorePath, data, ( writeError ) => writeError ? reject( writeError ) : resolve() );
+                    
+                }
+                
+            } );
+
+        } );
+        
+    }
+    
+    createWellKnownPaths( pathsTable ) {
+        
+        return Promise.all( pathsTable.hashes().map( x => this.createWellKnownPath( x.path ) ) );
         
     }
     
@@ -53,4 +81,4 @@ class Step{
     }
     
 }
-module.exports = Step;
+module.exports = Path;

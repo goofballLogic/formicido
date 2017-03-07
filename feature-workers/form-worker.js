@@ -55,7 +55,7 @@ function taintPage( taint ) {
 
 function taintRemoved( client, taint ) {
     
-    return client.getAttribute( "body", "data-" + taint ).then( found => console.log( "taint?", found, !found ) || !found ).catch( e => false );
+    return client.getAttribute( "body", "data-" + taint ).then( found => !found ).catch( e => false );
     
 }
 function waitingForPageToReload( client, invokeAction ) {
@@ -132,6 +132,32 @@ class FormWorker{
         
     }
     
+    expectCheckedLabelledCheckboxes( label, expectedCheckedTable ) {
+        
+        const { client } = this.world;
+        const expected = expectedCheckedTable.hashes().map( x => x[ "Name" ] );
+        const selector = `//label[normalize-space()='${label}']/following-sibling::*[@class='checkbox-list']`; 
+        return client.execute( function( selector, expected ) {
+            
+            var checkboxList = document.evaluate( selector, document.body ).iterateNext();
+            if ( !checkboxList ) { throw new Error( "Checkbox list not found for: " + selector ); }
+            var found = [];
+            [].forEach.call( checkboxList.querySelectorAll( "label" ), function( label ) {
+
+                var labelText = ( label.querySelector( ".checkbox-label" ) || {} ).textContent;
+                var checkbox = label.querySelector( "input[type=checkbox]" ) || {};
+                if ( checkbox.checked ) { found.push( labelText ); }
+
+            } );
+            if ( JSON.stringify( found.sort() ) !== JSON.stringify( expected.sort() ) ) {
+                
+                throw new Error( "Expected: " + expected.sort().join( ", " ) + ". Actual: " + found.join( ",  " ) );
+
+            }
+
+        }, selector, expected );
+    }
+    
     fill( label, value ) {
       
         const { client } = this.world;
@@ -174,6 +200,33 @@ class FormWorker{
         const { client } = this.world;
         return client.click( `//*[contains(@class, "label-text") and normalize-space()="${label}"]/parent::label//option[normalize-space()="${optionText}"]` );
 
+    }
+    
+    selectLabelledCheckboxes( label, checkboxTable ) {
+        
+        const { client } = this.world;
+        const checked = checkboxTable.hashes().map( x => x[ "Name" ] );
+        const selector = `//label[normalize-space()='${label}']/following-sibling::*[@class='checkbox-list']`; 
+        return client.execute( function( selector, checked ) {
+            
+            var checkboxList = document.evaluate( selector, document.body ).iterateNext();
+            if ( !checkboxList ) { throw new Error( "Checkbox list not found for: " + selector ); }
+            var found = [];
+            [].forEach.call( checkboxList.querySelectorAll( "label" ), function( label ) {
+
+                var labelText = ( label.querySelector( ".checkbox-label" ) || {} ).textContent;
+                var checkbox = label.querySelector( "input[type=checkbox]" ) || {};
+                checkbox.checked = !!~checked.indexOf( labelText );
+                if( checkbox.checked ) { found.push( labelText ); }
+                
+            } );
+            if ( found.length !== checked.length ) {
+                
+                throw new Error( "Some checkboxes were missing, only found: " + found.join( ", " ) );
+                
+            }
+
+        }, selector, checked );
     }
     
 }

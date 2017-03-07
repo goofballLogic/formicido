@@ -5,6 +5,7 @@ const shortid = require( "shortid" );
 
 const stepDefinitions = require( "./domain/step-definitions" );
 const paths = require( "./domain/paths" );
+const scripts = require( "./domain/scripts" );
 
 const agentjs = fs.readFileSync( __dirname + "/scripts/agent.js" );
 
@@ -90,9 +91,19 @@ module.exports = function( config ) {
     
     app.get( "/paths", ( req, res ) => {
 
-        paths.listRecent( 10 ).then( paths => 
+        paths.listRecent( 25 ).then( paths => 
 
             res.render( "paths", { paths, newId: shortid() } )
+            
+        ).catch( handleErrors( res ) );
+        
+    } );
+    
+    app.get( "/scripts", ( req, res ) => {
+        
+        scripts.listRecent( 100 ).then( scripts =>
+        
+            res.render( "scripts", { scripts, newId: shortid() } )
             
         ).catch( handleErrors( res ) );
         
@@ -121,6 +132,28 @@ module.exports = function( config ) {
             
     } );
     
+    
+    app.get( "/scripts/:scriptId", ( req, res ) => {
+    
+        const { scriptId } = req.params;
+        scripts.fetchOrDefault( scriptId ).then( script =>
+            
+            paths.listRecent( 200 ).then( paths =>
+            
+                res.render( "script", {
+                    
+                    script,
+                    scriptId,
+                    paths
+                    
+                } )
+                
+            )
+            
+        ).catch( handleErrors( res ) );
+
+    } );
+    
     app.post( "/paths/:pathId", bodyParser.json(), bodyParser.urlencoded(), ( req, res ) => {
         
         const { pathId } = req.params;
@@ -134,6 +167,21 @@ module.exports = function( config ) {
             } )
             .catch( handleErrors( res ) );
         
+    } );
+    
+    app.post( "/scripts/:scriptId", bodyParser.json(), bodyParser.urlencoded(), ( req, res ) => {
+        
+        const { scriptId } = req.params;
+        scripts.fetchOrCreate( scriptId )
+            .then( script => {
+                
+                script.consume( req.body );
+                script.save();
+                res.redirect( `/scripts/${scriptId}` );
+                
+            } )
+            .catch( handleErrors( res ) );
+            
     } );
     
     app.post( "/paths/:pathId/add-step", bodyParser.json(), bodyParser.urlencoded(), ( req, res ) => {

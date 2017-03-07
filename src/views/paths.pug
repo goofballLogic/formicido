@@ -3,8 +3,11 @@ extends layout
 block content    
     h1 Paths
     a(href="/paths/" + newId) Create
-    ul
+    ul(class="paths")
         each path in paths
             li
-                a(href="/paths/" + path.id) #{path.name} - #{path.modified.toDateString()}
+                a(href="/paths/" + path.id)
+                    span(class="path-name")= path.name
+                    span #{path.modified.toDateString()}, #{path.modified.toLocaleTimeString()}
+                    
     

@@ -1,0 +1,15 @@
+{
+ "id": "nav-to-hello",
+ "name": "Navigate to Hello World",
+ "steps": [
+  {
+   "id": "nth-1",
+   "step": "navigate",
+   "args": {
+    "url": [
+     "http://localhost:8124/hello-world"
+    ]
+   }
+  }
+ ]
+}

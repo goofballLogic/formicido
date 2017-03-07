@@ -21,8 +21,26 @@ module.exports = function( config, appConfig ) {
     
     app.get( "/some-links/poem", ( req, res ) => {
 
-       res.render( "a-poem", { agentUrl } );
+        res.render( "a-poem", { agentUrl } );
        
+    } );
+    
+    app.get( "/a", ( req, res ) => {
+        
+        res.render( "alphabet", { "title": "A", "target": "B", "targetUrl": "/a/b" } );
+        
+    } );
+
+    app.get( "/a/b", ( req, res ) => {
+        
+        res.render( "alphabet", { "title": "B", "target": "C", "targetUrl": "/a/b/c" } );
+        
+    } );
+
+    app.get( "/a/b/c", ( req, res ) => {
+        
+        res.render( "alphabet", { "title": "C", "target": "A", "targetUrl": "/a" } );
+        
     } );
     
     return new Promise( ( resolve, reject ) => {

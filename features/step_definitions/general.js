@@ -62,4 +62,16 @@ defineSupportCode( function( { Given, When, Then } ) {
         
     } );
     
+    When( "I select checkboxes for {fieldLabel:stringInDoubleQuotes}", function( fieldLabel, checkboxNameTable ) {
+        
+        return this.formWorker.selectLabelledCheckboxes( fieldLabel, checkboxNameTable );
+        
+    } );
+    
+    Then( "the checked checkboxes for {fieldLabel:stringInDoubleQuotes} should be", function( fieldLabel, checkboxNameTable ) {
+        
+        return this.formWorker.expectCheckedLabelledCheckboxes( fieldLabel, checkboxNameTable );
+        
+    } );
+    
 } );

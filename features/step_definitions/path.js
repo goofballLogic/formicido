@@ -20,4 +20,10 @@ defineSupportCode( function( { Given, When, Then } ) {
         
     } );
     
+    Given ( "well-known test paths exist:", function( pathTable ) {
+        
+        return this.path.createWellKnownPaths( pathTable );
+        
+    } );
+    
 } );

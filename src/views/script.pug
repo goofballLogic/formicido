@@ -1,0 +1,22 @@
+extends layout
+
+mixin pathOption( path )
+    label
+        input(type="checkbox",value=path.id,name="path",checked=!!~script.paths.indexOf(path.id))
+        span(class="checkbox-label") #{path.name}
+        
+append headers
+    script(src="/public/js/script.js")
+    
+prepend content
+    h2= script.name
+    form(method="POST")
+        label
+            span(class="label-text")= "Name"
+            input(name="script-name",value=script.name)
+        label
+            span(class="label-text")= "Paths"
+        div(class="checkbox-list")
+            each path in paths
+                +pathOption( path )
+        button= "Save"
