@@ -55,7 +55,7 @@ function taintPage( taint ) {
 
 function taintRemoved( client, taint ) {
     
-    return client.getAttribute( "body", "data-" + taint ).then( found => console.log( found ) || !found.value ).catch( e => false );
+    return client.getAttribute( "body", "data-" + taint ).then( found => console.log( "taint?", found, !found ) || !found ).catch( e => false );
     
 }
 function waitingForPageToReload( client, invokeAction ) {
@@ -63,9 +63,7 @@ function waitingForPageToReload( client, invokeAction ) {
     const taint = shortid();
     return client.execute( taintPage, taint ).then( () =>
         invokeAction().then( () =>
-            client.waitUntil( () =>
-                taintRemoved( client, taint ) 
-            )
+            client.waitUntil( () => taintRemoved( client, taint ), 5000 )
         )
     );
             
