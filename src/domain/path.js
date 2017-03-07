@@ -54,17 +54,17 @@ class Path {
     }
     
     consume( values ) {
-        
-        Object.keys( [ 
+
+        [ 
             
             [ "path-name", "name" ] 
             
-        ] ).filter( ( [ key ] ) => 
-        
+        ].filter( ( [ key ] ) => 
+
             key in values 
         
         ).forEach( ( [ key, prop ] ) => {
-                
+
             // only allow singleton values
             this.data[ prop ] = singletonValue( values[ key ] );
 

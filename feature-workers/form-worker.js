@@ -1,4 +1,7 @@
+const assert = require( "assert" );
 const shortid = require( "shortid" );
+
+/* global CustomEvent*/
 
 function initDocumentWaiter( waiterId, eventName ) {
     
@@ -118,6 +121,16 @@ class FormWorker{
         
         const { client } = this.world;
         return waitingForNewURL( client, () => client.click( selector ) );
+        
+    }
+    
+    expectLabelledFieldValue( fieldLabel, expected ) {
+        
+        const { client } = this.world;
+        
+        return client.element( `label=${fieldLabel}` )
+            .getValue( "input, textarea, select" )
+            .then( actual => assert.equal( actual, expected ) );
         
     }
     

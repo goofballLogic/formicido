@@ -56,4 +56,10 @@ defineSupportCode( function( { Given, When, Then } ) {
         
     } );
     
+    Then( "the {fieldLabel:stringInDoubleQuotes} field value should be {expectedValue:stringInDoubleQuotes}", function( fieldLabel, expectedValue ) {
+        
+        return this.formWorker.expectLabelledFieldValue( fieldLabel, expectedValue );
+        
+    } );
+    
 } );
