@@ -68,7 +68,7 @@ module.exports = function( config ) {
         
     } );
     
-    app.post( "/steps/:slug", bodyParser.json(), bodyParser.urlencoded(), ( req, res ) => {
+    app.post( "/steps/:slug", bodyParser.json(), bodyParser.urlencoded( { extended: false } ), ( req, res ) => {
         
         const { slug } = req.params;
         const step = stepDefinitions[ slug ];
@@ -136,12 +136,14 @@ module.exports = function( config ) {
     app.get( "/scripts/:scriptId", ( req, res ) => {
     
         const { scriptId } = req.params;
+        const newRunUrl = `/scripts/${scriptId}/run/${shortid()}`;
         scripts.fetchOrDefault( scriptId ).then( script =>
             
             paths.listRecent( 200 ).then( paths =>
             
                 res.render( "script", {
                     
+                    newRunUrl,
                     script,
                     scriptId,
                     paths
@@ -154,7 +156,22 @@ module.exports = function( config ) {
 
     } );
     
-    app.post( "/paths/:pathId", bodyParser.json(), bodyParser.urlencoded(), ( req, res ) => {
+    app.get( "/scripts/:scriptId/run/:runId", ( req, res ) => {
+        
+        const { scriptId } = req.params;
+        scripts.fetch( scriptId ).then( script => 
+
+            script.generateJS().then( pathScripts => {
+
+                res.render( "script-run", { pathScripts: JSON.stringify( pathScripts ) } );
+                
+            } )
+            
+        ).catch( handleErrors( res ) );
+
+    } );
+    
+    app.post( "/paths/:pathId", bodyParser.json(), bodyParser.urlencoded( { extended: false } ), ( req, res ) => {
         
         const { pathId } = req.params;
         paths.fetchOrCreate( pathId )
@@ -169,7 +186,7 @@ module.exports = function( config ) {
         
     } );
     
-    app.post( "/scripts/:scriptId", bodyParser.json(), bodyParser.urlencoded(), ( req, res ) => {
+    app.post( "/scripts/:scriptId", bodyParser.json(), bodyParser.urlencoded( { extended: false } ), ( req, res ) => {
         
         const { scriptId } = req.params;
         scripts.fetchOrCreate( scriptId )
@@ -184,7 +201,7 @@ module.exports = function( config ) {
             
     } );
     
-    app.post( "/paths/:pathId/add-step", bodyParser.json(), bodyParser.urlencoded(), ( req, res ) => {
+    app.post( "/paths/:pathId/add-step", bodyParser.json(), bodyParser.urlencoded( { extended: false } ), ( req, res ) => {
         
         const { pathId } = req.params;
         const newStep = stepDefinitions[ req.body[ "new-step" ] ];
@@ -231,7 +248,7 @@ module.exports = function( config ) {
             
     } );
     
-    app.post( "/paths/:pathId/step/:stepSlug/:stepId", bodyParser.json(), bodyParser.urlencoded(), ( req, res ) => {
+    app.post( "/paths/:pathId/step/:stepSlug/:stepId", bodyParser.json(), bodyParser.urlencoded( { extended: false } ), ( req, res ) => {
     
         const { pathId, stepSlug, stepId } = req.params;
         paths.fetchOrCreate( pathId )
@@ -248,7 +265,7 @@ module.exports = function( config ) {
 
     } );
     
-    app.post( "/paths/:pathId/step/:stepSlug/:stepId/delete", bodyParser.json(), bodyParser.urlencoded(), ( req, res ) => {
+    app.post( "/paths/:pathId/step/:stepSlug/:stepId/delete", bodyParser.json(), bodyParser.urlencoded( { extended: false } ), ( req, res ) => {
         
         const { pathId, stepId } = req.params;
         paths.fetch( pathId )

@@ -1,0 +1,19 @@
+extends layout-with-browser
+
+append headers
+    script(src="/public/js/path.js")
+    script(src="/public/js/script-run.js")
+    script.
+        window.addEventListener( "load", function() {
+                
+            document.dispatchEvent( new CustomEvent( "initiate-script", { detail: !{pathScripts} } ) );
+            
+        } );
+
+prepend content
+    div(class="run-counter")
+        | Completed runs:
+        span(class="run-count")= "0"
+    div(id="outcome")
+    ol(id="transcript")
+    

@@ -32,9 +32,14 @@ class Path {
         
     }
     
-    createWellKnownPaths( pathsTable ) {
+    createWellKnownPaths( paths ) {
         
-        return Promise.all( pathsTable.hashes().map( x => this.createWellKnownPath( x.path ) ) );
+        if ( paths.hashes ) {
+            
+            paths = paths.hashes().map( x => x.path );
+            
+        }
+        return Promise.all( paths.map( x => this.createWellKnownPath( x ) ) );
         
     }
     

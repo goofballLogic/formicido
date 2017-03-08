@@ -1,4 +1,5 @@
 const scripts = require( "./scripts" );
+const paths = require( "./paths" );
 
 function singletonValue( values ) {
     
@@ -23,23 +24,6 @@ class Script {
         
     }
     
-    remove( pathId ) {
-        
-        //this.steps = this.steps.filter( s => s.data.id !== pathId );
-        //return Promise.resolve();
-
-    }
-    
-    fetch( pathId ) {
-
-        /*const found = this.steps.find( s => s.data.id === pathId );
-        return found 
-            ? Promise.resolve( found )
-            : Promise.reject( "Not found" );
-        */
-
-    }
-    
     consume( values ) {
 
         [ 
@@ -55,6 +39,22 @@ class Script {
             this.data[ prop ] = value;
 
         } );
+        
+    }
+    
+    generateJS() {
+
+        return Promise.all( this.paths.map( x => paths.fetch( x ) ) ).then( loaded => 
+        
+            loaded.map( path => ( {
+
+                name: path.name,
+                id: path.id,
+                script: path.script()
+
+            } ) ) 
+        
+        );
         
     }
     

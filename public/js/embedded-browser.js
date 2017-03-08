@@ -150,7 +150,10 @@ document.addEventListener( "submit", function( e ) {
             var args = [ "frame", "remote", "poll" ].concat( dynamicArgs ).concat( e.detail.script );
             var script = Function.apply( null, args );
             var dynamicArgValues = dynamicArgs.map( x => e.detail.args[ x ] );
-                
+
+console.log( script );
+console.log( dynamicArgValues );
+
             Promise.resolve()
                 .then( () => script.apply( null, [ frame, remote, poll ].concat( dynamicArgValues ) ) )
                 .then( () => null, err => err )

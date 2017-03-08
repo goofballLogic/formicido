@@ -10,11 +10,11 @@ Feature: Declare a script
       | nav-to-hello     |
       | a-b-c-a-b        |
     And I have opened formicido
-    And I follow the "Scripts" link
-    And I click the "Create" link and wait for URL to change
 
   Scenario: Create a script from two paths and save
-    When I select checkboxes for "Paths"
+    When I follow the "Scripts" link
+     And I click the "Create" link and wait for URL to change
+     And I select checkboxes for "Paths"
       | Name             |
       | Find TCOTLB poem |
       | Alphabet hell    |
@@ -23,3 +23,11 @@ Feature: Declare a script
       | Name             |
       | Find TCOTLB poem |
       | Alphabet hell    |
+
+  Scenario: Run a script until two completed runs are logged
+    Given well-known script "all-three-paths" exists
+     When I follow the "Scripts" link
+      And I follow the "All three paths" link
+      And I click the "New run..." link and wait for URL to change
+      And I wait for ".run-count" to equal "2"
+     Then the outcome should match "Script run completed.*Script run completed"

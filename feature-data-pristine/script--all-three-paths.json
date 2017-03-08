@@ -1,0 +1,9 @@
+{
+ "id": "all-three-paths",
+ "name": "All three paths",
+ "paths": [
+  "a-b-c-a-b",
+  "find-charge-poem",
+  "nav-to-hello"
+ ]
+}

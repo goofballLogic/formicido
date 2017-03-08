@@ -242,27 +242,27 @@ fieldset {
     content: "Pending";   
     
 }
-.step-error {
+.error {
     
     color: #770000;
     
 }
-.step-success {
+.success {
     
     color: #007700;
     
 }
-#transcript .step-running::after {
+#transcript .running::after {
     
     content: "Running";
     
 }
-#transcript .step-error::after {
+#transcript .error::after {
     
     content: "✘";
     
 }
-#transcript .step-success::after {
+#transcript .success::after {
     
     content: "✔";
     
@@ -332,18 +332,20 @@ fieldset {
     padding: 0;
     list-style: none;
 }
-.paths {
+.paths, .scripts {
     
     list-style: none;
     padding: 0;
     
 }
-.paths li {
+.paths li, .scripts li {
     
     display: inline-block;
-    margin: 0 10px 10px 0;    
+    margin: 0 10px 10px 0; 
+    cursor: pointer;
+    
 }
-.paths a {
+.paths a, .scripts a {
     
     display: inline-block;
     padding: 10px;
@@ -352,13 +354,13 @@ fieldset {
     text-decoration: none;
     
 }
-.paths a:hover {
+.paths a:hover, .scripts a:hover {
     
     background-color: white;
     
 }
 
-.paths .path-name {
+.paths .path-name, .scripts .script-name {
 
     font-size: 1.2em;
     display: block;
@@ -410,4 +412,21 @@ select.paths option:checked:before {
     
     content: "✔";
         
+}
+.run-counter {
+    
+    padding: 10px;
+    margin: 10px 10px 10px 0;
+    display: inline-block;
+    background-color: #EEE;
+    border: solid 1px silver;
+}
+.run-count {
+    
+    font-family: monospace;
+    margin-left: 5px;
+    background-color: white;
+    padding: 5px 10px;
+    box-shadow: inset 0 0 10px -5px black;
+    
 }

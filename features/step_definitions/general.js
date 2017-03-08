@@ -16,7 +16,7 @@ defineSupportCode( function( { Given, When, Then } ) {
     
     When( "I follow the {arg1:stringInDoubleQuotes} link", function ( linkText ) {
        
-       return this.client.element( `=${linkText}` ).click();
+       return this.client.element( `//a[contains(string(.), '${linkText}')]` ).click();
        
     } );
     
@@ -74,4 +74,11 @@ defineSupportCode( function( { Given, When, Then } ) {
         
     } );
     
+    When( "I wait for {selector:stringInDoubleQuotes} to equal {expected:stringInDoubleQuotes}", function( selector, expected ) {
+
+        return this.formWorker.waitForExpectedContent( selector, expected );
+
+    } );
+    
+
 } );

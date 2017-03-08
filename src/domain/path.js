@@ -41,7 +41,7 @@ class Path {
         const found = this.steps.find( s => s.data.id === stepId );
         if ( found ) { 
 
-            return found;
+            return Promise.resolve( found );
 
         } else {
 
