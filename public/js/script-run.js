@@ -1,11 +1,13 @@
 /*global CustomEvent*/
 document.addEventListener( "initiate-script", function( e ) {
     
-    var outcome = document.querySelector( "#outcome" );
+    var counter = 0;
+    var outcome = document.querySelector( "#script-outcome" );
     outcome.innerHTML = "";
     function recordOutcome( html ) { if ( outcome ) { outcome.innerHTML += "<br />" + html; } }
-    var transcript = document.querySelector( "#transcript" );
-    var scripts = e.detail;
+    var transcript = document.querySelector( "#script-transcript" );
+    var scripts = e.detail.scripts;
+    var nextIterationURL = e.detail.nextIterationURL;    
 
     var bookmark = 0;
     var paths = scripts.map( x => {
@@ -47,7 +49,7 @@ document.addEventListener( "initiate-script", function( e ) {
             path.classList.add( "success" );
             
         }
-        nextPath();
+        setTimeout( nextPath, 1000 );
         
     }
     
@@ -55,6 +57,23 @@ document.addEventListener( "initiate-script", function( e ) {
         
         document.removeEventListener( "path-complete", pathComplete );
         document.dispatchEvent( new CustomEvent( "info-message", { detail: "Script run complete" } ) );
+        var stopper = document.querySelector( "#stop" );
+        if ( !stopper.checked ) {
+            
+            window.location.replace( nextIterationURL );
+            
+        } else {
+            
+            document.body.classList.add( "paused" );
+            
+        }
+        
+    }
+
+    function runScript() {
+        
+        document.addEventListener( "path-complete", pathComplete );
+        nextPath();
         
     }
         
@@ -64,8 +83,7 @@ document.addEventListener( "initiate-script", function( e ) {
         
     } else {
     
-        document.addEventListener( "path-complete", pathComplete );
-        nextPath();
+        runScript();
         
     }
     

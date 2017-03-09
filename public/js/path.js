@@ -14,7 +14,7 @@ document.addEventListener( "click", function( e ) {
 } );
 
 ( function() {
-    
+
     function runPath( e ) {
         
         var outcome = document.querySelector( "#outcome" );
@@ -23,7 +23,6 @@ document.addEventListener( "click", function( e ) {
         var transcript = document.querySelector( "#transcript" );
         transcript.innerHTML = "";
 
-console.log( e.detail );        
         var json = e.detail;
         if ( json.length < 1 ) { 
             
@@ -60,6 +59,7 @@ console.log( e.detail );
             function pathStepComplete( outcomeEvent ) {
                 
                 var step = steps[ bookmark - 1 ];
+                step.classList.remove( "running" );
                 if ( outcomeEvent.detail.err ) {
                     
                     recordOutcome( "Step " + bookmark + " error: " + outcomeEvent.detail.err );

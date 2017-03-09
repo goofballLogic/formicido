@@ -136,7 +136,7 @@ module.exports = function( config ) {
     app.get( "/scripts/:scriptId", ( req, res ) => {
     
         const { scriptId } = req.params;
-        const newRunUrl = `/scripts/${scriptId}/run/${shortid()}`;
+        const newRunUrl = `/scripts/${scriptId}/run/${shortid()}/0`;
         scripts.fetchOrDefault( scriptId ).then( script =>
             
             paths.listRecent( 200 ).then( paths =>
@@ -156,14 +156,16 @@ module.exports = function( config ) {
 
     } );
     
-    app.get( "/scripts/:scriptId/run/:runId", ( req, res ) => {
+    app.get( "/scripts/:scriptId/run/:runId/:iteration", ( req, res ) => {
         
-        const { scriptId } = req.params;
+        const { scriptId, runId, iteration } = req.params;
+        const nextIteration = parseInt( iteration ) + 1;
+        const nextIterationURL = `/scripts/${scriptId}/run/${runId}/${nextIteration}`;
         scripts.fetch( scriptId ).then( script => 
 
             script.generateJS().then( pathScripts => {
 
-                res.render( "script-run", { pathScripts: JSON.stringify( pathScripts ) } );
+                res.render( "script-run", { pathScripts: JSON.stringify( pathScripts ), iteration, nextIterationURL } );
                 
             } )
             

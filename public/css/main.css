@@ -235,7 +235,7 @@ fieldset {
     
 }
 
-#transcript li::after {
+.transcript li::after {
 
     display: inline-block;    
     margin-left: 10px;
@@ -252,19 +252,24 @@ fieldset {
     color: #007700;
     
 }
-#transcript .running::after {
+.running {
     
-    content: "Running";
+    font-weight: bold;
     
 }
-#transcript .error::after {
+.transcript .error::after {
     
     content: "✘";
     
 }
-#transcript .success::after {
+.transcript .success::after {
     
     content: "✔";
+    
+}
+.transcript .running::after {
+    
+    content: "Running";
     
 }
 .steps {
@@ -428,5 +433,15 @@ select.paths option:checked:before {
     background-color: white;
     padding: 5px 10px;
     box-shadow: inset 0 0 10px -5px black;
+    
+}
+.next-iteration {
+    
+    visibility: hidden;
+    
+}
+.paused .next-iteration {
+    
+    visibility: visible;
     
 }

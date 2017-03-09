@@ -49,6 +49,8 @@ document.addEventListener( "submit", function( e ) {
         
     } );
     
+    var isDebug = false;
+    
     function remote( js, timeout ) {
     
         var frame = document.querySelector( "#embedded-browser" );
@@ -60,7 +62,7 @@ document.addEventListener( "submit", function( e ) {
 
                 if ( isActive && received && received.data && received.data.cid === correlationId ) {
 
-                    notify( "Reply to: " + correlationId );
+                    if ( isDebug ) { notify( "Reply to: " + correlationId ); }
                     console.log( correlationId, received );
                     isActive = false;
                     inboxSubscribers.splice( inboxSubscribers.indexOf( receiveReply ), 1 );
@@ -80,13 +82,13 @@ document.addEventListener( "submit", function( e ) {
 
             }
             inboxSubscribers.push( receiveReply );
-            notify( "Remoting: " + correlationId );
+            if ( isDebug ) { notify( "Remoting: " + correlationId ); }
             frame.contentWindow.postMessage( { cid: correlationId, js: js }, "*" );
             setTimeout( function() {
                 
                 if ( !isActive ) { return; }
                 isActive = false;
-                notify( "Timed out: " + correlationId );
+                if ( isDebug ) { notify( "Timed out: " + correlationId ); }
                 inboxSubscribers.splice( inboxSubscribers.indexOf( receiveReply ), 1 );
                 reject( new Error( "Timed out" ) );
                 
@@ -116,7 +118,7 @@ document.addEventListener( "submit", function( e ) {
                             
                         } else {
                             
-                            notify( "Scheduling another poll" );
+                            if ( isDebug ) { notify( "Scheduling another poll" ); }
                             setTimeout( task, interval );
                             
                         }
@@ -139,6 +141,7 @@ document.addEventListener( "submit", function( e ) {
     
     document.addEventListener( "run-script", e => {
 
+        isDebug = !!e.detail.debug;
         var frame = document.querySelector( "#embedded-browser" );
         if ( !frame ) {
             
@@ -150,10 +153,6 @@ document.addEventListener( "submit", function( e ) {
             var args = [ "frame", "remote", "poll" ].concat( dynamicArgs ).concat( e.detail.script );
             var script = Function.apply( null, args );
             var dynamicArgValues = dynamicArgs.map( x => e.detail.args[ x ] );
-
-console.log( script );
-console.log( dynamicArgValues );
-
             Promise.resolve()
                 .then( () => script.apply( null, [ frame, remote, poll ].concat( dynamicArgValues ) ) )
                 .then( () => null, err => err )

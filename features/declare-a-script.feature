@@ -29,5 +29,4 @@ Feature: Declare a script
      When I follow the "Scripts" link
       And I follow the "All three paths" link
       And I click the "New run..." link and wait for URL to change
-      And I wait for ".run-count" to equal "2"
-     Then the outcome should match "Script run completed.*Script run completed"
+     Then I wait for ".run-count" to equal "2"
