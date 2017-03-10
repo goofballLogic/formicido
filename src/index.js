@@ -55,6 +55,7 @@ module.exports = function( config ) {
         
         const { slug } = req.params;
         const step = stepDefinitions[ slug ];
+        const pageClass = "step-page";
         if ( !step ) { 
             
             res.status( 404 );
@@ -62,7 +63,7 @@ module.exports = function( config ) {
             
         } else {
 
-            res.render( "step", { step } );
+            res.render( "step", { step, pageClass } );
             
         }
         
@@ -112,6 +113,7 @@ module.exports = function( config ) {
     app.get( "/paths/:pathId", ( req, res ) => {
         
         const { pathId } = req.params;
+        const pageClass = "path-page";
         const decorateDescription = desc => Object.assign( desc, { 
             
             "url": `/paths/${pathId}/step/${desc.slug}/${desc.id}`,
@@ -122,6 +124,7 @@ module.exports = function( config ) {
             .then( path => [ path, path.stepDescriptions().map( decorateDescription ) ] )
             .then( ( [ path, descriptions ] ) => res.render( "path", { 
                 
+                pageClass,
                 path, 
                 pathId, 
                 stepDefinitions, 
@@ -159,13 +162,23 @@ module.exports = function( config ) {
     app.get( "/scripts/:scriptId/run/:runId/:iteration", ( req, res ) => {
         
         const { scriptId, runId, iteration } = req.params;
-        const nextIteration = parseInt( iteration ) + 1;
+        const nextIteration = parseInt( iteration, 10 ) + 1;
         const nextIterationURL = `/scripts/${scriptId}/run/${runId}/${nextIteration}`;
+        const pageClass = "script-run-page";
         scripts.fetch( scriptId ).then( script => 
 
             script.generateJS().then( pathScripts => {
 
-                res.render( "script-run", { pathScripts: JSON.stringify( pathScripts ), iteration, nextIterationURL } );
+                res.render( "script-run", { 
+
+                    iteration,
+                    nextIterationURL,
+                    pageClass,
+                    pathScripts: JSON.stringify( pathScripts ),
+                    runId,
+                    scriptId
+                
+                } );
                 
             } )
             
@@ -225,7 +238,7 @@ module.exports = function( config ) {
         
         const { pathId } = req.params;
         paths.fetchOrCreate( pathId )
-            .then( path => res.send( path.script() ) )
+            .then( path => res.send( path.generateJS() ) )
             .catch( handleErrors( res ) );
         
     } );
@@ -275,6 +288,16 @@ module.exports = function( config ) {
             .then( () => res.redirect( `/paths/${pathId}` ) )
             .catch( handleErrors( res ) );
         
+    } );
+
+    app.post( "/metrics", bodyParser.raw({ type: "*/*" }), ( req, res ) => {
+       
+       const body = JSON.parse( req.body.toString() );
+       const { type, detail } = body;
+       const { err, start, end, path, step, id, runId, iteration } = detail;
+       console.log( type, id, runId, iteration, err, start, end, !!path, step, Object.keys( detail ) )       
+       res.send( "ok" );
+
     } );
     
     return new Promise( ( resolve, reject ) => {

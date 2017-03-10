@@ -10,9 +10,6 @@ mixin fields( fieldDefs )
     each fieldDef in fieldDefs
         +field( fieldDef )
 
-append headers
-    script(src="/public/js/step.js")
-    
 prepend content
     h2= step.name
     form(method="POST", class="via-ajax")

@@ -28,7 +28,7 @@ class PathStep {
         
         const instance = new this.step.class();
         instance.consume( this.data.args );
-        return instance.script();
+        return Object.assign( { "id": this.data.id }, instance.script() );
          
     }
     

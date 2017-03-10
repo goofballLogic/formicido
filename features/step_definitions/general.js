@@ -26,9 +26,9 @@ defineSupportCode( function( { Given, When, Then } ) {
         
     } );
     
-    When( "I click the {buttonText:stringInDoubleQuotes} button and wait for the {eventName:stringInDoubleQuotes} event", function ( buttonText, eventName ) {
+    When( "I click the {buttonText:stringInDoubleQuotes} button and wait for the {messageName:stringInDoubleQuotes} message", function ( buttonText, messageName ) {
          
-        return this.formWorker.clickButtonToEvent( buttonText, eventName );
+        return this.formWorker.clickButtonToMessage( buttonText, messageName );
     
     } );
     

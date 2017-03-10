@@ -1,8 +1,5 @@
 extends layout-with-browser
 
-append headers
-    script(src="/public/js/path.js")
-    
 prepend content
     h2= path.name
     form(method="POST", class="via-ajax")

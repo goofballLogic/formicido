@@ -12,7 +12,7 @@ Feature: Declare a step
       And I enter form values
         | label  | relative-path |
         | URL    | /hello-world   |
-      And I click the "Run" button and wait for the "run-complete" event
+      And I click the "Run" button and wait for the "step-complete" message
      Then the frame's location should be "${root}/hello-world"
       And the frame's text should contain "Hello world"
       And the outcome should be "Complete."
@@ -23,7 +23,7 @@ Feature: Declare a step
       And I enter form values
         | label          | value         |
         | Query selector | .link-to-poem |
-      And I click the "Run" button and wait for the "run-complete" event
+      And I click the "Run" button and wait for the "step-complete" message
      Then the frame's text should contain "The Charge of the Light Brigade"
       And the outcome should be "Complete."
 
@@ -32,7 +32,6 @@ Feature: Declare a step
       And I enter form values
         | label          | value         |
         | Query selector | .im-not-there |
-      And I click the "Run" button and wait for the "run-complete" event
-     Then the outcome should contain "Complete"
-      And the outcome should contain "Timed out"
+      And I click the "Run" button and wait for the "step-complete" message
+     Then the outcome should contain "Timed out"
       And the outcome should contain "Error"

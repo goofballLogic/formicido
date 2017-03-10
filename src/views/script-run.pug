@@ -1,16 +1,5 @@
 extends layout-with-browser
 
-append headers
-    script(src="/public/js/path.js")
-    script(src="/public/js/script-run.js")
-    script.
-        window.addEventListener( "load", function() {
-                
-            var runDetail = { nextIterationURL: "#{nextIterationURL}", scripts: !{pathScripts} };
-            document.dispatchEvent( new CustomEvent( "initiate-script", { detail: runDetail } ) );
-            
-        } );
-
 prepend content
     div(class="run-counter")
         | Completed runs:
@@ -27,4 +16,15 @@ prepend content
     h3= "Steps"
     div(id="outcome", class="outcome")
     ol(id="transcript", class="transcript")
-    
+
+append content
+    script.
+        window.formicido.bus.emit( "initiate-script", { 
+            
+            nextIterationURL: "#{nextIterationURL}",
+            pathScripts: !{pathScripts},
+            id: "#{scriptId}",
+            runId: "#{runId}",
+            iteration: "#{iteration}"
+                
+        } );

@@ -1,12 +1,10 @@
 html
     head
         title Formicido
-        block headers
-            script(src="/public/js/errors.js")
-            script(src="/public/js/general.js")
-            script(src="/public/js/form-fetching.js")
-            link(href="/public/css/main.css", rel="stylesheet")
-    body
+        script(src="/public/js/bundle.js")
+        link(href="/public/css/main.css", rel="stylesheet")
+            
+    body(class=pageClass)
         ul(class="errors", role="alert")
         ul(class="infos", role="alert")
         include partials/menu

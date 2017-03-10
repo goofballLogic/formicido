@@ -3,18 +3,12 @@ function handleAgentLoaded() {
     
     
     var debugOutput = document.querySelector( "#debug" );
+    if ( !debugOutput ) { return; }
     debugOutput.innerHTML = "Agent loaded";
     
 }
-if ( document.querySelector( "#debug" ) ) { 
-    
-    handleAgentLoaded();
-    
-} else {
-    
-    window.addEventListener( "load", handleAgentLoaded );
-    
-}
+handleAgentLoaded();
+window.addEventListener( "load", handleAgentLoaded );
 
 window.addEventListener( "message", function( e ) { 
     

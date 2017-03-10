@@ -1,21 +1,10 @@
 const assert = require( "assert" );
 const shortid = require( "shortid" );
 
-/* global CustomEvent*/
-
-function initDocumentWaiter( waiterId, eventName ) {
+function initDocumentWaiter( waiterId, messageName ) {
     
     window[ waiterId ] = true;
-    function waiter() {
-
-        document.dispatchEvent( new CustomEvent( "info-message", { detail: "Path complete event waiter received" } ) );
-        document.removeEventListener( eventName, waiter );
-        delete window[ waiterId ];
-        
-        
-    }
-    document.dispatchEvent( new CustomEvent( "info-message", { detail: "Adding waiter for " + eventName } ) );
-    document.addEventListener( eventName, waiter );
+    window.formicido.bus.once( messageName, function() { delete window[ waiterId ]; } );
 
 }
 
@@ -68,7 +57,7 @@ function waitingForPageToReload( client, invokeAction ) {
     );
             
 }
-function waitingForEvent( client, eventName, invokeAction ) {
+function waitingForMessage( client, eventName, invokeAction ) {
     
     const waiterId = shortid();
     client.timeoutsAsyncScript( 15000 );
@@ -87,10 +76,10 @@ class FormWorker{
         
     }
     
-    clickButtonToEvent( buttonText, eventName ) {
+    clickButtonToMessage( buttonText, eventName ) {
         
         const { client } = this.world;       
-        return waitingForEvent( client, eventName, () => client.click( `button=${buttonText}` ) );
+        return waitingForMessage( client, eventName, () => client.click( `button=${buttonText}` ) );
         
     }
     

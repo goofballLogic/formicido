@@ -46,13 +46,7 @@ class Script {
 
         return Promise.all( this.paths.map( x => paths.fetch( x ) ) ).then( loaded => 
         
-            loaded.map( path => ( {
-
-                name: path.name,
-                id: path.id,
-                script: path.script()
-
-            } ) ) 
+            loaded.map( path => path.generateJS() )
         
         );
         

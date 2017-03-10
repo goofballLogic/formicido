@@ -21,7 +21,7 @@ Feature: Declare a path
         | label          | value         |
         | Query selector | .link-to-poem |
       And I click the "Add step" button and wait for the URL to change
-      And I click the "Run" button and wait for the "path-complete" event
+      And I click the "Run" button and wait for the "path-complete" message
      Then the frame's text should contain "The Charge of the Light Brigade"
       And all steps should have succeeded
   

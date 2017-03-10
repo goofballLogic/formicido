@@ -78,9 +78,15 @@ class Path {
         
     }
     
-    script() {
-    
-        return this.steps.map( s => s.script() );
+    generateJS() {
+        
+        return {
+
+            name: this.name,
+            id: this.id,
+            stepScripts: this.steps.map( s => s.script() )
+            
+        };
         
     }
     
