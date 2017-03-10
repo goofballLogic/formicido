@@ -21,5 +21,4 @@ class Navigate extends StepBase {
     
 }
 
-console.log( new Navigate().sci );
 module.exports = Navigate;

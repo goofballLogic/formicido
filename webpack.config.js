@@ -1,4 +1,5 @@
 const path = require( "path" );
+const webpack = require( "webpack" );
 
 module.exports = {
     
@@ -16,6 +17,12 @@ module.exports = {
         filename: "bundle.js",
         path: path.resolve( __dirname, "public/js" )
         
-    }
+    },
+    devtool: process.env.DEVTOOL || "source-map",
+    plugins:[
+        
+        new webpack.optimize.UglifyJsPlugin( { sourceMap: true } )
+        
+    ]
     
 };

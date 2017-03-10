@@ -114,7 +114,6 @@ export default function embeddedBrowser( ns ) {
     bus.on( "run-step", detail => {
         
         isDebug = !!detail.debug;
-console.log( detail );        
         var frame = document.querySelector( "#embedded-browser" );
         if ( !frame ) {
             

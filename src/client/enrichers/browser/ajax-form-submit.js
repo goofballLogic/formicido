@@ -60,8 +60,6 @@ export default function ajaxFormSubmit( ns ) {
 
     document.addEventListener( "submit", e => {
 
-console.log( e );
-
         if ( !e.target.classList.contains( "via-ajax" ) ) { return; }
         e.preventDefault();    
         ajaxSubmit( e.target );

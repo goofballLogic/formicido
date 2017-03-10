@@ -4,8 +4,6 @@ export default function( ns ) {
 
     bus.on( "initiate-script", function( script ) {
 
-console.log( "Initiate-script", script );
-
         const { pathScripts, nextIterationURL } = script;
         
         var outcome = document.querySelector( "#script-outcome" );
