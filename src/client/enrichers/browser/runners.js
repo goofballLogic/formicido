@@ -18,9 +18,9 @@ export default function( ns ) {
         
     } );
     
-    bus.on( "script-complete", function( script ) {
+    bus.on( "script-complete", function( detail ) {
         
-        const { nextIterationURL } = script;
+        const { nextIterationURL } = detail.script;
         const stopper = document.querySelector( "#stop" );
         if ( !stopper.checked ) {
                 
@@ -55,26 +55,18 @@ export default function( ns ) {
     
     bus.on( "path-complete", detail => {
         
-        const { context, err } = detail;
+        const { err } = detail.path;
+        const { path } = detail.script;
         
         const scriptOutcome = document.querySelector( ".script-outcome" ) || {};
         const outcome = document.querySelector( ".path-outcome" ) || {};
         outcome.innerHTML = `Complete. ${err}`;
         if ( paths && paths.length ) {
         
-            const path = paths[ context.path - 1 ];
-            path.classList.remove( "running" );
-            if ( detail.err ) {
-                
-                scriptOutcome.innerHTML += `<br />Path ${context.path}: ${err}`;
-                path.classList.add( "error" );
-                
-            } else {
-                
-                outcome.innerHTML = `Complete`;
-                path.classList.add( "success" );
-                    
-            }
+            const pathElement = paths[ path - 1 ];
+            pathElement.classList.remove( "running" );
+            scriptOutcome.innerHTML = "Complete.";
+            pathElement.classList.add( err ? "error" : "success" );
             
         } 
             
@@ -86,9 +78,9 @@ export default function( ns ) {
         const outcome = document.querySelector( ".step-outcome" ) || {};
         outcome.innerHTML = "Running...";
         if ( steps && steps.length ) {
-        
-            const { context } = detail;
-            steps[ context.step - 1 ].classList.add( "running" );
+            
+            const pathContext = detail.context.path;
+            steps[ pathContext.step - 1 ].classList.add( "running" );
             
         }
         
@@ -96,20 +88,21 @@ export default function( ns ) {
     
     bus.on( "step-complete", detail => {
 
-        const { context, err } = detail;
+        const { err } = detail.step;
+        const { step } = detail.path;
         const outcome = document.querySelector( ".step-outcome" ) || {};
         if ( steps && steps.length ) {
         
-            const step = steps[ context.step - 1 ];
-            step.classList.remove( "running" );
+            const stepElement = steps[ step - 1 ];
+            stepElement.classList.remove( "running" );
             if ( err ) {
 
-                step.classList.add( "error" );
-                outcome.innerHTML += `Step ${context.step}: ${err}\n`;
+                stepElement.classList.add( "error" );
+                outcome.innerHTML += `Step ${step}: ${err}\n`;
                 
             } else {
                 
-                step.classList.add( "success" );
+                stepElement.classList.add( "success" );
                 
             }
             

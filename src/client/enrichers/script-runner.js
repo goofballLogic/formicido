@@ -5,20 +5,24 @@ export default function( ns ) {
     bus.on( "run-script", script => {
     
         let bookmark = 0;
-        const { pathScripts, nextIterationURL } = script;
-        const outcome = { scriptId: script.id, nextIterationURL };
-        function nextPath() {
+        const { pathScripts, nextIterationURL, runId, iteration } = script;
+        const scriptId = script.id;
+        const context = { script: { scriptId, nextIterationURL, runId } };
+        
+        function nextPath( err ) {
             
             if ( bookmark < pathScripts.length ) { 
                 
-                bus.emit( "run-path", { context: { path: bookmark + 1  }, ...pathScripts[ bookmark ] } );
+                context.script.path = bookmark + 1;
+                bus.emit( "run-path", { context, ...pathScripts[ bookmark ] } );
                 bookmark++;
             
             } else {
                 
                 bus.removeListener( "path-complete", pathComplete );
-                outcome.end = Date.now();
-                bus.emit( "script-complete", outcome );
+                context.script.end = Date.now();
+                delete context.path;
+                bus.emit( "script-complete", context );
                 notify( "Script run complete" );
                 
             }
@@ -27,7 +31,15 @@ export default function( ns ) {
     
         function pathComplete( detail ) {
             
-            setTimeout( nextPath, 1000 );
+            const { pathId, start, err } = detail.path;
+            if ( err ) {
+                
+                context.script.err = new Error( "Path error" );
+                context.script.errorPaths = context.script.errorPaths || [];
+                context.script.errorPaths.push( { pathId, start } );
+                
+            }
+            setTimeout( nextPath(), 1000 );
             
         }
         
@@ -37,7 +49,7 @@ export default function( ns ) {
             
         } else {
         
-            outcome.start = Date.now();
+            context.script.start = Date.now();
             bus.on( "path-complete", pathComplete );
             nextPath();
             

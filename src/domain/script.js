@@ -64,13 +64,6 @@ class Script {
         
     }
     
-    stepDescriptions() {
-        
-        throw new Error( "Not implemented" );
-        //return this.steps.map( s => s.describe() );
-        
-    }
-    
 }
 
 module.exports = Script;

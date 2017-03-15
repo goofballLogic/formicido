@@ -100,22 +100,26 @@ export default function runner( ns ) {
     }
     
     bus.on( "run-step", function executeStep( detail ) {
+
+console.log( detail );        
+        const { id, description, script, args, context } = detail;
+        const stepId = id;
         
-        const { id, script, args, context } = detail;
         var dynamicArgs = Object.keys( args || {} );
         var func = Function.apply( null, [ "navigateTo", "remote", "poll" ].concat( dynamicArgs ).concat( script ) );
         var dynamicArgValues = dynamicArgs.map( x => args[ x ] );
-        let outcome = { args, context, id, start: Date.now() };
+        context.step = { stepId, description, args, start: Date.now() };
         Promise.resolve()
             .then( () => func.apply( null, [ navigateTo, remote, poll ].concat( dynamicArgValues ) ) )
             .then( () => null, err => err )
-            .then( maybeErr => bus.emit( "step-complete", { 
+            .then( maybeErr => {
+
+console.log( maybeErr );                
+                context.step.end = Date.now();
+                context.step.err = maybeErr;
+                bus.emit( "step-complete", context );
                 
-                end: Date.now(),
-                err: maybeErr, 
-                ...outcome 
-                
-            } ) );
+            } );
                 
     } );
     

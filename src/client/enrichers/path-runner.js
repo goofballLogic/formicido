@@ -4,26 +4,35 @@ export default function( ns ) {
 
     bus.on( "run-path", detail => {
 
-        const { stepScripts, id, context } = detail;
+        const { stepScripts, id, name } = detail;
+        const pathId = id;
+        const context = detail.context || {};
+        context.path = { pathId, name };
         
         let bookmark = 0;
-        let start;
         
-        function nextStep() {
+        function nextStep( detail ) {
             
-            if ( bookmark < stepScripts.length ) {
+            const err = detail ? detail.step.err : null;
+            if ( err ) {
+                    
+                context.path.err = new Error( "Step error" );
+                    
+            }
+            if ( !err && bookmark < stepScripts.length ) {
 
                 bus.once( "step-complete", nextStep );
-                const message = { context: { step: bookmark + 1 }, ...stepScripts[ bookmark ] };
-                bus.emit( "run-step", message );
+                context.path.step = bookmark + 1;
+                const message = { context, ...stepScripts[ bookmark ] };
                 bookmark++;
+                bus.emit( "run-step", message );
             
             } else {
                 
-                var end = Date.now();
-                var outcome = { path: stepScripts, pathId: id, start, end, context };
+                context.path.end = Date.now();
                 notify( "Path run complete" );
-                bus.emit( "path-complete", outcome );
+                delete context.step;
+                bus.emit( "path-complete", context );
                 
             }
                 
@@ -35,7 +44,7 @@ export default function( ns ) {
             
         } else {
         
-            start = Date.now();
+            context.path.start = Date.now();
             nextStep();
 
         }

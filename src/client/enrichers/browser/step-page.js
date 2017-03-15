@@ -4,7 +4,6 @@ export default function( ns ) {
     
     window.addEventListener( "DOMContentLoaded", () => {
 
-console.log( "step-page" );
         if( !document.body.classList.contains( "step-page" ) ) { return; }
         ns.options.debug = true;
         

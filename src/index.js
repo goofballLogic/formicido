@@ -6,6 +6,14 @@ const shortid = require( "shortid" );
 const stepDefinitions = require( "./domain/step-definitions" );
 const paths = require( "./domain/paths" );
 const scripts = require( "./domain/scripts" );
+const metrics = require( "./domain/metrics" );
+const promClient = require( "prom-client" );
+
+[ 
+    "./agents/console-metrics", 
+    "./agents/prometheus-metrics"
+
+].forEach( agent => require( agent ) );
 
 const agentjs = fs.readFileSync( __dirname + "/scripts/agent.js" );
 
@@ -309,12 +317,15 @@ module.exports = function( config ) {
 
     app.post( "/metrics", bodyParser.raw({ type: "*/*" }), ( req, res ) => {
        
-       const body = JSON.parse( req.body.toString() );
-       const { type, detail } = body;
-       const { err, start, end, path, step, id, runId, iteration } = detail;
-       console.log( type, id, runId, iteration, err, start, end, !!path, step, Object.keys( detail ) )       
+       metrics.publish( JSON.parse( req.body.toString() ) );
        res.send( "ok" );
 
+    } );
+    
+    app.get( "/metrics", ( req, res ) => {
+        
+        res.type( "text/plain" ).send( promClient.register.metrics() );
+        
     } );
     
     return new Promise( ( resolve, reject ) => {
