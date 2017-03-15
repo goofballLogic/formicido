@@ -1,23 +1,26 @@
-const express = require( "express" );
-const bodyParser = require( "body-parser" );
-const fs = require( "fs" );
-const shortid = require( "shortid" );
-
-const stepDefinitions = require( "./domain/step-definitions" );
-const paths = require( "./domain/paths" );
-const scripts = require( "./domain/scripts" );
-const metrics = require( "./domain/metrics" );
-const promClient = require( "prom-client" );
-
-[ 
-    "./agents/console-metrics", 
-    "./agents/prometheus-metrics"
-
-].forEach( agent => require( agent ) );
-
-const agentjs = fs.readFileSync( __dirname + "/scripts/agent.js" );
-
 module.exports = function( config ) {
+
+    // update configuration for the config module with injected
+    Object.assign( require( "../config" ), config );
+    
+    const express = require( "express" );
+    const bodyParser = require( "body-parser" );
+    const fs = require( "fs" );
+    const shortid = require( "shortid" );
+    
+    const stepDefinitions = require( "./domain/step-definitions" );
+    const paths = require( "./domain/paths" );
+    const scripts = require( "./domain/scripts" );
+    const metrics = require( "./domain/metrics" );
+    const promClient = require( "prom-client" );
+    
+    [ 
+        "./agents/console-metrics", 
+        "./agents/prometheus-metrics"
+    
+    ].forEach( agent => require( agent ) );
+    
+    const agentjs = fs.readFileSync( __dirname + "/scripts/agent.js" );
 
     const configuredAgentJS = agentjs.toString().replace( /\$\{origin\}/g, config.origin );
     const app = express();

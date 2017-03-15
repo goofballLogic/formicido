@@ -101,8 +101,8 @@ export default function runner( ns ) {
     
     bus.on( "run-step", function executeStep( detail ) {
 
-console.log( detail );        
-        const { id, description, script, args, context } = detail;
+        const { id, description, script, args } = detail;
+        let context = detail.context || {};
         const stepId = id;
         
         var dynamicArgs = Object.keys( args || {} );

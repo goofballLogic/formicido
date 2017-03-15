@@ -6,7 +6,7 @@ const metrics = require( "../domain/metrics" );
 
 function asNamePart( part ) {
     
-    return part.replace( /[^a-zA-Z0-9_:]/g, "_" );
+    return ( part || "" ).replace( /[^a-zA-Z0-9_:]/g, "_" );
     
 }
 function asName( parts ) {
@@ -19,7 +19,10 @@ function asName( parts ) {
 function metricKey( metric ) {
     
     const { type, detail } = metric;
-    const { step, path, script } = detail;
+    let { step, path, script } = detail;
+    step = step || {};
+    path = path || {};
+    script = script || {};
     
     switch( type ) {
     
@@ -40,7 +43,10 @@ function metricDescription( metric ) {
 
      
     const { type, detail } = metric;
-    const { step, path, script } = detail;
+    let { step, path, script } = detail;
+    step = step || {};
+    path = path || {};
+    script = script || {};
     
     switch( type ) {
     

@@ -56,12 +56,12 @@ export default function( ns ) {
     bus.on( "path-complete", detail => {
         
         const { err } = detail.path;
-        const { path } = detail.script;
+        const { path } = detail.script || {};
         
         const scriptOutcome = document.querySelector( ".script-outcome" ) || {};
         const outcome = document.querySelector( ".path-outcome" ) || {};
-        outcome.innerHTML = `Complete. ${err}`;
-        if ( paths && paths.length ) {
+        outcome.innerHTML = `Complete. ${err || ""}`;
+        if ( path && paths && paths.length ) {
         
             const pathElement = paths[ path - 1 ];
             pathElement.classList.remove( "running" );
@@ -89,7 +89,7 @@ export default function( ns ) {
     bus.on( "step-complete", detail => {
 
         const { err } = detail.step;
-        const { step } = detail.path;
+        const step = detail.path ? detail.path.step : "";
         const outcome = document.querySelector( ".step-outcome" ) || {};
         if ( steps && steps.length ) {
         
