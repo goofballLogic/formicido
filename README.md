@@ -27,7 +27,6 @@ mkdir data
 npm install formicido --save
 node index
 
-> node index
 Running { port: 8888,
   repo: { root: '/home/goofballLogic/src/my-project/monitor/data' } }
 Configuration fixture is running at: http://localhost:8888
