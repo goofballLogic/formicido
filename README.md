@@ -21,8 +21,9 @@ formicido( config ).then( () =>
 
 );
 ```
-install formicido and run:
+create a folder for data, install formicido, then run:
 ```bash
+mkdir data
 npm install formicido --save
 node index
 ```
