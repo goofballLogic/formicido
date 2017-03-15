@@ -14,13 +14,13 @@ Feature: Declare a path
       And I enter form values
         | label  | relative-path |
         | URL    | /some-links   |
-      And I click the "Add step" button and wait for the URL to change
+      And I click the "Save step" button and wait for the URL to change
       And I select "Click then wait for new location" from the "Add a new step" dropdown
       And I click the "Configure..." button and wait for the URL to change
       And I enter form values
         | label          | value         |
         | Query selector | .link-to-poem |
-      And I click the "Add step" button and wait for the URL to change
+      And I click the "Save step" button and wait for the URL to change
       And I click the "Run" button and wait for the "path-complete" message
      Then the frame's text should contain "The Charge of the Light Brigade"
       And all steps should have succeeded
@@ -32,13 +32,13 @@ Feature: Declare a path
       And I enter form values
         | label  | relative-path |
         | URL    | /some-links   |
-      And I click the "Add step" button and wait for the URL to change
+      And I click the "Save step" button and wait for the URL to change
       And I select "Click then wait for new location" from the "Add a new step" dropdown
       And I click the "Configure..." button and wait for the URL to change
       And I enter form values
         | label          | value         |
         | Query selector | .link-to-poem |
-      And I click the "Add step" button and wait for the URL to change
+      And I click the "Save step" button and wait for the URL to change
       And I click the "Delete" link for step 1 and wait for the URL to change
       And I click the "Confirm" button and wait for the URL to change
      Then there should be 1 steps shown

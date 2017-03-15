@@ -4,19 +4,18 @@ mixin field( fieldDef )
     label
         span(class="label-text")
             = fieldDef.label
-        input(type=fieldDef.type name=fieldDef.name)
+        input(type=fieldDef.type, name=fieldDef.name, value=args[fieldDef.name])
     
-mixin fields( fieldDefs )
+mixin fields( fieldDefs, step )
     each fieldDef in fieldDefs
-        +field( fieldDef )
+        +field( fieldDef, step )
 
 prepend content
     h2= step.name
     form(method="POST", class="via-ajax")
         +fields( step.class.shape )
-        button(type="button", class="redirect-form", value=testRunsUrl) Run
-        button Add step
-            
+        button(class="redirect-form", value=testRunsUrl) Run
+        button Save step
     div(id="outcome")        
     div
         textarea(id="code", readonly)

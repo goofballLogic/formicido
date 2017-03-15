@@ -245,10 +245,27 @@ module.exports = function( config ) {
     
     app.get( "/paths/:pathId/step/:stepSlug/:stepId", ( req, res ) => {
         
-        const { stepSlug } = req.params;
+        const { pathId, stepSlug, stepId } = req.params;
         const step = stepDefinitions[ stepSlug ];
         const testRunsUrl = `/steps/${stepSlug}`;
-        res.render( "add-step", { step, testRunsUrl } );
+        const pageClass = "step-page";
+        paths.fetch( pathId )
+            .then( path => path.fetch( stepId ) )
+            .catch( () => ( { data: { args: {} } } ) )
+            .then( maybeStep => {
+
+                // TODO: fix this orrible mess
+                const { args } = maybeStep.data;
+                Object.keys( args ).forEach( key => {
+                   
+                   args[ key ] = [].concat( args[ key ] || [] )[ 0 ];
+                   
+                } );
+                res.render( "edit-step", { step, testRunsUrl, args, pageClass } );        
+                
+            } );
+            
+
         
     } );
     

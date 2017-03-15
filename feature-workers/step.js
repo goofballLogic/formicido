@@ -7,14 +7,14 @@ class Step{
     expectOutcome( expected ) {
     
         const { client } = this.world;
-        return client.getText( "#outcome" ).then( actual => assert.equal( actual, expected ) );
+        return client.getText( ".step-outcome" ).then( actual => assert.equal( actual, expected ) );
         
     }
     
     expectOutcomeContains( expected ) {
         
         const { client } = this.world;
-        return client.getText( "#outcome" ).then( actual => assert( !!~actual.indexOf( expected ), `${expected} not found in ${actual}` ) );
+        return client.getText( ".step-outcome" ).then( actual => assert( !!~actual.indexOf( expected ), `${expected} not found in ${actual}` ) );
         
     }
     

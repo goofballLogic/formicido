@@ -3,7 +3,7 @@ export default function ajaxFormSubmit( ns ) {
     const { bus } = ns;
     
     function ajaxSubmit( form ) {
-        
+
         const doc = {};
         [].slice.call( form.elements, 0 ).forEach( field => {
     
@@ -34,7 +34,7 @@ export default function ajaxFormSubmit( ns ) {
                     window.location.href = response.url;
                     
                 } else {
-                    
+
                     return response.json().then( json => bus.emit( "fetch-result", json ) );
     
                 }
@@ -61,11 +61,10 @@ export default function ajaxFormSubmit( ns ) {
     document.addEventListener( "submit", e => {
 
         if ( !e.target.classList.contains( "via-ajax" ) ) { return; }
-        e.preventDefault();    
+        e.preventDefault();
         ajaxSubmit( e.target );
         
     
     } );
-    document.addEventListener( "ajax-submit", e => ajaxSubmit( e.detail ) );
     
 }

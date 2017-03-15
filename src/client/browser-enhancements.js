@@ -24,5 +24,6 @@ document.addEventListener( "click", function redirectFormSubmission( e ) {
         form.action = originalAction;
         
     }, 100 );
+    return true;
 
 } );

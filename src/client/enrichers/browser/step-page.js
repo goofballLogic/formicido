@@ -1,26 +1,18 @@
 export default function( ns ) {
     
     const { bus } = ns;
+    
     window.addEventListener( "DOMContentLoaded", () => {
 
+console.log( "step-page" );
         if( !document.body.classList.contains( "step-page" ) ) { return; }
+        ns.options.debug = true;
+        
         bus.on( "fetch-result", detail => {
 
             document.querySelector( "#code" ).innerHTML = detail.script;
-            document.querySelector( "#outcome" ).innerHTML = "Running...";
             bus.emit( "run-step", detail );
     
-        } );
-
-        bus.on( "step-complete", detail => {
-            
-            document.querySelector( "#outcome" ).innerHTML = "Complete.";
-            if ( detail.err ) {
-    
-                document.querySelector( "#outcome" ).innerHTML += " " + detail.err;
-                
-            } 
-            
         } );
         
     } );
