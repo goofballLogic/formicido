@@ -3,6 +3,32 @@
 # formicido
 Site monitor like an ant
 
+## Getting started
+Formicido is a library which contains a functional express.js web application which can be used for configuring your scripts. To install the library and run the configuration app, do thusly:
+
+index.js:
+```javascript
+const formicido = require( "formicido" );
+const config = {
+
+    port: 8888,
+    repo: { root: __dirname + "/data" }
+
+};
+formicido( config ).then( () =>
+
+    console.log( `Configuration fixture is running at: http://localhost:${config.port}` )
+
+);
+```
+install formicido and run:
+```bash
+npm install formicido --save
+node index
+```
+
+
+
 ## Testing
 Thanks to the good people at BrowserStack, this application is being automatically tested cross-browser. This means that we can drive selenium tests running in Travis as part of our CI build. We use Browserstack selenium bindings along with Cucumber.
 [More about testing with Selenium](https://github.com/goofballLogic/formicido/wiki/Testing)
