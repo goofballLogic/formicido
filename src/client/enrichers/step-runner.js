@@ -109,17 +109,18 @@ export default function runner( ns ) {
         var func = Function.apply( null, [ "navigateTo", "remote", "poll" ].concat( dynamicArgs ).concat( script ) );
         var dynamicArgValues = dynamicArgs.map( x => args[ x ] );
         context.step = { stepId, description, args, start: Date.now() };
-        Promise.resolve()
-            .then( () => func.apply( null, [ navigateTo, remote, poll ].concat( dynamicArgValues ) ) )
-            .then( () => null, err => err )
-            .then( maybeErr => {
-
-console.log( maybeErr );                
-                context.step.end = Date.now();
-                context.step.err = maybeErr;
-                bus.emit( "step-complete", context );
+        promiseTimeout( 10000, ( resolve, reject ) => {
+        
+            func.apply( null, [ navigateTo, remote, poll ].concat( dynamicArgValues ) )
+                .then( resolve, reject );
                 
-            } );
+        }, maybeErr => {
+
+            context.step.end = Date.now();
+            context.step.err = maybeErr;
+            bus.emit( "step-complete", context );
+                    
+        } );
                 
     } );
     

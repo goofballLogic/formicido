@@ -1,6 +1,8 @@
 
 const { Counter, Gauge } = require( "prom-client" );
-const metricCounters = {};
+
+const metricWasCollectedCounter = {};
+const metricFaultsCounter = {};
 
 const metrics = require( "../domain/metrics" );
 
@@ -63,12 +65,39 @@ function metricDescription( metric ) {
     
 }
 
+function metricErr( metric ) {
+    
+    let { step, path, script } = metric.detail;
+    step = step || {};
+    path = path || {};
+    script = script || {};
+    return script.err || path.err || step.err;
+    
+}
+
+function metricWasCollected( metric, key, description ) {
+    
+    const counter = metricWasCollectedCounter[ key ] = metricWasCollectedCounter[ key ] 
+        || new Counter( key + "__collected", "Metric was collected: " + description );
+    counter.inc();
+    
+}
+
+function metricFaults( metric, key, description ) {
+    
+    if ( !metricErr( metric ) ) { return; }
+    const counter = metricFaultsCounter[ key ] = metricFaultsCounter[ key ] 
+        || new Counter( key + "__fault", "Fault: " + description );
+    counter.inc();
+    
+}
+
 metrics.on( "metric", metric => {
     
     const key = metricKey( metric );
-console.log( key );    
     const description = metricDescription( metric );
-    const counter = metricCounters[ key ] = metricCounters[ key ] || new Counter( key, description );
-    counter.inc();
+
+    metricWasCollected( metric, key, description );
+    metricFaults( metric, key, description );
     
 } );

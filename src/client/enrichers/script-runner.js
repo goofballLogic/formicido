@@ -5,11 +5,11 @@ export default function( ns ) {
     bus.on( "run-script", script => {
     
         let bookmark = 0;
-        const { pathScripts, nextIterationURL, runId, iteration } = script;
+        const { pathScripts, nextIterationURL, runId } = script;
         const scriptId = script.id;
         const context = { script: { scriptId, nextIterationURL, runId } };
         
-        function nextPath( err ) {
+        function nextPath() {
             
             if ( bookmark < pathScripts.length ) { 
                 
@@ -39,7 +39,7 @@ export default function( ns ) {
                 context.script.errorPaths.push( { pathId, start } );
                 
             }
-            setTimeout( nextPath(), 1000 );
+            setTimeout( nextPath, 1000 );
             
         }
         

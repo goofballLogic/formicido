@@ -54,7 +54,7 @@ export default function ajaxFormSubmit( ns ) {
             }
     
         } )
-        .catch( e => bus.emit( "fetch-error", e.message ) );
+        .catch( e => bus.emit( "error-message", e.message ) );
 
     }
 

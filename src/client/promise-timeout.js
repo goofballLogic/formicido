@@ -30,9 +30,9 @@ export default function promiseTimeout( timeout, promise, callback ) {
                 
             }
             
-        }, function() {
+        }, function( err ) {
             
-            if ( deactivate() ) {
+            if ( deactivate( err ) ) {
             
                 reject.apply( null, arguments );
                 

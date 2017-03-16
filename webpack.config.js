@@ -1,7 +1,7 @@
 const path = require( "path" );
 const webpack = require( "webpack" );
 
-module.exports = {
+module.exports = [ {
     
     entry: "./src/client/browser.js",
     module: {
@@ -25,4 +25,27 @@ module.exports = {
         
     ]
     
-};
+}, {
+    entry: "./src/client/server.js",
+    module: {
+        
+        rules: [
+    
+            { test: /\.js$/, exclude: /node_modules/, loader: "babel-loader" }
+    
+        ]
+    },
+    externals: {
+        
+        "server-namespace": "./server-namespace"
+        
+    },
+    output: {
+        
+        filename: "server.js",
+        path: path.resolve( __dirname, "src/runtime" ),
+        libraryTarget: "umd"
+        
+    }
+    
+} ];

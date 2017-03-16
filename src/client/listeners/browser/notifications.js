@@ -29,8 +29,6 @@ function displayErrorNotification( message ) {
 export default function( ns ) {
     
     const { bus } = ns;
-    bus.on( "fetch-error", displayErrorNotification );
-    bus.on( "agent-error", displayErrorNotification );
     bus.on( "error-message", displayErrorNotification );
     bus.on( "info-message", displayNotification );
     bus.on( "debug-message", displayNotification );
