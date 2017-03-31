@@ -29,14 +29,14 @@ class DebuggableEventEmitter extends EventEmitter {
 
 function app( ns ) {
     
-    ns.options = { debug: false };
-    ns.bus = new DebuggableEventEmitter( ns.options );
+    const options = ns.options = { debug: false };
+    const bus = ns.bus = new DebuggableEventEmitter( ns.options );
     
     ns.uuid = uuid;
-    ns.notify = message => ns.bus.emit( "info-message", message );
-    ns.debug = message => ns.options.debug ? ns.bus.emit( "debug-message", message ) : false;
-    ns.error = message => ns.bus.emit( "error-message", message );
-    
+    ns.notify = message => bus.emit( "info-message", message );
+    ns.debug = message => options.debug ? bus.emit( "debug-message", message ) : false;
+    ns.error = message => bus.emit( "error-message", message );
+
     stepRunner( ns );
     pathRunner( ns );
     scriptRunner( ns );

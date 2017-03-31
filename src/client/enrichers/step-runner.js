@@ -12,13 +12,14 @@ export default function runner( ns ) {
             debug( "Reply to: " + cid );
             const data = received.data;
             const args = [].concat( data.args || [] );
+            const output = args.length === 1 ? args[ 0 ] : args;
             if ( data.isSuccess ) {
                         
-                resolve.apply( null, args );
+                resolve( output );
                         
             } else {
                         
-                reject.apply( null, args );
+                reject( output );
                     
             }
             

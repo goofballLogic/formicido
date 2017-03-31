@@ -14,4 +14,16 @@ defineSupportCode( function( { Given, When, Then } ) {
         
     } );
     
+    When( "I invoke a continuous headless run for {scriptId:stringInDoubleQuotes}", function ( scriptId ) {
+    
+        return this.headless.runContinuous( scriptId );
+        
+    } );
+    
+    Then( "I wait for the {eventName:stringInDoubleQuotes} event to be emitted {count:int} times", function( eventName, count ) {
+        
+        return this.headless.waitForEvent( eventName, count );
+        
+    } );
+    
 } );

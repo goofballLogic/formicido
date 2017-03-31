@@ -1,13 +1,13 @@
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory();
+		module.exports = factory(require("zombie"));
 	else if(typeof define === 'function' && define.amd)
-		define([], factory);
+		define(["zombie"], factory);
 	else {
-		var a = factory();
+		var a = typeof exports === 'object' ? factory(require("zombie")) : factory(root["zombie"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(this, function() {
+})(this, function(__WEBPACK_EXTERNAL_MODULE_3__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -73,7 +73,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 7);
+/******/ 	return __webpack_require__(__webpack_require__.s = 10);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -91,19 +91,19 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
-var _events = __webpack_require__(6);
+var _events = __webpack_require__(8);
 
 var _events2 = _interopRequireDefault(_events);
 
-var _stepRunner = __webpack_require__(4);
+var _stepRunner = __webpack_require__(6);
 
 var _stepRunner2 = _interopRequireDefault(_stepRunner);
 
-var _pathRunner = __webpack_require__(2);
+var _pathRunner = __webpack_require__(4);
 
 var _pathRunner2 = _interopRequireDefault(_pathRunner);
 
-var _scriptRunner = __webpack_require__(3);
+var _scriptRunner = __webpack_require__(5);
 
 var _scriptRunner2 = _interopRequireDefault(_scriptRunner);
 
@@ -155,18 +155,18 @@ var DebuggableEventEmitter = function (_EventEmitter) {
 
 function app(ns) {
 
-    ns.options = { debug: false };
-    ns.bus = new DebuggableEventEmitter(ns.options);
+    var options = ns.options = { debug: false };
+    var bus = ns.bus = new DebuggableEventEmitter(ns.options);
 
     ns.uuid = uuid;
     ns.notify = function (message) {
-        return ns.bus.emit("info-message", message);
+        return bus.emit("info-message", message);
     };
     ns.debug = function (message) {
-        return ns.options.debug ? ns.bus.emit("debug-message", message) : false;
+        return options.debug ? bus.emit("debug-message", message) : false;
     };
     ns.error = function (message) {
-        return ns.bus.emit("error-message", message);
+        return bus.emit("error-message", message);
     };
 
     (0, _stepRunner2.default)(ns);
@@ -176,8 +176,79 @@ function app(ns) {
 exports.default = app;
 
 /***/ }),
-/* 1 */,
-/* 2 */
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(process) {
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+exports.default = function (ns) {
+    var bus = ns.bus,
+        browser = ns.browser;
+
+    bus.on("navigate-to", function (_ref) {
+        var _ref2 = _slicedToArray(_ref, 1),
+            url = _ref2[0];
+
+        return browser.visit(url).then(function () {
+            return new Promise(function (resolve) {
+
+                var poll = function poll() {
+
+                    if (browser.document.readyState === "complete") {
+                        resolve();
+                    } else {
+                        setTimeout(poll, 100);
+                    }
+                };
+                setTimeout(poll, 100);
+            });
+        }).then(function () {
+            return bus.emit("navigate-to-complete", {});
+        }, function (err) {
+            return bus.emit("navigate-to-complete", { err: err });
+        });
+    });
+
+    bus.on("agent-request", function (x) {
+
+        browser.window.reply = function (err) {
+            var _arguments = arguments;
+
+
+            process.nextTick(function () {
+
+                bus.emit("agent-response", { data: {
+
+                        type: "agent-response",
+                        cid: x.cid,
+                        isSuccess: !err,
+                        args: err ? err.stack : [].slice.call(_arguments, 1)
+
+                    } });
+            });
+        };
+        browser.evaluate(x.js);
+        browser.wait();
+    });
+};
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9)))
+
+/***/ }),
+/* 2 */,
+/* 3 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE_3__;
+
+/***/ }),
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -210,7 +281,9 @@ exports.default = function (ns) {
             var err = detail ? detail.step.err : null;
             if (err) {
 
-                context.path.err = new Error("Step error");
+                context.path.errorSteps = context.path.errorSteps || [];
+                detail.step.errStack = err.stack;
+                context.path.errorSteps.push(detail.step);
             }
             if (!err && bookmark < stepScripts.length) {
 
@@ -240,7 +313,7 @@ exports.default = function (ns) {
 };
 
 /***/ }),
-/* 3 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -288,13 +361,12 @@ exports.default = function (ns) {
             var _detail$path = detail.path,
                 pathId = _detail$path.pathId,
                 start = _detail$path.start,
-                err = _detail$path.err;
+                errorSteps = _detail$path.errorSteps;
 
-            if (err) {
+            if (errorSteps) {
 
-                context.script.err = new Error("Path error");
                 context.script.errorPaths = context.script.errorPaths || [];
-                context.script.errorPaths.push({ pathId: pathId, start: start });
+                context.script.errorPaths.push({ pathId: pathId, start: start, errorSteps: errorSteps });
             }
             setTimeout(nextPath, 1000);
         }
@@ -312,7 +384,7 @@ exports.default = function (ns) {
 };
 
 /***/ }),
-/* 4 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -323,7 +395,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = runner;
 
-var _promiseTimeout = __webpack_require__(5);
+var _promiseTimeout = __webpack_require__(7);
 
 var _promiseTimeout2 = _interopRequireDefault(_promiseTimeout);
 
@@ -345,12 +417,13 @@ function runner(ns) {
             debug("Reply to: " + cid);
             var data = received.data;
             var args = [].concat(data.args || []);
+            var output = args.length === 1 ? args[0] : args;
             if (data.isSuccess) {
 
-                resolve.apply(null, args);
+                resolve(output);
             } else {
 
-                reject.apply(null, args);
+                reject(output);
             }
         };
     }
@@ -449,7 +522,7 @@ function runner(ns) {
 }
 
 /***/ }),
-/* 5 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -461,6 +534,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = promiseTimeout;
 function promiseTimeout(timeout, promise, callback) {
 
+    var constructionStack = new Error().stack;
     return new Promise(function (resolve, reject) {
 
         var isActive = true;
@@ -476,7 +550,7 @@ function promiseTimeout(timeout, promise, callback) {
 
         setTimeout(function () {
 
-            var timedOut = new Error("Timed out");
+            var timedOut = new Error("Timed out. " + constructionStack);
             if (deactivate(timedOut)) {
 
                 reject(timedOut);
@@ -499,7 +573,7 @@ function promiseTimeout(timeout, promise, callback) {
 }
 
 /***/ }),
-/* 6 */
+/* 8 */
 /***/ (function(module, exports) {
 
 // Copyright Joyent, Inc. and other Node contributors.
@@ -807,26 +881,251 @@ function isUndefined(arg) {
 
 
 /***/ }),
-/* 7 */
+/* 9 */
+/***/ (function(module, exports) {
+
+// shim for using process in browser
+var process = module.exports = {};
+
+// cached from whatever global is present so that test runners that stub it
+// don't break things.  But we need to wrap it in a try catch in case it is
+// wrapped in strict mode code which doesn't define any globals.  It's inside a
+// function because try/catches deoptimize in certain engines.
+
+var cachedSetTimeout;
+var cachedClearTimeout;
+
+function defaultSetTimout() {
+    throw new Error('setTimeout has not been defined');
+}
+function defaultClearTimeout () {
+    throw new Error('clearTimeout has not been defined');
+}
+(function () {
+    try {
+        if (typeof setTimeout === 'function') {
+            cachedSetTimeout = setTimeout;
+        } else {
+            cachedSetTimeout = defaultSetTimout;
+        }
+    } catch (e) {
+        cachedSetTimeout = defaultSetTimout;
+    }
+    try {
+        if (typeof clearTimeout === 'function') {
+            cachedClearTimeout = clearTimeout;
+        } else {
+            cachedClearTimeout = defaultClearTimeout;
+        }
+    } catch (e) {
+        cachedClearTimeout = defaultClearTimeout;
+    }
+} ())
+function runTimeout(fun) {
+    if (cachedSetTimeout === setTimeout) {
+        //normal enviroments in sane situations
+        return setTimeout(fun, 0);
+    }
+    // if setTimeout wasn't available but was latter defined
+    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+        cachedSetTimeout = setTimeout;
+        return setTimeout(fun, 0);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedSetTimeout(fun, 0);
+    } catch(e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+            return cachedSetTimeout.call(null, fun, 0);
+        } catch(e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+            return cachedSetTimeout.call(this, fun, 0);
+        }
+    }
+
+
+}
+function runClearTimeout(marker) {
+    if (cachedClearTimeout === clearTimeout) {
+        //normal enviroments in sane situations
+        return clearTimeout(marker);
+    }
+    // if clearTimeout wasn't available but was latter defined
+    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+        cachedClearTimeout = clearTimeout;
+        return clearTimeout(marker);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedClearTimeout(marker);
+    } catch (e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+            return cachedClearTimeout.call(null, marker);
+        } catch (e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+            return cachedClearTimeout.call(this, marker);
+        }
+    }
+
+
+
+}
+var queue = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+    if (!draining || !currentQueue) {
+        return;
+    }
+    draining = false;
+    if (currentQueue.length) {
+        queue = currentQueue.concat(queue);
+    } else {
+        queueIndex = -1;
+    }
+    if (queue.length) {
+        drainQueue();
+    }
+}
+
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    var timeout = runTimeout(cleanUpNextTick);
+    draining = true;
+
+    var len = queue.length;
+    while(len) {
+        currentQueue = queue;
+        queue = [];
+        while (++queueIndex < len) {
+            if (currentQueue) {
+                currentQueue[queueIndex].run();
+            }
+        }
+        queueIndex = -1;
+        len = queue.length;
+    }
+    currentQueue = null;
+    draining = false;
+    runClearTimeout(timeout);
+}
+
+process.nextTick = function (fun) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
+    }
+    queue.push(new Item(fun, args));
+    if (queue.length === 1 && !draining) {
+        runTimeout(drainQueue);
+    }
+};
+
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
+}
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
+};
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+process.umask = function() { return 0; };
+
+
+/***/ }),
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
 
 var _app = __webpack_require__(0);
 
 var _app2 = _interopRequireDefault(_app);
 
+var _zombie = __webpack_require__(3);
+
+var _zombie2 = _interopRequireDefault(_zombie);
+
+var _agent = __webpack_require__(1);
+
+var _agent2 = _interopRequireDefault(_agent);
+
+var _notifications = __webpack_require__(11);
+
+var _notifications2 = _interopRequireDefault(_notifications);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var ns = {};
-(0, _app2.default)(ns);
+var ns = { browser: new _zombie2.default() };
+
+[_app2.default, // must be first
+
+_notifications2.default, // user-display notifications
+//metricsSink, // relay metrics to the server
+
+_agent2.default].forEach(function (module) {
+    return module(ns);
+});
 
 exports.default = ns;
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+exports.default = function (ns) {
+    var bus = ns.bus;
+
+    bus.on("error-message", function (message) {
+        return console.error(message);
+    });
+};
 
 /***/ })
 /******/ ]);

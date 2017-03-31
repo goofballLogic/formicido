@@ -16,7 +16,9 @@ export default function( ns ) {
             const err = detail ? detail.step.err : null;
             if ( err ) {
                     
-                context.path.err = new Error( "Step error" );
+                context.path.errorSteps = context.path.errorSteps || [];
+                detail.step.errStack = err.stack;
+                context.path.errorSteps.push( detail.step );
                     
             }
             if ( !err && bookmark < stepScripts.length ) {
@@ -28,7 +30,7 @@ export default function( ns ) {
                 bus.emit( "run-step", message );
             
             } else {
-                
+
                 context.path.end = Date.now();
                 notify( "Path run complete" );
                 delete context.step;

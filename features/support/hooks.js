@@ -21,35 +21,39 @@ defineSupportCode( function( { setWorldConstructor, setDefaultTimeout, registerH
     
     function initBrowserStack() {
         
-        try {
+        if ( !~process.argv.indexOf( "--headless" ) ) { 
             
-            browserStackClient = webdriverio.remote( { 
+            try {
+                
+                browserStackClient = webdriverio.remote( { 
+        
+                    desiredCapabilities: {
+        
+                        browserName: 'Chrome',
+                        os: "Windows",
+                        os_version: "8",
+                        project: "Formicido",
+                        build: process.env.BROWSERSTACK_BUILD || defaultBuild(),
+                        "browserstack.local": true,
+                        "browserstack.debug": true,
+                        resolution: "1280x1024"
+        
+                    },
+                    host: 'hub.browserstack.com',
+                    port: 80,
+                    user: process.env.BROWSERSTACK_USERNAME,
+                    key: process.env.BROWSERSTACK_ACCESS_KEY,
     
-                desiredCapabilities: {
-    
-                    browserName: 'Chrome',
-                    os: "Windows",
-                    os_version: "8",
-                    project: "Formicido",
-                    build: process.env.BROWSERSTACK_BUILD || defaultBuild(),
-                    "browserstack.local": true,
-                    "browserstack.debug": true,
-                    resolution: "1280x1024"
-    
-                },
-                host: 'hub.browserstack.com',
-                port: 80,
-                user: process.env.BROWSERSTACK_USERNAME,
-                key: process.env.BROWSERSTACK_ACCESS_KEY,
-
-    
-            } );
-            return browserStackClient.init();
-            
-        } catch( e ) {
-            
-            browserStackClient = null;
-            return Promise.reject( e );
+        
+                } );
+                return browserStackClient.init();
+                
+            } catch( e ) {
+                
+                browserStackClient = null;
+                return Promise.reject( e );
+                
+            }
             
         }
 
@@ -59,9 +63,9 @@ defineSupportCode( function( { setWorldConstructor, setDefaultTimeout, registerH
 
         return Promise.all( [
           
-          index( config.app ),
-          testServer( config.test, config.app ),
-          initBrowserStack()
+            index( config.app ),
+            testServer( config.test, config.app ),
+            initBrowserStack()
           
         ] );
 
@@ -69,20 +73,23 @@ defineSupportCode( function( { setWorldConstructor, setDefaultTimeout, registerH
     
     registerHandler( "AfterFeatures", () => {
         
-    
-        console.log( "Ending browserstack connection" );    
-        const x = browserStackClient.end().then( () => {
+        if ( browserStackClient ) {
             
-            console.log( "Browserstack connection closed" );
-            return Promise.resolve();
+            console.log( "Ending browserstack connection" );    
+            const x = browserStackClient.end().then( () => {
+                
+                console.log( "Browserstack connection closed" );
+                return Promise.resolve();
+                
+            }, e => {
+                
+                console.error( e );
+                throw e;
+                
+            } );
+            return x;
             
-        }, e => {
-            
-            console.error( e );
-            throw e;
-            
-        } );
-        return x;
+        }
 
     } );
     

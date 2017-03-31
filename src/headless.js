@@ -1,35 +1,22 @@
-const Zombie = require( "zombie" );
-const scripts = require( "./domain/scripts" );
-const server = require( "./runtime/server" ).default;
-const { bus, options } = server;
-
-bus.on( "error-message", message => console.error( message ) );
-bus.on( "warn-message", message => console.warn( message ) );
-bus.on( "info-message", message => console.log( message ) );
+const MultiRun = require( "./multi-run" );
+const server = require( "./runtime/headless" ).default;
+const { bus } = server;
 
 class Headless {
     
-    run( scriptId ) {
+    run( scriptId, options = {} ) {
         
-        const browser = new Zombie();
-        return scripts.fetch( scriptId )
-            .then( script => script.generateJS() )
-            .then( pathScripts => new Promise( ( resolve, reject ) => {
-                
-                bus.on( "navigate-to", ( [ url ] ) => browser.visit( url ).then( 
-                    
-                    () => bus.emit( "navigate-to-complete", {} ),
-                    err => bus.emit( "navigate-to-complete", { err } )
-                    
-                ) );
-                bus.once( "script-complete", context => {
-
-                    resolve( context );
-                    
-                } );
-                bus.emit( "run-script", { id: scriptId, pathScripts } );                
-                
-            } ) );
+        const runner = new MultiRun( scriptId, options, bus );
+        if ( options.continuous ) {
+            
+            runner.start();
+            return Promise.resolve( runner );
+            
+        } else {
+            
+            return runner.runOne();
+            
+        }
 
     }
     

@@ -1,5 +1,6 @@
 export default function promiseTimeout( timeout, promise, callback ) {
         
+    const constructionStack = new Error().stack;
     return new Promise( ( resolve, reject ) => {
     
         let isActive = true;
@@ -14,7 +15,7 @@ export default function promiseTimeout( timeout, promise, callback ) {
         
         setTimeout( () => { 
             
-            const timedOut = new Error( "Timed out" );
+            const timedOut = new Error( "Timed out. " + constructionStack );
             if ( deactivate( timedOut ) ) {
                 
                 reject( timedOut );

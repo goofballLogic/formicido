@@ -14,3 +14,7 @@ Feature: Run script in headless browser
     Scenario: Invoke a single run
       When I invoke a headless run for "all-three-paths"
       Then the headless run should complete without error
+    
+    Scenario: Run a script until three completed runs are logged
+      When I invoke a continuous headless run for "all-three-paths"
+      Then I wait for the "script-complete" event to be emitted 3 times

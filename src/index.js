@@ -15,7 +15,7 @@ module.exports = function( config ) {
     const promClient = require( "prom-client" );
     
     [ 
-        "./agents/console-metrics", 
+        //"./agents/console-metrics", 
         "./agents/prometheus-metrics"
     
     ].forEach( agent => require( agent ) );
@@ -32,12 +32,6 @@ module.exports = function( config ) {
     };
     
     app.use( "/public", express.static( __dirname + "/../public" ) );
-    app.use( ( req, res, next ) => {
-       
-       console.log( req.url );
-       next();
-       
-    } );
     
     app.set( "view engine", "pug" );
     app.set( "views", __dirname + "/views" );

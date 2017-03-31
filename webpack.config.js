@@ -26,7 +26,7 @@ module.exports = [ {
     ]
     
 }, {
-    entry: "./src/client/server.js",
+    entry: "./src/client/headless.js",
     module: {
         
         rules: [
@@ -37,12 +37,13 @@ module.exports = [ {
     },
     externals: {
         
-        "server-namespace": "./server-namespace"
+        "server-namespace": "./server-namespace",
+        "zombie": "zombie"
         
     },
     output: {
         
-        filename: "server.js",
+        filename: "headless.js",
         path: path.resolve( __dirname, "src/runtime" ),
         libraryTarget: "umd"
         

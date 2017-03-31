@@ -10,7 +10,7 @@ export default function( ns ) {
         const context = { script: { scriptId, nextIterationURL, runId } };
         
         function nextPath() {
-            
+
             if ( bookmark < pathScripts.length ) { 
                 
                 context.script.path = bookmark + 1;
@@ -30,13 +30,12 @@ export default function( ns ) {
         }
     
         function pathComplete( detail ) {
-            
-            const { pathId, start, err } = detail.path;
-            if ( err ) {
+
+            const { pathId, start, errorSteps } = detail.path;
+            if ( errorSteps ) {
                 
-                context.script.err = new Error( "Path error" );
                 context.script.errorPaths = context.script.errorPaths || [];
-                context.script.errorPaths.push( { pathId, start } );
+                context.script.errorPaths.push( { pathId, start, errorSteps } );
                 
             }
             setTimeout( nextPath, 1000 );
