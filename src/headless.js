@@ -1,6 +1,11 @@
-const MultiRun = require( "./multi-run" );
 const server = require( "./runtime/headless" ).default;
 const { bus } = server;
+
+const metrics = require( "./domain/metrics" );
+require( "./agents/prometheus-metrics" );
+bus.on( "metrics", x => metrics.publish( JSON.parse( x ) ) );
+
+const MultiRun = require( "./multi-run" );
 
 class Headless {
     

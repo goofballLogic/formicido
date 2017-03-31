@@ -107,6 +107,10 @@ var _scriptRunner = __webpack_require__(5);
 
 var _scriptRunner2 = _interopRequireDefault(_scriptRunner);
 
+var _metricsGenerator = __webpack_require__(11);
+
+var _metricsGenerator2 = _interopRequireDefault(_metricsGenerator);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -172,6 +176,7 @@ function app(ns) {
     (0, _stepRunner2.default)(ns);
     (0, _pathRunner2.default)(ns);
     (0, _scriptRunner2.default)(ns);
+    (0, _metricsGenerator2.default)(ns);
 }
 exports.default = app;
 
@@ -241,7 +246,25 @@ exports.default = function (ns) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9)))
 
 /***/ }),
-/* 2 */,
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+exports.default = function (ns) {
+    var bus = ns.bus;
+
+    bus.on("error-message", function (message) {
+        return console.error(message);
+    });
+};
+
+/***/ }),
 /* 3 */
 /***/ (function(module, exports) {
 
@@ -330,15 +353,18 @@ exports.default = function (ns) {
         notify = ns.notify;
 
 
+    console.log("RUN SCRIPT");
     bus.on("run-script", function (script) {
 
         var bookmark = 0;
+        console.log("SCRIPT", script);
         var pathScripts = script.pathScripts,
             nextIterationURL = script.nextIterationURL,
-            runId = script.runId;
+            runId = script.runId,
+            name = script.name;
 
         var scriptId = script.id;
-        var context = { script: { scriptId: scriptId, nextIterationURL: nextIterationURL, runId: runId } };
+        var context = { script: { scriptId: scriptId, name: name, nextIterationURL: nextIterationURL, runId: runId } };
 
         function nextPath() {
 
@@ -1089,7 +1115,7 @@ var _agent = __webpack_require__(1);
 
 var _agent2 = _interopRequireDefault(_agent);
 
-var _notifications = __webpack_require__(11);
+var _notifications = __webpack_require__(2);
 
 var _notifications2 = _interopRequireDefault(_notifications);
 
@@ -1122,9 +1148,32 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = function (ns) {
     var bus = ns.bus;
 
-    bus.on("error-message", function (message) {
-        return console.error(message);
-    });
+    // thanks: http://stackoverflow.com/a/18391400/275501
+
+    function replaceErrors(key, value) {
+
+        if (value instanceof Error) {
+            var error = {};
+
+            Object.getOwnPropertyNames(value).forEach(function (key) {
+                error[key] = value[key];
+            });
+            return error;
+        }
+        return value;
+    }
+
+    var recordMetric = function recordMetric(type) {
+        return function (detail) {
+
+            detail = JSON.parse(JSON.stringify(detail, replaceErrors));
+            bus.emit("metrics", JSON.stringify({ type: type, detail: detail }));
+        };
+    };
+
+    bus.on("step-complete", recordMetric("step"));
+    bus.on("path-complete", recordMetric("path"));
+    bus.on("script-complete", recordMetric("script"));
 };
 
 /***/ })

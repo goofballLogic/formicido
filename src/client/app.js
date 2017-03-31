@@ -2,6 +2,7 @@ import EventEmitter from "events";
 import stepRunner from "./enrichers/step-runner";
 import pathRunner from "./enrichers/path-runner";
 import scriptRunner from "./enrichers/script-runner";
+import metricsGenerator from "./enrichers/metrics-generator";
 
 function uuid() {
         
@@ -40,6 +41,7 @@ function app( ns ) {
     stepRunner( ns );
     pathRunner( ns );
     scriptRunner( ns );
+    metricsGenerator( ns );
     
 }
 export default app;

@@ -10,6 +10,12 @@ module.exports = {
         
         port: 8124
         
+    },
+    headless: {
+        
+        host: "localhost",
+        port: 8125
+        
     }
     
 };

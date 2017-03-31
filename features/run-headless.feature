@@ -18,3 +18,14 @@ Feature: Run script in headless browser
     Scenario: Run a script until three completed runs are logged
       When I invoke a continuous headless run for "all-three-paths"
       Then I wait for the "script-complete" event to be emitted 3 times
+
+    Scenario: Serve metrics from continuous script
+      When I invoke a continuous headless run for "all-three-paths"
+      Then I wait for the script collected metric to reach 3
+    
+    Scenario: Record the state of the browser on step failure
+      When I invoke a continuous headless run for "one-dodgy-path"
+       And I wait for the "script-complete" event to be emitted 2 times
+      Then the diagnostics folder should contain two failure files
+       And the failure files should have URL "http://localhost:9999/not-found"
+       And the failure files should have HTML matching "The Charge of the Light Brigade"

@@ -1,13 +1,15 @@
 export default function( ns ) {
     
     const { bus, notify } = ns;
-    
+
+console.log( "RUN SCRIPT" );    
     bus.on( "run-script", script => {
     
         let bookmark = 0;
-        const { pathScripts, nextIterationURL, runId } = script;
+console.log( "SCRIPT", script );        
+        const { pathScripts, nextIterationURL, runId, name } = script;
         const scriptId = script.id;
-        const context = { script: { scriptId, nextIterationURL, runId } };
+        const context = { script: { scriptId, name, nextIterationURL, runId } };
         
         function nextPath() {
 

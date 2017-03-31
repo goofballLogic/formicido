@@ -26,4 +26,10 @@ defineSupportCode( function( { Given, When, Then } ) {
         
     } );
     
+    Then( "I wait for the script collected metric to reach {count:int}", function( count ) {
+    
+        return this.headless.waitForScriptCollectedMetric( count );
+        
+    } );
+    
 } );

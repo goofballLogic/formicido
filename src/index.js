@@ -13,6 +13,7 @@ module.exports = function( config ) {
     const scripts = require( "./domain/scripts" );
     const metrics = require( "./domain/metrics" );
     const promClient = require( "prom-client" );
+    const metricsRouter = require( "./metrics-router" );
     
     [ 
         //"./agents/console-metrics", 
@@ -32,6 +33,7 @@ module.exports = function( config ) {
     };
     
     app.use( "/public", express.static( __dirname + "/../public" ) );
+    app.use( "/metrics", metricsRouter );
     
     app.set( "view engine", "pug" );
     app.set( "views", __dirname + "/views" );
@@ -181,7 +183,8 @@ module.exports = function( config ) {
                     pageClass,
                     pathScripts: JSON.stringify( pathScripts ),
                     runId,
-                    scriptId
+                    scriptId,
+                    name: script.name
                 
                 } );
                 
@@ -319,15 +322,11 @@ module.exports = function( config ) {
 
     } );
     
-    app.get( "/metrics", ( req, res ) => {
-        
-        res.type( "text/plain" ).send( promClient.register.metrics() );
-        
-    } );
-    
     return new Promise( ( resolve, reject ) => {
 
-        app.listen( config.port, config.host || "0.0.0.0", e => {
+        const port = config.port || 8080;
+        const host = config.host || "0.0.0.0";
+        app.listen( port, host, e => {
             
             if ( e ) {
                 

@@ -1,4 +1,6 @@
 const scripts = require( "./domain/scripts" );
+const express = require( "express" );
+const metricsRouter = require( "./metrics-router" );
 
 const eventLog = Symbol( "event-log" );
 module.exports = class MultiRun {
@@ -14,6 +16,7 @@ module.exports = class MultiRun {
             
         } );
         this[ eventLog ] = {};
+        this.initMetricsServer();
         
     }
     
@@ -21,6 +24,22 @@ module.exports = class MultiRun {
         
         return this[ eventLog ][ eventName ] || 0;
         
+    }
+    
+    initMetricsServer() {
+    
+        const app = new express();
+        app.use( "/metrics", metricsRouter );
+        const port = this.options.port || 8080;
+        const host = this.options.host || "0.0.0.0";
+        this.server = app.listen( port, host, e => {
+            
+            if ( e ) { throw e; }
+            console.log( `Metrics available here: http://${host}:${port}/metrics` );
+            
+        } );
+        this.server.unref();
+            
     }
     
     start() {
