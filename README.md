@@ -48,6 +48,13 @@ Formicido scripts consist of one or more paths, each of which consist of one or 
 
 For an example walk-through of creating a script, see the wiki: https://github.com/goofballLogic/formicido/wiki/Create-your-first-script
 
+## Running your script in "production" monitoring mode
+
+Once your script is created, the configuration web application is no longer needed, unless you specifically want to run your script in a physical browser.
+
+Instead, Formicido uses a headless (emulated) browser called Zombie.js: http://zombie.js.org/. This won't work for every web application, but will support the majority of well designed web apps.
+
+For an example walk-through of running your script in headless mode, see the wiki: https://github.com/goofballLogic/formicido/wiki/Run-your-first-script-headless
 
 ## Metrics
 
