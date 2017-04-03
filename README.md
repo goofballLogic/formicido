@@ -53,6 +53,8 @@ For an example walk-through of creating a script, see the wiki: https://github.c
 
 You can launch the metrics endpoint by browsing to /metrics. For example, the configuration mentioned above will expose metrics at http://localhost:8888/metrics. Even when running in "headless" mode, a web server is still started just to serve the metrics.
 
+You might recognise the metrics format as the text-version of Prometheus' exposition formats: https://prometheus.io/docs/instrumenting/exposition_formats/#format-variants-comparison
+
 ## Testing
 Thanks to the good people at BrowserStack, this application is being automatically tested cross-browser. This means that we can drive selenium tests running in Travis as part of our CI build. We use Browserstack selenium bindings along with Cucumber.
 [More about testing with Selenium](https://github.com/goofballLogic/formicido/wiki/Testing)
