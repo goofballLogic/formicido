@@ -83,6 +83,7 @@ This step will attempt to click something on the page loaded in your previous st
 
 Click the "Run" button to run your 2-step path. You should see a path listing the two steps, initially marked "PENDING", and changing colour as they resolve (hopefully to green with a check mark).
 
+Here's a sample screenshot: https://github.com/goofballLogic/formicido/raw/master/assets/formicido-screenshot.png
 
 ## Metrics
 
