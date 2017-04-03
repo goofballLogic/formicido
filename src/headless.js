@@ -32,4 +32,4 @@ class Headless {
     }
     
 }
-module.exports = Headless;
+module.exports = new Headless();

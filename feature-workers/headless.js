@@ -1,4 +1,4 @@
-const headless = require( "../src/headless" );
+const index = require( "../src" );
 const assert = require( "assert" );
 const request = require( "request" );
 /*
@@ -18,7 +18,7 @@ class Headless {
     constructor( world ) {
         
         this.world = world;
-        this.headless = new headless();
+        this.headless = index( null, true );
         this.options = this.world.config.headless;
         
     }
