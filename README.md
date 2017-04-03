@@ -4,34 +4,7 @@
 Site monitor like an ant.
 
 ## Getting started
-Formicido is a library which contains an express.js web application which can be used for configuring your scripts. Here's a quick-start guide to running the configuration app:
-
-index.js:
-```javascript
-const formicido = require( "formicido" );
-const config = {
-
-    port: 8888,
-    repo: { root: __dirname + "/data" }
-
-};
-formicido( config ).then( () =>
-
-    console.log( `Configuration fixture is running at: http://localhost:${config.port}` )
-
-);
-```
-create a folder for data, install formicido, then run:
-```bash
-mkdir data
-npm install formicido --save
-node index
-
-Running { port: 8888,
-  repo: { root: '/home/goofballLogic/src/my-project/monitor/data' } }
-Configuration fixture is running at: http://localhost:8888
-
-```
+Formicido is a library which contains an express.js web application which can be used for configuring your scripts. Here's a quick-start guide to running the configuration app: https://github.com/goofballLogic/formicido/wiki/Setting-up-a-monitoring-application
 
 ## Design-time requirements
 
