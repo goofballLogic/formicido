@@ -76,7 +76,12 @@ This step will attempt to click something on the page loaded in your previous st
 1. Choose "Click then wait for new location" and click "Configure..."
 1. Navigate the iframe to the location specified in your previous step.
 1. Find a link and view it in development tools so you can determine a valid query-selector for locating this element. For example, ".w3-navbar a[title='JavaScript Tutorial']"
+1. Click the "Run" button to ensure that the click and navigation happen as expected
+1. Click "Save step" to add this step to your path
 
+### 3. Run your path
+
+Click the "Run" button to run your 2-step path. You should see a path listing the two steps, initially marked "PENDING", and changing colour as they resolve (hopefully to green with a check mark).
 
 
 ## Metrics
