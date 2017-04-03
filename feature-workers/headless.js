@@ -19,12 +19,13 @@ class Headless {
         
         this.world = world;
         this.headless = new headless();
+        this.options = this.world.config.headless;
         
     }
     
     run( scriptId ) {
         
-        return this.headless.run( scriptId ).then( result => {
+        return this.headless.run( scriptId, this.options ).then( result => {
             
             this.result = result;
             
@@ -34,8 +35,7 @@ class Headless {
     
     runContinuous( scriptId ) {
 
-        const { headless } = this.world.config;
-        const options = Object.assign( { continuous: true }, headless );
+        const options = Object.assign( { continuous: true }, this.options );
         return this.headless.run( scriptId, options ).then( run => {
             
             this.run = run;

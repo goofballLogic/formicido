@@ -10,6 +10,10 @@ Feature: Run script in headless browser
       | nav-to-hello     |
       | a-b-c-a-b        |
     And well-known script "all-three-paths" exists
+    And well-known test paths exist:
+      | path             |
+      | nav-to-missing   |
+    And well-known script "one-dodgy-path" exists
     
     Scenario: Invoke a single run
       When I invoke a headless run for "all-three-paths"
@@ -26,6 +30,10 @@ Feature: Run script in headless browser
     Scenario: Record the state of the browser on step failure
       When I invoke a continuous headless run for "one-dodgy-path"
        And I wait for the "script-complete" event to be emitted 2 times
-      Then the diagnostics folder should contain two failure files
-       And the failure files should have URL "http://localhost:9999/not-found"
-       And the failure files should have HTML matching "The Charge of the Light Brigade"
+      Then the diagnostics folder should contain 2 failure files
+       And the failure files should all contain
+        | prop      | value                            |
+        | path      | 2                                |
+        | step      | 1                                |
+        | location  | http://localhost:8124/dodgy-path |
+       And the failure files should all have HTML matching "The Charge of the Light Brigade"

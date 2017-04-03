@@ -1,3 +1,5 @@
+const path = require( "path" );
+
 module.exports = {
     app: {
         
@@ -14,7 +16,12 @@ module.exports = {
     headless: {
         
         host: "localhost",
-        port: 8125
+        port: 8125,
+        diagnostics: {
+        
+            filePath: path.resolve( __dirname, "../data/diagnostics" )
+        
+        }
         
     }
     

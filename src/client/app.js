@@ -21,10 +21,17 @@ class DebuggableEventEmitter extends EventEmitter {
 
     emit( ...args ) {
         
-        if ( this.options.debug ) { console.log( args ); }
+        if ( this.options.debug ) { console.log( "Emit", args ); }
         return super.emit.apply( this, args );
         
-    }   
+    }
+    
+    on( ...args ) {
+        
+        if ( this.options.debug ) { console.log( "On", args ); }
+        return super.on.apply( this, args );
+        
+    }
     
 }
 

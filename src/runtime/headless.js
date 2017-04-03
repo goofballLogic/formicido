@@ -7,7 +7,7 @@
 		var a = typeof exports === 'object' ? factory(require("zombie")) : factory(root["zombie"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(this, function(__WEBPACK_EXTERNAL_MODULE_3__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE_4__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -73,7 +73,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 10);
+/******/ 	return __webpack_require__(__webpack_require__.s = 12);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -91,23 +91,23 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
-var _events = __webpack_require__(8);
+var _events = __webpack_require__(10);
 
 var _events2 = _interopRequireDefault(_events);
 
-var _stepRunner = __webpack_require__(6);
+var _stepRunner = __webpack_require__(8);
 
 var _stepRunner2 = _interopRequireDefault(_stepRunner);
 
-var _pathRunner = __webpack_require__(4);
+var _pathRunner = __webpack_require__(6);
 
 var _pathRunner2 = _interopRequireDefault(_pathRunner);
 
-var _scriptRunner = __webpack_require__(5);
+var _scriptRunner = __webpack_require__(7);
 
 var _scriptRunner2 = _interopRequireDefault(_scriptRunner);
 
-var _metricsGenerator = __webpack_require__(11);
+var _metricsGenerator = __webpack_require__(5);
 
 var _metricsGenerator2 = _interopRequireDefault(_metricsGenerator);
 
@@ -148,9 +148,21 @@ var DebuggableEventEmitter = function (_EventEmitter) {
             }
 
             if (this.options.debug) {
-                console.log(args);
+                console.log("Emit", args);
             }
             return _get(DebuggableEventEmitter.prototype.__proto__ || Object.getPrototypeOf(DebuggableEventEmitter.prototype), "emit", this).apply(this, args);
+        }
+    }, {
+        key: "on",
+        value: function on() {
+            for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+                args[_key2] = arguments[_key2];
+            }
+
+            if (this.options.debug) {
+                console.log("On", args);
+            }
+            return _get(DebuggableEventEmitter.prototype.__proto__ || Object.getPrototypeOf(DebuggableEventEmitter.prototype), "on", this).apply(this, args);
         }
     }]);
 
@@ -243,10 +255,58 @@ exports.default = function (ns) {
         browser.wait();
     });
 };
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(11)))
 
 /***/ }),
 /* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+exports.default = function (ns) {
+    var bus = ns.bus,
+        browser = ns.browser;
+
+
+    bus.on("step-complete", function (detail) {
+        var script = detail.script,
+            path = detail.path,
+            step = detail.step;
+
+        if (step && step.err) {
+
+            var window = browser.tabs.current;
+            var location = window.location.toString();
+            var content = window.document.documentElement.outerHTML;
+            var disposition = "step-error";
+            var pathId = path && path.pathId;
+            var scriptId = script && script.scriptId;
+            var now = Date.now();
+            var report = {
+
+                content: content,
+                detail: detail,
+                disposition: disposition,
+                location: location,
+                now: now,
+                path: script && script.path,
+                pathId: pathId,
+                step: path && path.step,
+                scriptId: scriptId
+
+            };
+            bus.emit("diagnostic-report", report);
+        }
+    });
+};
+
+/***/ }),
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -265,13 +325,55 @@ exports.default = function (ns) {
 };
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE_3__;
+module.exports = __WEBPACK_EXTERNAL_MODULE_4__;
 
 /***/ }),
-/* 4 */
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+exports.default = function (ns) {
+    var bus = ns.bus;
+
+    // thanks: http://stackoverflow.com/a/18391400/275501
+
+    function replaceErrors(key, value) {
+
+        if (value instanceof Error) {
+            var error = {};
+
+            Object.getOwnPropertyNames(value).forEach(function (key) {
+                error[key] = value[key];
+            });
+            return error;
+        }
+        return value;
+    }
+
+    var recordMetric = function recordMetric(type) {
+        return function (detail) {
+
+            detail = JSON.parse(JSON.stringify(detail, replaceErrors));
+            bus.emit("metrics", JSON.stringify({ type: type, detail: detail }));
+        };
+    };
+
+    bus.on("step-complete", recordMetric("step"));
+    bus.on("path-complete", recordMetric("path"));
+    bus.on("script-complete", recordMetric("script"));
+};
+
+/***/ }),
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -287,6 +389,17 @@ exports.default = function (ns) {
     var bus = ns.bus,
         notify = ns.notify;
 
+    var aborted = {};
+    var instance = Math.random();
+
+    bus.on("abort-run", function (detail) {
+
+        notify("path-runner " + instance + " received abort-run " + detail);
+        aborted[detail.id] = Date.now();
+        setTimeout(function () {
+            return delete aborted[detail.id];
+        }, 60000);
+    });
 
     bus.on("run-path", function (detail) {
         var stepScripts = detail.stepScripts,
@@ -295,12 +408,20 @@ exports.default = function (ns) {
 
         var pathId = id;
         var context = detail.context || {};
+
+        var _ref = context.script || {},
+            runId = _ref.runId;
+
         context.path = { pathId: pathId, name: name };
 
         var bookmark = 0;
 
         function nextStep(detail) {
 
+            var isAborted = runId in aborted;
+            if (isAborted) {
+                bus.emit("run-path-aborted", context);
+            }
             var err = detail ? detail.step.err : null;
             if (err) {
 
@@ -308,7 +429,7 @@ exports.default = function (ns) {
                 detail.step.errStack = err.stack;
                 context.path.errorSteps.push(detail.step);
             }
-            if (!err && bookmark < stepScripts.length) {
+            if (!err && bookmark < stepScripts.length && !isAborted) {
 
                 bus.once("step-complete", nextStep);
                 context.path.step = bookmark + 1;
@@ -336,7 +457,7 @@ exports.default = function (ns) {
 };
 
 /***/ }),
-/* 5 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -352,12 +473,21 @@ exports.default = function (ns) {
     var bus = ns.bus,
         notify = ns.notify;
 
+    var aborted = {};
+    var instance = Math.random();
 
-    console.log("RUN SCRIPT");
+    bus.on("abort-run", function (detail) {
+
+        notify("script-runner " + instance + " received abort-run " + detail);
+        aborted[detail.id] = Date.now();
+        setTimeout(function () {
+            return delete aborted[detail.id];
+        }, 60000);
+    });
+
     bus.on("run-script", function (script) {
 
         var bookmark = 0;
-        console.log("SCRIPT", script);
         var pathScripts = script.pathScripts,
             nextIterationURL = script.nextIterationURL,
             runId = script.runId,
@@ -368,7 +498,11 @@ exports.default = function (ns) {
 
         function nextPath() {
 
-            if (bookmark < pathScripts.length) {
+            var isAborted = runId in aborted;
+            if (isAborted) {
+                bus.emit("run-script-aborted", context);
+            }
+            if (bookmark < pathScripts.length && !isAborted) {
 
                 context.script.path = bookmark + 1;
                 bus.emit("run-path", _extends({ context: context }, pathScripts[bookmark]));
@@ -410,7 +544,7 @@ exports.default = function (ns) {
 };
 
 /***/ }),
-/* 6 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -421,7 +555,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = runner;
 
-var _promiseTimeout = __webpack_require__(7);
+var _promiseTimeout = __webpack_require__(9);
 
 var _promiseTimeout2 = _interopRequireDefault(_promiseTimeout);
 
@@ -548,7 +682,7 @@ function runner(ns) {
 }
 
 /***/ }),
-/* 7 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -599,7 +733,7 @@ function promiseTimeout(timeout, promise, callback) {
 }
 
 /***/ }),
-/* 8 */
+/* 10 */
 /***/ (function(module, exports) {
 
 // Copyright Joyent, Inc. and other Node contributors.
@@ -907,7 +1041,7 @@ function isUndefined(arg) {
 
 
 /***/ }),
-/* 9 */
+/* 11 */
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -1093,7 +1227,7 @@ process.umask = function() { return 0; };
 
 
 /***/ }),
-/* 10 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1107,7 +1241,7 @@ var _app = __webpack_require__(0);
 
 var _app2 = _interopRequireDefault(_app);
 
-var _zombie = __webpack_require__(3);
+var _zombie = __webpack_require__(4);
 
 var _zombie2 = _interopRequireDefault(_zombie);
 
@@ -1115,7 +1249,11 @@ var _agent = __webpack_require__(1);
 
 var _agent2 = _interopRequireDefault(_agent);
 
-var _notifications = __webpack_require__(2);
+var _diagnosticsSink = __webpack_require__(2);
+
+var _diagnosticsSink2 = _interopRequireDefault(_diagnosticsSink);
+
+var _notifications = __webpack_require__(3);
 
 var _notifications2 = _interopRequireDefault(_notifications);
 
@@ -1126,55 +1264,15 @@ var ns = { browser: new _zombie2.default() };
 [_app2.default, // must be first
 
 _notifications2.default, // user-display notifications
-//metricsSink, // relay metrics to the server
 
-_agent2.default].forEach(function (module) {
+_diagnosticsSink2.default, // create diagnostic reports for failures
+_agent2.default // navigation and execution of script against the browser
+
+].forEach(function (module) {
     return module(ns);
 });
 
 exports.default = ns;
-
-/***/ }),
-/* 11 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-exports.default = function (ns) {
-    var bus = ns.bus;
-
-    // thanks: http://stackoverflow.com/a/18391400/275501
-
-    function replaceErrors(key, value) {
-
-        if (value instanceof Error) {
-            var error = {};
-
-            Object.getOwnPropertyNames(value).forEach(function (key) {
-                error[key] = value[key];
-            });
-            return error;
-        }
-        return value;
-    }
-
-    var recordMetric = function recordMetric(type) {
-        return function (detail) {
-
-            detail = JSON.parse(JSON.stringify(detail, replaceErrors));
-            bus.emit("metrics", JSON.stringify({ type: type, detail: detail }));
-        };
-    };
-
-    bus.on("step-complete", recordMetric("step"));
-    bus.on("path-complete", recordMetric("path"));
-    bus.on("script-complete", recordMetric("script"));
-};
 
 /***/ })
 /******/ ]);

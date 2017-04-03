@@ -1,6 +1,7 @@
 const scripts = require( "./domain/scripts" );
 const express = require( "express" );
 const metricsRouter = require( "./metrics-router" );
+const shortid = require( "shortid" );
 
 const eventLog = Symbol( "event-log" );
 module.exports = class MultiRun {
@@ -10,19 +11,30 @@ module.exports = class MultiRun {
         this.scriptId = scriptId;
         this.options = options;
         this.bus = bus;
+        this.teardown = [];
         [ "script-complete", "path-complete", "step-complete" ].forEach( evt => {
         
-            bus.on( evt, this.handleEvent.bind( this, evt ) );    
+            const listener = this.handleEvent.bind( this, evt );
+            this.teardown.push( () => bus.removeListener( evt, listener ) );
+            bus.on( evt, listener );    
             
         } );
         this[ eventLog ] = {};
         this.initMetricsServer();
+        this.runId = shortid();
         
     }
     
     count( eventName ) {
         
         return this[ eventLog ][ eventName ] || 0;
+        
+    }
+    
+    dispose() {
+        
+        this.teardown.forEach( x => x() );    
+        return this.stop();
         
     }
     
@@ -56,20 +68,34 @@ module.exports = class MultiRun {
     
     stop() {
         
+        const id = this.runId;
+        this.bus.emit( "abort-run", { id } );
         this.stopRequested = true;
-        
+        const current = this.current || Promise.resolve();
+        return current.then( () => new Promise( resolve => this.server.close( resolve ) ) );
+
     }
     
     runOne() {
 
-        return scripts.fetch( this.scriptId )
-            .then( script => script.generateJS() )
-            .then( pathScripts => new Promise( ( resolve, reject ) => {
-    
-                this.bus.once( "script-complete", resolve );
-                this.bus.emit( "run-script", { id: this.scriptId, pathScripts } );                
+        const iteration = this.iteration = ( this.iteration || 0 ) + 1;
+        const id = this.scriptId;
+        const runId = this.runId;
+        return scripts.fetch( id ).then( script => 
+        
+            script.generateJS().then( pathScripts => 
             
-            } ) );
+                new Promise( resolve => {
+
+                    this.bus.once( "script-complete", resolve );
+                    const name = script.name;
+                    this.bus.emit( "run-script", { id, iteration, name, runId, pathScripts } );                
+        
+                } )
+                
+            )
+
+        );
         
     }    
     
@@ -92,7 +118,8 @@ module.exports = class MultiRun {
         
         this.outcome = { err };
         this.count( "failure" );
-        this.start();
+        console.error( err );
+        setTimeout( () => this.start(), 1000 );
         
     }
     

@@ -8,6 +8,8 @@
     "body-parser": "^1.16.1",
     "cucumber": "^2.0.0-rc.7",
     "express": "^4.14.1",
+    "fs-extra": "^2.1.2",
+    "glob": "^7.1.1",
     "prom-client": "^7.1.0",
     "pug": "^2.0.0-beta11",
     "request": "^2.81.0",

@@ -11,7 +11,7 @@ function defaultBuild() {
     
 }
 
-defineSupportCode( function( { setWorldConstructor, setDefaultTimeout, registerHandler, Before } ) {
+defineSupportCode( function( { setWorldConstructor, setDefaultTimeout, registerHandler, Before, After } ) {
 
     setWorldConstructor( World );
 
@@ -97,6 +97,16 @@ defineSupportCode( function( { setWorldConstructor, setDefaultTimeout, registerH
         
         this.client = browserStackClient;
 
+    } );
+    
+    After( function() {
+        
+        if ( this.headless.run && this.headless.run.dispose ) {
+
+            return this.headless.run.dispose();
+            
+        }
+        
     } );
     
 

@@ -1,19 +1,29 @@
 export default function( ns ) {
     
     const { bus, notify } = ns;
+    const aborted = {};
+    const instance = Math.random();
 
-console.log( "RUN SCRIPT" );    
+    bus.on( "abort-run", detail => {
+    
+        notify( `script-runner ${instance} received abort-run ${detail}` );
+        aborted[ detail.id ] = Date.now();
+        setTimeout( () => delete aborted[ detail.id ], 60000 );
+        
+    } );
+    
     bus.on( "run-script", script => {
     
         let bookmark = 0;
-console.log( "SCRIPT", script );        
         const { pathScripts, nextIterationURL, runId, name } = script;
         const scriptId = script.id;
         const context = { script: { scriptId, name, nextIterationURL, runId } };
         
         function nextPath() {
-
-            if ( bookmark < pathScripts.length ) { 
+            
+            const isAborted = runId in aborted;
+            if ( isAborted ) { bus.emit( "run-script-aborted", context ); }
+            if ( bookmark < pathScripts.length && !isAborted ) { 
                 
                 context.script.path = bookmark + 1;
                 bus.emit( "run-path", { context, ...pathScripts[ bookmark ] } );

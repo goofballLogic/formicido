@@ -5,12 +5,16 @@ const metrics = require( "./domain/metrics" );
 require( "./agents/prometheus-metrics" );
 bus.on( "metrics", x => metrics.publish( JSON.parse( x ) ) );
 
+const FileDiagnostics = require( "./agents/file-diagnostics" );
+const diagnostics = new FileDiagnostics( bus );
+
 const MultiRun = require( "./multi-run" );
 
 class Headless {
     
     run( scriptId, options = {} ) {
-        
+       
+        diagnostics.configure( options );
         const runner = new MultiRun( scriptId, options, bus );
         if ( options.continuous ) {
             
@@ -19,7 +23,9 @@ class Headless {
             
         } else {
             
-            return runner.runOne();
+            const result = runner.runOne();
+            runner.dispose();
+            return result;
             
         }
 
