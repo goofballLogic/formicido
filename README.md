@@ -48,6 +48,8 @@ There are two ways you may consider to run the agent within your application. Th
 <SCRIPT src="http://localhost:8888/agent"></SCRIPT>
 ```
 
+Another way to accomplish the same effect is to inject this script using a browser extension such as Tampermonkey. This process is explained here: [Setting up agent injection]
+
 ## Creating your first script
 
 Formicido scripts consist of one or more _paths_, each of which consist of one or more configured _steps_. A step is a piece of parameterisable code which can be configured and combined with other configured steps to make up a named _path_.
