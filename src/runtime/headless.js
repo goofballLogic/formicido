@@ -73,7 +73,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 12);
+/******/ 	return __webpack_require__(__webpack_require__.s = 9);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -91,7 +91,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
-var _events = __webpack_require__(10);
+var _events = __webpack_require__(11);
 
 var _events2 = _interopRequireDefault(_events);
 
@@ -255,7 +255,7 @@ exports.default = function (ns) {
         browser.wait();
     });
 };
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(11)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(12)))
 
 /***/ }),
 /* 2 */
@@ -555,7 +555,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = runner;
 
-var _promiseTimeout = __webpack_require__(9);
+var _promiseTimeout = __webpack_require__(10);
 
 var _promiseTimeout2 = _interopRequireDefault(_promiseTimeout);
 
@@ -691,6 +691,54 @@ function runner(ns) {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+
+var _app = __webpack_require__(0);
+
+var _app2 = _interopRequireDefault(_app);
+
+var _zombie = __webpack_require__(4);
+
+var _zombie2 = _interopRequireDefault(_zombie);
+
+var _agent = __webpack_require__(1);
+
+var _agent2 = _interopRequireDefault(_agent);
+
+var _diagnosticsSink = __webpack_require__(2);
+
+var _diagnosticsSink2 = _interopRequireDefault(_diagnosticsSink);
+
+var _notifications = __webpack_require__(3);
+
+var _notifications2 = _interopRequireDefault(_notifications);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var ns = { browser: new _zombie2.default() };
+
+[_app2.default, // must be first
+
+_notifications2.default, // user-display notifications
+
+_diagnosticsSink2.default, // create diagnostic reports for failures
+_agent2.default // navigation and execution of script against the browser
+
+].forEach(function (module) {
+    return module(ns);
+});
+
+exports.default = ns;
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 exports.default = promiseTimeout;
 function promiseTimeout(timeout, promise, callback) {
 
@@ -733,7 +781,7 @@ function promiseTimeout(timeout, promise, callback) {
 }
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports) {
 
 // Copyright Joyent, Inc. and other Node contributors.
@@ -1041,7 +1089,7 @@ function isUndefined(arg) {
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -1225,54 +1273,6 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-
-/***/ }),
-/* 12 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _app = __webpack_require__(0);
-
-var _app2 = _interopRequireDefault(_app);
-
-var _zombie = __webpack_require__(4);
-
-var _zombie2 = _interopRequireDefault(_zombie);
-
-var _agent = __webpack_require__(1);
-
-var _agent2 = _interopRequireDefault(_agent);
-
-var _diagnosticsSink = __webpack_require__(2);
-
-var _diagnosticsSink2 = _interopRequireDefault(_diagnosticsSink);
-
-var _notifications = __webpack_require__(3);
-
-var _notifications2 = _interopRequireDefault(_notifications);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var ns = { browser: new _zombie2.default() };
-
-[_app2.default, // must be first
-
-_notifications2.default, // user-display notifications
-
-_diagnosticsSink2.default, // create diagnostic reports for failures
-_agent2.default // navigation and execution of script against the browser
-
-].forEach(function (module) {
-    return module(ns);
-});
-
-exports.default = ns;
 
 /***/ })
 /******/ ]);

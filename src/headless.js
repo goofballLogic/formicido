@@ -12,8 +12,14 @@ const MultiRun = require( "./multi-run" );
 
 class Headless {
     
+    constructor() {
+        
+        this.bus = bus;
+        
+    }
+    
     run( scriptId, options = {} ) {
-       
+
         diagnostics.configure( options );
         const runner = new MultiRun( scriptId, options, bus );
         if ( options.continuous ) {
@@ -23,9 +29,11 @@ class Headless {
             
         } else {
             
-            const result = runner.runOne();
-            runner.dispose();
-            return result;
+            return runner.runOne().then( result => {
+
+                return runner.dispose().then( () => result );
+
+            } );
             
         }
 

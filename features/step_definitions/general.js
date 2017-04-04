@@ -14,7 +14,7 @@ defineSupportCode( function( { Given, When, Then } ) {
         
     } );
     
-    When( "I follow the {arg1:stringInDoubleQuotes} link", function ( linkText ) {
+    When( "I follow the {stringInDoubleQuotes} link", function ( linkText ) {
        
        return this.client.element( `//a[contains(string(.), '${linkText}')]` ).click();
        
@@ -26,55 +26,55 @@ defineSupportCode( function( { Given, When, Then } ) {
         
     } );
     
-    When( "I click the {buttonText:stringInDoubleQuotes} button and wait for the {messageName:stringInDoubleQuotes} message", function ( buttonText, messageName ) {
+    When( "I click the {stringInDoubleQuotes} button and wait for the {stringInDoubleQuotes} message", function ( buttonText, messageName ) {
          
         return this.formWorker.clickButtonToMessage( buttonText, messageName );
     
     } );
     
-    When( "I click the {buttonText:stringInDoubleQuotes} button and wait for( the) URL to change", function ( buttonText ) {
+    When( "I click the {stringInDoubleQuotes} button and wait for( the) URL to change", function ( buttonText ) {
     
        return this.formWorker.clickButtonToNewURL( buttonText );
     
     } );
 
-    When( "I click the {linkText:stringInDoubleQuotes} link and wait for URL to change", function ( linkText ) {
+    When( "I click the {stringInDoubleQuotes} link and wait for URL to change", function ( linkText ) {
     
        return this.formWorker.clickLinkToNewURL( linkText );
     
     } );
     
-    When( "I select {optionText:stringInDoubleQuotes} from the {labelText:stringInDoubleQuotes} dropdown", function( optionText, labelText ) {
+    When( "I select {stringInDoubleQuotes} from the {stringInDoubleQuotes} dropdown", function( optionText, labelText ) {
 
         return this.formWorker.selectLabelledDropdownOptionByText( labelText, optionText );
 
     } );
     
-    When( "I click the {buttonText:stringInDoubleQuotes} button and wait for the page to reload", function( buttonText ) {
+    When( "I click the {stringInDoubleQuotes} button and wait for the page to reload", function( buttonText ) {
 
         return this.formWorker.clickButtonToReload( buttonText );
         
     } );
     
-    Then( "the {fieldLabel:stringInDoubleQuotes} field value should be {expectedValue:stringInDoubleQuotes}", function( fieldLabel, expectedValue ) {
+    Then( "the {stringInDoubleQuotes} field value should be {stringInDoubleQuotes}", function( fieldLabel, expectedValue ) {
         
         return this.formWorker.expectLabelledFieldValue( fieldLabel, expectedValue );
         
     } );
     
-    When( "I select checkboxes for {fieldLabel:stringInDoubleQuotes}", function( fieldLabel, checkboxNameTable ) {
+    When( "I select checkboxes for {stringInDoubleQuotes}", function( fieldLabel, checkboxNameTable ) {
         
         return this.formWorker.selectLabelledCheckboxes( fieldLabel, checkboxNameTable );
         
     } );
     
-    Then( "the checked checkboxes for {fieldLabel:stringInDoubleQuotes} should be", function( fieldLabel, checkboxNameTable ) {
+    Then( "the checked checkboxes for {stringInDoubleQuotes} should be", function( fieldLabel, checkboxNameTable ) {
         
         return this.formWorker.expectCheckedLabelledCheckboxes( fieldLabel, checkboxNameTable );
         
     } );
     
-    When( "I wait for {selector:stringInDoubleQuotes} to equal {expected:stringInDoubleQuotes}", function( selector, expected ) {
+    When( "I wait for {stringInDoubleQuotes} to equal {stringInDoubleQuotes}", function( selector, expected ) {
 
         return this.formWorker.waitForExpectedContent( selector, expected );
 

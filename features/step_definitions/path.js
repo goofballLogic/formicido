@@ -8,13 +8,13 @@ defineSupportCode( function( { Given, When, Then } ) {
         
     } );
     
-    When( "I click the {linkLabel:stringInDoubleQuotes} link for step {stepNumber:int} and wait for the URL to change", function( linkLabel, stepNumber ) {
+    When( "I click the {stringInDoubleQuotes} link for step {int} and wait for the URL to change", function( linkLabel, stepNumber ) {
     
         return this.path.clickStepLinkToURL( linkLabel, stepNumber );
         
     } );
     
-    Then( "there should be {stepCount:int} steps shown", function( stepCount ) {
+    Then( "there should be {int} steps shown", function( stepCount ) {
     
         return this.path.expectStepCount( stepCount );
         

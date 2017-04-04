@@ -44,6 +44,7 @@ module.exports = class MultiRun {
         app.use( "/metrics", metricsRouter );
         const port = this.options.port || 8080;
         const host = this.options.host || "0.0.0.0";
+        
         this.server = app.listen( port, host, e => {
             
             if ( e ) { throw e; }

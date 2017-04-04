@@ -322,19 +322,27 @@ return new Promise( ( resolve, reject ) => {
 
     const port = config.port || 8080;
     const host = config.host || "0.0.0.0";
-    app.listen( port, host, e => {
+    try {
         
-        if ( e ) {
+        app.listen( port, host, e => {
             
-            reject( e );
+            if ( e ) {
+                
+                reject( e );
+                
+            } else {
+                
+                console.log( "Running", config );
+                resolve();
+                
+            }
             
-        } else {
-            
-            console.log( "Running", config );
-            resolve();
-            
-        }
+        } );
         
-    } );
+    } catch( e ) {
+        
+        reject( e );
+        
+    }
     
 } );

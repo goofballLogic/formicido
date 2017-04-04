@@ -2,7 +2,7 @@ const { defineSupportCode } = require( "cucumber" );
 
 defineSupportCode( function( { Given, When, Then } ) {
     
-    Then( "the diagnostics folder should contain {count:int} failure files", function( count ) {
+    Then( "the diagnostics folder should contain {int} failure files", function( count ) {
         
         return this.diagnostics.expectFailureFiles( count );
         
@@ -14,7 +14,7 @@ defineSupportCode( function( { Given, When, Then } ) {
         
     } );
     
-    Then( "the failure files should all have HTML matching {pattern:stringInDoubleQuotes}", function( expected ) {
+    Then( "the failure files should all have HTML matching {stringInDoubleQuotes}", function( expected ) {
         
         return this.diagnostics.expectFailureFileContentMatching( expected );
         
