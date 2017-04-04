@@ -8,7 +8,7 @@ Formicido is a library which contains an express.js web application which can be
 
 ## Design-time requirements
 
-Although no such requirements exist when running the monitoring tool, certain requirements are imposed in order to use the configuration interface:
+Once your script is created, it can be run in a headless browser. However, while creating the script, you may want to use the configuration interface, which places certain requirements on your application:
 
 * Your site must be capable of running within an IFRAME
 * You must run the Formicido javascript agent in your application, so that it can carry out browser-like actions (such as navigation or clicking)
