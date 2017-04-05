@@ -101,12 +101,13 @@ defineSupportCode( function( { setWorldConstructor, setDefaultTimeout, registerH
     
     After( function() {
         
-        if ( this.headless.run && this.headless.run.dispose ) {
-
-            return this.headless.run.dispose();
-            
-        }
+        return Promise.all( [
         
+            this.headless.dispose(),
+            this.cli.dispose()
+            
+        ] );
+
     } );
     
 

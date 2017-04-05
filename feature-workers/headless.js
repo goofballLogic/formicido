@@ -44,6 +44,16 @@ class Headless {
         
     }
     
+    dispose() {
+        
+        if ( this.run && this.run.dispose ) {
+            
+            return this.run.dispose();
+            
+        }
+
+    }
+    
     expectSuccessfulRun() {
 
         const { script } = this.result;

@@ -56,6 +56,34 @@ class CLI {
         
     }
     
+    dispose() {
+        
+        if ( this.current && !this.exited ) {
+        
+            this.current.kill();
+            return new Promise( resolve => {
+                
+                const poll = () => {
+                    
+                    if ( this.current && !this.exited ) {
+                        
+                        setTimeout( poll, 100 );
+                        
+                    } else {
+                        
+                        resolve();
+                        
+                    }
+                    
+                }
+                poll();
+                
+            } );
+            
+        }
+        
+    }
+    
     expectOutput( expected, expectedCount ) {
         
         return new Promise( ( resolve, reject ) => {
