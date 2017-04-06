@@ -15,9 +15,7 @@ const metricsRouter = require( "./metrics-router" );
 ].forEach( agent => require( agent ) );
 
 const agentjs = fs.readFileSync( __dirname + "/scripts/agent.js" );
-
 const config = require( "../config" );
-const configuredAgentJS = agentjs.toString().replace( /\$\{origin\}/g, config.origin );
 const handleErrors = res => err => {
                 
     console.error( err );
@@ -28,6 +26,7 @@ const handleErrors = res => err => {
 module.exports = function launchServer() {
     
     const app = express();
+    const configuredAgentJS = agentjs.toString().replace( /`\$\{origin\}`/g, `"${config.origin}"` );
     
     app.use( function( req, res, next ) {
 

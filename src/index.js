@@ -17,6 +17,8 @@ program
 program
     .command( "launch" )
     .description( "Launch the configuration server" )
+    .option( "-p, --port [port]", "Port on which to launch the server" )
+    .option( "-o, --origin [authority]", "Origin for web messaging API messages (e.g. http://localhost:8888)" )
     .action( launchServer );
     
 program.parse( argv );
@@ -39,13 +41,20 @@ function report( scriptResult ) {
 function updateConfig( config ) {
     
     // inject properties into the global config module
+    // this only works because config exposes a singleton and index only executes once
     Object.assign( require( "../config" ), config );
     
 }
 
-function launchServer() {
+function launchServer( command ) {
     
     const server = require( "./server" );
+    const { port, origin, repo } = command;
+    const config = {};
+    if ( port ) { config.port = port; }
+    if ( origin ) { config.origin = origin; }
+    if ( repo ) { config.repo = repo; }
+    updateConfig( config );
     return server();
     
 }
