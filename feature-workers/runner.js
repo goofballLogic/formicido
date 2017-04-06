@@ -71,7 +71,6 @@ class runner {
     
     executeScriptViaCLI( scriptId ) {
 
-console.log( this.defaultArgs );
         const args = [ location, "run", scriptId ].concat( this.defaultArgs || [] );
         if ( args.every( arg => !/^--diagnostics/.test( arg ) ) ) {
             
@@ -85,6 +84,38 @@ console.log( this.defaultArgs );
         }
         this.executeCLI( args );
         
+    }
+    
+    failToLaunchServerViaCLI( expectedFailMessage ) {
+        
+        const args = [ location, "launch" ].concat( this.defaultargs || [] );
+        this.executeCLI( args );
+        return new Promise( ( resolve, reject ) => {
+            
+            const poll = () => {
+                
+                if ( ~this.stderr.indexOf( expectedFailMessage ) && this.exited ) {
+                    
+                    resolve();
+                    
+                } else {
+            
+                    if ( !this.exited ) {
+                        
+                        setTimeout( poll, 100 );
+                        
+                    } else {
+                        
+                        reject( `Expected ${expectedFailMessage}. Actual: ${this.stderr}` );
+                        
+                    }
+                    
+                }
+                
+            };
+            poll();
+            
+        } );
     }
     
     launchServerViaCLI() {

@@ -23,4 +23,8 @@ Feature: Command line interface
        When I launch the server
        Then I should be able to download the agent script from "http://localhost:8888/agent" containing the origin "http://localhost:8888"
         And I should be able to browse to "http://localhost:8888/scripts"
-        
+
+    Scenario: Require a data path
+      Given CLI options are "--port 8888 --origin http://whatever"
+       When I attempt launch the server it should fail with message "You must specify the file-path where script data is stored (using the --repo argument)."
+       

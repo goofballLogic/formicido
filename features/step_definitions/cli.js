@@ -4,13 +4,19 @@ defineSupportCode( function( { Given, When, Then } ) {
     
     Given( "CLI options are {stringInDoubleQuotes}", function( defaultCLIargs ) {
 
-        this.runner.defaultArgsTo( defaultCLIargs );      
+        return this.runner.defaultArgsTo( defaultCLIargs );      
 
     } );
 
-    Given( "the CLI repo option is set to a well-known location", function () {
+    Given( "the CLI repo option is set to a well-known location", function() {
     
-        this.runner.addDefaultRepoArg();
+        return this.runner.addDefaultRepoArg();
+        
+    } );
+    
+    When( "I attempt launch the server it should fail with message {stringInDoubleQuotes}", function( expectedFailMessage ) {
+        
+        return this.runner.failToLaunchServerViaCLI( expectedFailMessage );
         
     } );
        

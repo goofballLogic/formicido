@@ -19,6 +19,7 @@ program
     .description( "Launch the configuration server" )
     .option( "-p, --port [port]", "Port on which to launch the server" )
     .option( "-o, --origin [authority]", "Origin for web messaging API messages (e.g. http://localhost:8888)" )
+    .option( "-r, --repo [file path]", "File path where script definitions are located" )
     .action( launchServer );
     
 program.parse( argv );
@@ -48,6 +49,12 @@ function updateConfig( config ) {
 
 function launchServer( command ) {
     
+    if ( !command.repo ) {
+        
+        console.error( "\nERROR: You must specify the file-path where script data is stored (using the --repo argument)." );
+        command.help();
+        
+    }
     const server = require( "./server" );
     const { port, origin, repo } = command;
     const config = {};

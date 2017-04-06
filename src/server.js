@@ -1,29 +1,29 @@
-const express = require( "express" );
-const bodyParser = require( "body-parser" );
-const fs = require( "fs" );
-const shortid = require( "shortid" );
-const stepDefinitions = require( "./domain/step-definitions" );
-const paths = require( "./domain/paths" );
-const scripts = require( "./domain/scripts" );
-const metrics = require( "./domain/metrics" );
-const metricsRouter = require( "./metrics-router" );
-
-[ 
-    //"./agents/console-metrics", 
-    "./agents/prometheus-metrics"
-
-].forEach( agent => require( agent ) );
-
-const agentjs = fs.readFileSync( __dirname + "/scripts/agent.js" );
-const config = require( "../config" );
-const handleErrors = res => err => {
-                
-    console.error( err );
-    res.status( 500 ).send( "The server failed processing your request." );
-                
-};
-
 module.exports = function launchServer() {
+
+    const express = require( "express" );
+    const bodyParser = require( "body-parser" );
+    const fs = require( "fs" );
+    const shortid = require( "shortid" );
+    const stepDefinitions = require( "./domain/step-definitions" );
+    const paths = require( "./domain/paths" );
+    const scripts = require( "./domain/scripts" );
+    const metrics = require( "./domain/metrics" );
+    const metricsRouter = require( "./metrics-router" );
+    
+    [ 
+        //"./agents/console-metrics", 
+        "./agents/prometheus-metrics"
+    
+    ].forEach( agent => require( agent ) );
+    
+    const agentjs = fs.readFileSync( __dirname + "/scripts/agent.js" );
+    const config = require( "../config" );
+    const handleErrors = res => err => {
+                    
+        console.error( err );
+        res.status( 500 ).send( "The server failed processing your request." );
+                    
+    };
     
     const app = express();
     const configuredAgentJS = agentjs.toString().replace( /`\$\{origin\}`/g, `"${config.origin}"` );

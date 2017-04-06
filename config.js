@@ -5,7 +5,7 @@ module.exports = {
     origin: process.env.ORIGIN,
     repo: {
         
-        root: process.env.FILE_REPO_ROOT || __dirname + "/data"
+        root: process.env.FILE_REPO_ROOT
         
     }
     

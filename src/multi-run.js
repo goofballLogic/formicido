@@ -1,7 +1,8 @@
-const scripts = require( "./domain/scripts" );
 const express = require( "express" );
 const metricsRouter = require( "./metrics-router" );
 const shortid = require( "shortid" );
+
+const requireScripts = () => require( "scripts" ); // delays loading to allow injection of config
 
 const eventLog = Symbol( "event-log" );
 module.exports = class MultiRun {
@@ -82,7 +83,7 @@ module.exports = class MultiRun {
         const iteration = this.iteration = ( this.iteration || 0 ) + 1;
         const id = this.scriptId;
         const runId = this.runId;
-        return scripts.fetch( id ).then( script => 
+        return requireScripts().fetch( id ).then( script => 
         
             script.generateJS().then( pathScripts => 
             

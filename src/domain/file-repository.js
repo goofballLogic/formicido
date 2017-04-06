@@ -5,6 +5,8 @@ const asy = require( "async" );
 const config = require( "../../config" );
 const fileRepositoryRoot = config.repo.root;
 
+if ( !fileRepositoryRoot ) { throw new Error( "Repository root is not specified." ); }
+
 fs.statSync( fileRepositoryRoot );
 
 // http://stackoverflow.com/a/24311711/275501
