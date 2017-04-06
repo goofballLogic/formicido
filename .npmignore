@@ -2,3 +2,8 @@ feature**
 fixtures**
 .c9
 data
+BrowserStackLocal
+env.sh
+README.md
+webpack.config.js
+app.js
