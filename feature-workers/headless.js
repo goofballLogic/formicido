@@ -1,6 +1,7 @@
-const index = require( "../src" );
 const assert = require( "assert" );
 const request = require( "request" );
+const headless = require( "../src/headless" );
+
 /*
     ^formicido_script__             must start with this string
     (?:
@@ -18,7 +19,7 @@ class Headless {
     constructor( world ) {
         
         this.world = world;
-        this.headless = index( null, true );
+        this.headless = headless;
         this.options = this.world.config.headless;
         
     }

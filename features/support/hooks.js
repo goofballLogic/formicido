@@ -1,5 +1,4 @@
 const { defineSupportCode } = require( "cucumber" );
-const index = require( "../../src" );
 const testServer = require( "../../fixtures/test-server" );
 const config = require( "../config" );
 const webdriverio = require( "webdriverio" );
@@ -8,6 +7,12 @@ const World = require( "./world" );
 function defaultBuild() {
     
     return `dev ${new Date().toDateString()}`;
+    
+}
+
+function updateConfig( injectedProperties ) {
+    
+    Object.assign( require( "../../config" ), injectedProperties );
     
 }
 
@@ -63,7 +68,7 @@ defineSupportCode( function( { setWorldConstructor, setDefaultTimeout, registerH
 
         return Promise.all( [
           
-            index( config.app ),
+            updateConfig( config.app ),
             testServer( config.test, config.app ),
             initBrowserStack()
           
@@ -96,6 +101,7 @@ defineSupportCode( function( { setWorldConstructor, setDefaultTimeout, registerH
     Before( function() {
         
         this.client = browserStackClient;
+        this.defaultServer = this.runner.startDefaultServer();
 
     } );
     
@@ -104,11 +110,10 @@ defineSupportCode( function( { setWorldConstructor, setDefaultTimeout, registerH
         return Promise.all( [
         
             this.headless.dispose(),
-            this.cli.dispose()
+            this.runner.dispose()
             
         ] );
 
     } );
-    
 
 } );

@@ -1,8 +1,9 @@
 const { spawn } = require( "child_process" );
 const path = require( "path" );
-const location = path.resolve( __dirname, "../src/cli" );
+const location = path.resolve( __dirname, "../src/index.js" );
+const server = require( "../src/server" );
 
-class CLI {
+class runner {
     
     constructor( world ) {
         
@@ -56,13 +57,39 @@ class CLI {
         
     }
     
+    startDefaultServer() {
+        
+        if ( !~process.argv.indexOf( "--headless" ) ) {
+        
+            return server().then( 
+                
+                httpServer => {
+                    
+                    this.server = httpServer;
+                    this.server.on( "connection", socket => {
+                        
+                        socket.setKeepAlive( false, 0 );
+                        
+                    } );
+                    this.server.unref();
+                
+                }, 
+                e => { throw e; }
+                
+            );
+            
+        }
+
+    }
+    
     dispose() {
         
+        const promises = [];
         if ( this.current && !this.exited ) {
         
-            this.current.kill();
-            return new Promise( resolve => {
-                
+            promises.push( new Promise( resolve => {
+        
+                this.current.kill();        
                 const poll = () => {
                     
                     if ( this.current && !this.exited ) {
@@ -75,12 +102,31 @@ class CLI {
                         
                     }
                     
-                }
+                };
                 poll();
                 
-            } );
+            } ) );
             
         }
+        if ( this.server ) {
+            
+            promises.push( new Promise( ( resolve, reject ) => {
+                
+                this.server.close( e => {
+                    
+                    if ( e ) { reject( e ); } else { 
+                        
+                        this.server = null;
+                        resolve();
+                    
+                    }
+                    
+                } );
+                
+            } ) );
+            
+        }
+        return Promise.all( promises );
         
     }
     
@@ -126,4 +172,4 @@ class CLI {
     }
 
 }
-module.exports = CLI;
+module.exports = runner;
