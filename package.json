@@ -1,6 +1,6 @@
 {
   "name": "formicido",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "description": "Site monitor like an ant",
   "main": "src/index.js",
   "dependencies": {
