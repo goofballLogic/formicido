@@ -3,6 +3,8 @@
 # formicido
 Site monitor like an ant.
 
+<img src="https://github.com/goofballLogic/formicido/raw/assets/ants.jpg" width="300" />
+
 ## Usage
 The wiki contains guides to using Formicido: https://github.com/goofballLogic/formicido/wiki
 
@@ -15,4 +17,4 @@ Thanks to the good people at BrowserStack, this application is being automatical
 
 
 
-![](https://github.com/goofballLogic/formicido/raw/assets/ants.jpg)
+
