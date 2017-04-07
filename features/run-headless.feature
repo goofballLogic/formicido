@@ -14,11 +14,11 @@ Feature: Run script in headless browser
       | path             |
       | nav-to-missing   |
     And well-known script "one-dodgy-path" exists
-    
+
     Scenario: Invoke a single run
       When I invoke a headless run for "all-three-paths"
       Then the headless run should complete without error
-    
+
     Scenario: Run a script until three completed runs are logged
       When I invoke a continuous headless run for "all-three-paths"
       Then I wait for the "script-complete" event to be emitted 3 times
@@ -26,7 +26,7 @@ Feature: Run script in headless browser
     Scenario: Serve metrics from continuous script
       When I invoke a continuous headless run for "all-three-paths"
       Then I wait for the script collected metric to reach 3
-    
+
     Scenario: Record the state of the browser on step failure
       When I invoke a continuous headless run for "one-dodgy-path"
        And I wait for the "script-complete" event to be emitted 2 times

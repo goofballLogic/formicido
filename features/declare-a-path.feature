@@ -2,11 +2,11 @@ Feature: Declare a path
   As a user of Formicido
   I want to be able to declare a path
   So that I can compose multiple configured steps together
-  
+
   Background:
     Given I have opened formicido
       And I follow the "Paths" link
-     
+
   Scenario: Create a path with a navigate and a click step
      When I click the "Create" link and wait for URL to change
       And I select "Navigate" from the "Add a new step" dropdown
@@ -24,7 +24,7 @@ Feature: Declare a path
       And I click the "Run" button and wait for the "path-complete" message
      Then the frame's text should contain "The Charge of the Light Brigade"
       And all steps should have succeeded
-  
+
   Scenario: Create a path with a navigate step and a click step, then delete the navigate step
      When I click the "Create" link and wait for URL to change
       And I select "Navigate" from the "Add a new step" dropdown
@@ -42,7 +42,7 @@ Feature: Declare a path
       And I click the "Delete" link for step 1 and wait for the URL to change
       And I click the "Confirm" button and wait for the URL to change
      Then there should be 1 steps shown
-  
+
   Scenario: Create a path and name items
       When I click the "Create" link and wait for URL to change
       And I enter form values

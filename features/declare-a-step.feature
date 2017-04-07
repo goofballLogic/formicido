@@ -2,11 +2,11 @@ Feature: Declare a step
   As a user of Formicido
   I want to be able to declare steps
   So that I can compose them into paths of behaviour
-  
+
   Background:
     Given I have opened formicido
       And I follow the "Steps" link
-     
+
   Scenario: Navigate to a new URL
      When I follow the "Navigate" link
       And I enter form values

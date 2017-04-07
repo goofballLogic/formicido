@@ -1,6 +1,6 @@
 extends layout
-    
-block content    
+
+block content
     h1 Scripts
     a(href="/scripts/" + newId) Create
     ul(class="scripts")
@@ -9,5 +9,4 @@ block content
                 a(href="/scripts/" + script.id)
                     span(class="script-name")= script.name
                     span #{script.modified.toDateString()}, #{script.modified.toLocaleTimeString()}
-                    
-    
+

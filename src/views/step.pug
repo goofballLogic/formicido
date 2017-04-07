@@ -1,11 +1,11 @@
 extends layout-with-browser
-    
+
 mixin field( fieldDef )
     label
         span(class="label-text")
             = fieldDef.label
         input(type=fieldDef.type name=fieldDef.name)
-    
+
 mixin fields( fieldDefs )
     each fieldDef in fieldDefs
         +field( fieldDef )
@@ -15,7 +15,7 @@ prepend content
     form(method="POST", class="via-ajax")
         +fields( step.class.shape )
         button= "Run"
-    div(class="step-outcome")        
+    div(class="step-outcome")
     div
         textarea(id="code", readonly)
     ol(id="transcript")

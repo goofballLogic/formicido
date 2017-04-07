@@ -9,18 +9,18 @@ const nameMunger = name => name.split( "-" ).map( ( x, i ) => i > 0 ? x[ 0 ].toU
 class World {
 
     constructor() {
-        
+
         this.config = config;
         // auto load workers
         workers.forEach( worker => {
-           
+
             const Constructor = require( `${workerPath}/${worker}` );
             const memberName = nameMunger( worker );
             this[ memberName ] = new Constructor( this );
-            
+
         } );
-                
+
     }
-    
+
 }
 module.exports = World;

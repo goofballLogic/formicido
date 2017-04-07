@@ -4,28 +4,28 @@ prepend content
     div(class="run-counter")
         | Completed runs:
         span(class="run-count")= iteration
-    
+
     label
         input(type="checkbox",id="stop")
         span(class="checkbox-label")= "Pause after this iteration"
     a(href=nextIterationURL,class="next-iteration")= "Proceed to next iteration..."
-    
-    h3= "Paths"        
+
+    h3= "Paths"
     div(class="outcome script-outcome")
-    ol(class="transcript script-transcript")        
+    ol(class="transcript script-transcript")
     h3= "Steps"
     div(class="outcome path-outcome")
     ol(class="transcript path-transcript")
 
 append content
     script.
-        window.formicido.bus.emit( "initiate-script", { 
-            
+        window.formicido.bus.emit( "initiate-script", {
+
             nextIterationURL: "#{nextIterationURL}",
             pathScripts: !{pathScripts},
             id: "#{scriptId}",
             runId: "#{runId}",
             iteration: "#{iteration}",
             name: "#{name}"
-                
+
         } );

@@ -20,20 +20,20 @@ import metricsSink from "./listeners/browser/metrics-sink";
 
 const ns = window.formicido = window.formicido || {};
 
-[ 
+[
     app, // must be first
-    
+
     notifications, // user-display notifications
     metricsSink, // relay metrics to the server
-    
+
     ajaxFormSubmit, // ajaxify form submission
-    
+
     agentEmitters, // marshall messages from agent
     agentListeners, // marshall messages to agent
-    
+
     embeddedBrowserWidget, // react to the embedded (iframe) browser control
     runners, // log the results of running stuff
-    
+
     stepPage,
     pathPage,
     scriptRunPage

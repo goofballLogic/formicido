@@ -4,7 +4,7 @@ const argv = global.argv || process.argv; // test seam
 
 program
     .version( require( "../package.json" ).version );
-    
+
 program
     .command( "run [script-id]" )
     .description( "Run a script (continuously). Specify the id of the script to run." )
@@ -26,38 +26,38 @@ program
 program.parse( argv );
 
 if ( !program.args.length ) {
-    
+
     program.help();
-    
+
 }
 
 function report( scriptResult ) {
-    
+
     const { script } = scriptResult;
     const { start, end, scriptId: id, name } = script;
     const elapsed = ( end - start ) / 1000;
     console.log( `Script complete: ${id} "${name}" (${elapsed} seconds)` );
-    
+
 }
 
 function updateConfig( config ) {
-    
+
     // inject properties into the global config module
     // this only works because config exposes a singleton and index only executes once
     Object.assign( require( "../config" ), config );
-    
+
 }
 
 
 function ensureRepoOption( command ) {
-    
+
     if ( !command.repo ) {
-        
+
         console.error( "\nERROR: You must specify the file-path where script data is stored (using the --repo argument)." );
         command.help();
-        
+
     }
-    
+
 }
 
 function launchServer( command ) {
@@ -71,19 +71,19 @@ function launchServer( command ) {
     if ( repo ) { config.repo = repo; }
     updateConfig( config );
     return server();
-    
+
 }
 
 function runScript( scriptId, command ) {
 
     if ( !scriptId ) { program.help(); }
     ensureRepoOption( command );
-    const { diagnostics: filePath, port, one, repo } = command; 
-    const config = { 
-        
+    const { diagnostics: filePath, port, one, repo } = command;
+    const config = {
+
         diagnostics: { filePath },
         continuous: !one
-        
+
     };
     if ( port ) { config.port = port; }
     if ( repo ) { config.repo = repo; }
@@ -91,45 +91,45 @@ function runScript( scriptId, command ) {
 
     const headless = require( "./headless" );
     if ( command.logScriptEvents ) {
-        
+
         headless.bus.on( "script-complete", detail => report( detail ) );
-        
+
     }
     headless
         .run( scriptId, config )
         .then( maybeResult => {
-            
+
         if ( maybeResult.script && !maybeResult.current ) {
-        
+
             report( maybeResult );
             return null;
-            
+
         } else {
-            
+
             return maybeResult;
-            
+
         }
-            
+
     } ).then(
-        
+
         maybeMultiRun => {
-            
+
             if ( maybeMultiRun ) {
-                
+
                 console.log( "Running..." );
-                
+
             } else {
-                
+
                 process.exit();
-                
+
             }
-            
+
         }
-            
+
     ).catch(
-        
-        err => console.error( err.stack ) 
-        
+
+        err => console.error( err.stack )
+
     );
-    
+
 }

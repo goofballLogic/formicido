@@ -1,6 +1,6 @@
 extends layout
-    
-block content    
+
+block content
     h1 Paths
     a(href="/paths/" + newId) Create
     ul(class="paths")
@@ -9,5 +9,4 @@ block content
                 a(href="/paths/" + path.id)
                     span(class="path-name")= path.name
                     span #{path.modified.toDateString()}, #{path.modified.toLocaleTimeString()}
-                    
-    
+

@@ -1,12 +1,12 @@
 export default function( ns ) {
-    
+
     const { bus, browser } = ns;
- 
+
     bus.on( "step-complete", detail => {
- 
+
         const { script, path, step } = detail;
         if ( step && step.err ) {
- 
+
             const window = browser.tabs.current;
             const location = window.location.toString();
             const content = window.document.documentElement.outerHTML;
@@ -15,7 +15,7 @@ export default function( ns ) {
             const scriptId = script && script.scriptId;
             const now = Date.now();
             const report = {
-              
+
                 content,
                 detail,
                 disposition,
@@ -25,12 +25,12 @@ export default function( ns ) {
                 pathId,
                 step: path && path.step,
                 scriptId
-                
+
             };
             bus.emit( "diagnostic-report", report );
-            
+
         }
 
     } );
-    
+
 }

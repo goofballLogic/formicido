@@ -2,7 +2,7 @@ Feature: Declare a script
   As a user of Formicido
   I want to be able to declare a script
   So that I can compose a repeating sequence of paths, and run them to generate events
-  
+
   Background: Three created paths, then go to scripts and click Create
     Given well-known test paths exist:
       | path             |

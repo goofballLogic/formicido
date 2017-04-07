@@ -1,11 +1,11 @@
 extends layout-with-browser
-    
+
 mixin field( fieldDef )
     label
         span(class="label-text")
             = fieldDef.label
         input(type=fieldDef.type, name=fieldDef.name, value=args[fieldDef.name])
-    
+
 mixin fields( fieldDefs, step )
     each fieldDef in fieldDefs
         +field( fieldDef, step )
@@ -16,6 +16,6 @@ prepend content
         +fields( step.class.shape )
         button(class="redirect-form", value=testRunsUrl) Run
         button Save step
-    div(id="outcome")        
+    div(id="outcome")
     div
         textarea(id="code", readonly)
