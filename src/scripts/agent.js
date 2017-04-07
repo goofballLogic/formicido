@@ -20,8 +20,8 @@ window.addEventListener( "message", function( e ) {
 
     }
     var origin = `${origin}`;
-    log( "Agent received", e, e.origin, origin );
     if( e.origin !== origin ){ return; }
+    log( "Agent received", e, e.origin, origin );
 
     var cid = e.data && e.data.cid;
 
