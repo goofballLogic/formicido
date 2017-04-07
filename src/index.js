@@ -20,6 +20,7 @@ program
     .description( "Launch the configuration server" )
     .option( "-p, --port [port]", "Port on which to launch the server" )
     .option( "-o, --origin [authority]", "Origin for web messaging API messages (e.g. http://localhost:8888)" )
+    .option( "-h, --host [host]", "Host for server (e.g. 0.0.0.0)" )
     .option( "-r, --repo [file-path]", "File path where script definitions are located" )
     .action( launchServer );
 
@@ -64,11 +65,12 @@ function launchServer( command ) {
 
     ensureRepoOption( command );
     const server = require( "./server" );
-    const { port, origin, repo } = command;
+    const { port, origin, repo, host } = command;
     const config = {};
     if ( port ) { config.port = port; }
     if ( origin ) { config.origin = origin; }
     if ( repo ) { config.repo = repo; }
+    config.host = host || "0.0.0.0";
     updateConfig( config );
     return server();
 

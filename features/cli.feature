@@ -18,7 +18,7 @@ Feature: Command line interface
        Then I wait for "Script complete: all-three-paths" to be output to the console 3 times
 
     Scenario: Start server (CLI)
-      Given CLI options are "--port 8888 --origin http://localhost:8888"
+      Given CLI options are "--port 8888 --origin http://localhost:8888 --host 0.0.0.0"
        When I launch the server
        Then I should be able to download the agent script from "http://localhost:8888/agent" containing the origin "http://localhost:8888"
         And I should be able to browse to "http://localhost:8888/scripts"
