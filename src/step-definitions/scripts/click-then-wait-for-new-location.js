@@ -26,7 +26,7 @@ return Promise.resolve().then( function() {
             return remote( fetchLocationScript, 1000 ).then( function( newState ) {
 
                 return newState
-                    && ( newState.readyState === "complete" )
+                    && ( ~[ "complete", "interactive" ].indexOf( newState.readyState ) )
                     && ( newState.location !== initialState.location );
 
             } );
