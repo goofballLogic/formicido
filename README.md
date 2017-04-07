@@ -12,3 +12,7 @@ TBD: documentation for contributors
 ## Testing
 Thanks to the good people at BrowserStack, this application is being automatically tested cross-browser. This means that we can drive selenium tests running in Travis as part of our CI build. We use Browserstack selenium bindings along with Cucumber.
 [More about testing with Selenium](https://github.com/goofballLogic/formicido/wiki/Testing)
+
+
+
+![](https://github.com/goofballLogic/formicido/raw/assets/ants.jpg)
