@@ -2,7 +2,7 @@ const express = require( "express" );
 const metricsRouter = require( "./metrics-router" );
 const shortid = require( "shortid" );
 
-const requireScripts = () => require( "scripts" ); // delays loading to allow injection of config
+const requireScripts = () => require( "./domain/scripts" ); // delays loading to allow injection of config
 
 const eventLog = Symbol( "event-log" );
 module.exports = class MultiRun {

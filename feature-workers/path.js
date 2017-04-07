@@ -1,6 +1,6 @@
 const assert = require( "assert" );
 const path = require( "path" );
-const fs = require( "fs" );
+const fs = require( "fs-extra" );
 
 class Path {
     
@@ -14,21 +14,26 @@ class Path {
     
     createWellKnownPath( pathId ) {
 
-        const fileStorePath = path.resolve( __dirname, `../data/paths/${pathId}.json` );                
+        const { repo } = this.world.config.app;
+        const fileStorePath = path.resolve( repo, `./paths/${pathId}.json` );                
         const pristinePath = path.resolve( __dirname, `../feature-data-pristine/path--${pathId}.json` );
-        return new Promise( ( resolve, reject ) => {
+        return new Promise( ( resolve, reject ) => 
         
-            fs.readFile( pristinePath, ( readError, data ) => {
+            fs.readFile( pristinePath, ( readError, data ) => readError ? reject( readError )
+            
+                : fs.ensureFile( fileStorePath, ensureError => ensureError ? reject( ensureError )
                 
-                if ( readError ) { reject( readError ); } else {
-        
-                    fs.writeFile( fileStorePath, data, ( writeError ) => writeError ? reject( writeError ) : resolve() );
+                    : fs.writeFile( fileStorePath, data, writeError => writeError ? reject( writeError )
                     
-                }
-                
-            } );
+                        : resolve()
+                        
+                    )
+                    
+                )
+            
+            )
 
-        } );
+        );
         
     }
     

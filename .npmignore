@@ -2,6 +2,7 @@ feature**
 fixtures**
 .c9
 data
+data-testing
 BrowserStackLocal
 env.sh
 README.md

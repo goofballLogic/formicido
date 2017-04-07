@@ -1,5 +1,5 @@
 const path = require( "path" );
-const fs = require( "fs" );
+const fs = require( "fs-extra" );
 
 class Script {
 
@@ -11,17 +11,26 @@ class Script {
     
     createWellKnownScript( scriptId ) {
 
+        const { repo } = this.world.config.app;
         try {
 
             const pristinePath = path.resolve( __dirname, `../feature-data-pristine/script--${scriptId}.json` );
-            const fileSystemPath = path.resolve( __dirname, `../data/scripts/${scriptId}.json` );
+            const fileSystemPath = path.resolve( repo, `./scripts/${scriptId}.json` );
             const script = require( pristinePath );
             const { paths } = script;
             return this.world.path.createWellKnownPaths( paths ).then( () => 
             
                 new Promise( ( resolve, reject ) => 
                 
-                    fs.writeFile( fileSystemPath, JSON.stringify( script, null, 1 ), e => e ? reject( e ) : resolve() )
+                    fs.ensureFile( fileSystemPath, ensureError => ensureError ? reject( ensureError )
+                    
+                        : fs.writeFile( fileSystemPath, JSON.stringify( script, null, 1 ), e => e ? reject( e ) 
+                        
+                            : resolve()
+                        
+                        )
+                        
+                    )
                     
                 )
                 

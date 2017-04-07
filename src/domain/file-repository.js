@@ -3,7 +3,7 @@ const path = require( "path" );
 const asy = require( "async" );
 
 const config = require( "../../config" );
-const fileRepositoryRoot = config.repo.root;
+const fileRepositoryRoot = config.repo;
 
 if ( !fileRepositoryRoot ) { throw new Error( "Repository root is not specified." ); }
 

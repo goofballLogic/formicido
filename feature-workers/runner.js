@@ -5,10 +5,9 @@ const request = require( "request" );
 const server = require( "../src/server" );
 
 const location = path.resolve( __dirname, "../src/index.js" );
-const testRepoLocation = path.resolve( __dirname, "../data/runner-tests" );
 
 class runner {
-    
+
     constructor( world ) {
         
         this.world = world;
@@ -21,51 +20,56 @@ class runner {
         
     }
     
-    addDefaultRepoArg() {
+    suppressRepoOption() {
         
-        return new Promise( ( resolve, reject ) => {
-            
-            fs.ensureDir( testRepoLocation, e => {
-                
-                if ( e ) { reject( e ); } else {
-
-                    this.defaultArgs = this.defaultArgs || [];
-                    this.defaultArgs.push( "--repo", testRepoLocation );
-                    resolve();
-                    
-                }
-                
-            } );
-        
-        } );
+        this._suppressRepoOption = true;
         
     }
     
     executeCLI( args ) {
         
-        this.stdout = this.stderr = "";
-        this.exited = false;
-        console.log( "Spawning node", args.join( " " ) );
-        this.current = spawn( "node", args, { stdio: [ "pipe", "pipe", "pipe" ] } );
-        this.current.stdout.on( "data", data => { 
-            
-            console.log( data.toString().replace( /\n$/, "" ) );
-            this.stdout = this.stdout + data.toString();
+        const { repo } = this.world.config.app;
+        return new Promise( ( resolve, reject ) => 
         
-        } );
-        this.current.stderr.on( "data", data => { 
+            fs.ensureDir( repo, e => {
             
-            console.error( data.toString().replace( /\n$/, "" ) );    
-            this.stderr = this.stderr + data.toString();
-        
-        } );
-        this.current.on( "error", e => { this.err = e; } );
-        this.current.on( "exit", x => { 
+                if ( e ) { reject( e ); } else {
+                
+                    if ( !this._suppressRepoOption ) {
+                    
+                        args.push( "--repo", repo );
+                        
+                    }
+                    this.stdout = this.stderr = "";
+                    this.exited = false;
+                    console.log( "Spawning node", args.join( " " ) );
+                    this.current = spawn( "node", args, { stdio: [ "pipe", "pipe", "pipe" ] } );
+                    this.current.stdout.on( "data", data => { 
+                    
+                        console.log( data.toString().replace( /\n$/, "" ) );
+                        this.stdout = this.stdout + data.toString();
+                    
+                    } );
+                    this.current.stderr.on( "data", data => { 
+                        
+                        console.error( data.toString().replace( /\n$/, "" ) );    
+                        this.stderr = this.stderr + data.toString();
+                    
+                    } );
+                    this.current.on( "error", e => { this.err = e; } );
+                    this.current.on( "exit", x => { 
+                        
+                        this.exited = true;
+                        this.exitCode = x; 
+                        
+                    } );
+                    resolve();
+                    
+                }
             
-            this.exited = true;
-            this.exitCode = x; 
+            } )
             
-        } );
+        );
         
     }
     
@@ -82,64 +86,71 @@ class runner {
             args.push( "--port", this.world.config.headless.port );
             
         }
-        this.executeCLI( args );
+        return this.executeCLI( args );
         
     }
     
     failToLaunchServerViaCLI( expectedFailMessage ) {
         
         const args = [ location, "launch" ].concat( this.defaultargs || [] );
-        this.executeCLI( args );
-        return new Promise( ( resolve, reject ) => {
+        return this.executeCLI( args ).then( () => 
+        
+            new Promise( ( resolve, reject ) => {
             
-            const poll = () => {
-                
-                if ( ~this.stderr.indexOf( expectedFailMessage ) && this.exited ) {
+                const poll = () => {
                     
-                    resolve();
-                    
-                } else {
-            
-                    if ( !this.exited ) {
+                    if ( ~this.stderr.indexOf( expectedFailMessage ) && this.exited ) {
                         
-                        setTimeout( poll, 100 );
+                        resolve();
                         
                     } else {
-                        
-                        reject( `Expected ${expectedFailMessage}. Actual: ${this.stderr}` );
+                
+                        if ( !this.exited ) {
+                            
+                            setTimeout( poll, 100 );
+                            
+                        } else {
+                            
+                            reject( `Expected ${expectedFailMessage}. Actual: ${this.stderr}` );
+                            
+                        }
                         
                     }
                     
-                }
+                };
+                poll();
                 
-            };
-            poll();
+            } )
             
-        } );
+        );
+        
     }
     
     launchServerViaCLI() {
         
         const args = [ location, "launch" ].concat( this.defaultArgs || [] );
-        this.executeCLI( args );
-        return new Promise( resolve => {
+        return this.executeCLI( args ).then( () => 
         
-            const poll = () => {
+            new Promise( resolve => {
+        
+                const poll = () => {
                 
-                if ( /Running/.test( this.stdout ) ) {
+                    if ( /Running/.test( this.stdout ) ) {
+                        
+                        resolve();
+                        
+                    } else {
                     
-                    resolve();
+                        setTimeout( poll, 100 );
+                        
+                    }
                     
-                } else {
+                };
+                poll();
                 
-                    setTimeout( poll, 100 );
-                    
-                }
-                
-            };
-            poll();
+            } )
             
-        } );
+        );
         
     }
     

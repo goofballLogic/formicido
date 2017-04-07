@@ -7,10 +7,10 @@ defineSupportCode( function( { Given, When, Then } ) {
         return this.runner.defaultArgsTo( defaultCLIargs );      
 
     } );
-
-    Given( "the CLI repo option is set to a well-known location", function() {
     
-        return this.runner.addDefaultRepoArg();
+    Given( "no repo option is supplied", function() {
+        
+        return this.runner.suppressRepoOption();
         
     } );
     

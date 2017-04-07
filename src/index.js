@@ -8,7 +8,8 @@ program
 program
     .command( "run [script-id]" )
     .description( "Run a script (continuously). Specify the id of the script to run." )
-    .option( "-d, --diagnostics [filePath]", "File path to diagnostics folder" )
+    .option( "-r, --repo [file-path])", "File path where script definitions are located" )
+    .option( "-d, --diagnostics [file-path]", "File path to diagnostics folder" )
     .option( "-p, --port [port]", "Port from which to serve metrics" )
     .option( "-o, --one", "Just run the script once")
     .option( "-ls, --log-script-events", "Log script events" )
@@ -19,9 +20,9 @@ program
     .description( "Launch the configuration server" )
     .option( "-p, --port [port]", "Port on which to launch the server" )
     .option( "-o, --origin [authority]", "Origin for web messaging API messages (e.g. http://localhost:8888)" )
-    .option( "-r, --repo [file path]", "File path where script definitions are located" )
+    .option( "-r, --repo [file-path]", "File path where script definitions are located" )
     .action( launchServer );
-    
+
 program.parse( argv );
 
 if ( !program.args.length ) {
@@ -47,7 +48,8 @@ function updateConfig( config ) {
     
 }
 
-function launchServer( command ) {
+
+function ensureRepoOption( command ) {
     
     if ( !command.repo ) {
         
@@ -55,6 +57,12 @@ function launchServer( command ) {
         command.help();
         
     }
+    
+}
+
+function launchServer( command ) {
+
+    ensureRepoOption( command );
     const server = require( "./server" );
     const { port, origin, repo } = command;
     const config = {};
@@ -69,8 +77,8 @@ function launchServer( command ) {
 function runScript( scriptId, command ) {
 
     if ( !scriptId ) { program.help(); }
-
-    const { diagnostics: filePath, port, one } = command; 
+    ensureRepoOption( command );
+    const { diagnostics: filePath, port, one, repo } = command; 
     const config = { 
         
         diagnostics: { filePath },
@@ -78,9 +86,9 @@ function runScript( scriptId, command ) {
         
     };
     if ( port ) { config.port = port; }
-    
+    if ( repo ) { config.repo = repo; }
     updateConfig( config );
-    
+
     const headless = require( "./headless" );
     if ( command.logScriptEvents ) {
         
