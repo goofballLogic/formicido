@@ -10,7 +10,7 @@ class Step{
 
         const { repo } = this.world.config.app;
         const fileStoreScripts = path.resolve( repo, "./steps/scripts" );
-        const pristineScripts = path.resolve( __dirname, "../feature-data-pristine/steps/scripts" );
+        const pristineScripts = path.resolve( __dirname, "../feature-data-pristine/step-scripts" );
         return new Promise( ( resolve, reject ) =>
 
             fs.copy( pristineScripts, fileStoreScripts, ( e ) => e ? reject( e ) : resolve() )
@@ -22,8 +22,8 @@ class Step{
     createWellKnownStep( stepId ) {
 
         const { repo } = this.world.config.app;
-        const fileStoreStep = path.resolve( repo, `./steps/${stepId}.json` );
-        const pristineStep = path.resolve( __dirname, `../feature-data-pristine/step--${stepId}.json` );
+        const fileStoreStep = path.resolve( repo, `./steps/${stepId}.js` );
+        const pristineStep = path.resolve( __dirname, `../feature-data-pristine/step--${stepId}.js` );
         return new Promise( ( resolve, reject ) =>
 
             fs.readFile( pristineStep, ( readError, data ) => readError ? reject( readError )
@@ -55,7 +55,7 @@ class Step{
 
             steps
                 .map( x => this.createWellKnownStep( x ) )
-                .concat( this.copyWellKnownScriptsFolder )
+                .concat( this.copyWellKnownScriptsFolder() )
 
         );
 

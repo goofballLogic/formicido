@@ -13,9 +13,10 @@ Feature: Handle unhappy path scenarios
         | login-as-needed |
       And I have opened formicido
       And I follow the "Paths" link
+      And I navigate to the "Navigate to a secured home page" path
 
   Scenario: Associate compensation path to existing path
-    Given I click the "Add unhappy path(s)" link and wait for the URL to change
+    Given I click the "Add unhappy path(s)..." link and wait for the URL to change
      When I select checkboxes for "Paths"
         | Name            |
         | Login as needed |

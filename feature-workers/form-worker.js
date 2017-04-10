@@ -133,6 +133,7 @@ class FormWorker{
         );
 
     }
+
     expectCheckedLabelledCheckboxes( label, expectedCheckedTable ) {
 
         const { client } = this.world;

@@ -26,6 +26,12 @@ defineSupportCode( function( { Given, When, Then } ) {
 
     } );
 
+    Given('I navigate to the {stringInDoubleQuotes} path', function( pathName ) {
+
+        return this.path.clickPathLinkTo( pathName );
+
+    } );
+
     Then( "the path's compensation paths should include {stringInDoubleQuotes}", function( pathName ) {
 
         return this.path.expectCompensationPaths( [ pathName ] );

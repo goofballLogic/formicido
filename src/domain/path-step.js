@@ -4,15 +4,16 @@ class PathStep {
 
     constructor( data ) {
 
-        const { step } = data;
+        const { step: stepId } = data;
         this.data = data;
-        if ( !(step in stepDefinitions) ) {
+        const steps = stepDefinitions();
+        if ( !(stepId in steps) ) {
 
-            throw new Error( "Unrecognised: " + step );
+            throw new Error( "Unrecognised: " + stepId );
 
         } else {
 
-            this.step = stepDefinitions[ step ];
+            this.step = steps[ stepId ];
 
         }
 

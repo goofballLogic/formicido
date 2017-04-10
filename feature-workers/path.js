@@ -12,6 +12,13 @@ class Path {
 
     }
 
+    clickPathLinkTo( pathName ) {
+
+        const selector = `//span[@class='path-name' and normalize-space()=\"${pathName}\"]/parent::a`;
+        return this.world.formWorker.clickSelectorToNewURL( selector );
+
+    }
+
     createWellKnownPath( pathId ) {
 
         const { repo } = this.world.config.app;
