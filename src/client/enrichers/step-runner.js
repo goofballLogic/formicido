@@ -27,8 +27,19 @@ export default function runner( ns ) {
 
     }
 
+    const functionScraper = /[^{]*{([\s\S]*)}$/;
+
+    function scrapeJS( maybeFunction ) {
+
+        return ( typeof maybeFunction === "function" )
+            ? functionScraper.exec( maybeFunction.toString() )[ 1 ]
+            : maybeFunction;
+
+    }
+
     function remote( js, timeout ) {
 
+        js = scrapeJS( js );
         const cid = uuid();
         let listener;
         return promiseTimeout( timeout || 5000, ( resolve, reject ) => {

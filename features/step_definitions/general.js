@@ -32,13 +32,19 @@ defineSupportCode( function( { Given, When, Then } ) {
 
     } );
 
+    When( "I click the {stringInDoubleQuotes} button and wait for the form to submit", function( buttonText ) {
+
+        return this.formWorker.clickButtonToSubmit( buttonText );
+
+    } );
+
     When( "I click the {stringInDoubleQuotes} button and wait for( the) URL to change", function ( buttonText ) {
 
        return this.formWorker.clickButtonToNewURL( buttonText );
 
     } );
 
-    When( "I click the {stringInDoubleQuotes} link and wait for URL to change", function ( linkText ) {
+    When( "I click the {stringInDoubleQuotes} link and wait for the URL to change", function ( linkText ) {
 
        return this.formWorker.clickLinkToNewURL( linkText );
 

@@ -49,7 +49,6 @@ function updateConfig( config ) {
 
 }
 
-
 function ensureRepoOption( command ) {
 
     if ( !command.repo ) {

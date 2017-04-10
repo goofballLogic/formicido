@@ -1,0 +1,14 @@
+{
+ "id": "login-as-needed",
+ "name": "Log in to secure area if necessary",
+ "steps": [
+  {
+   "id": "lan-1",
+   "step": "login-as-needed",
+   "args": {
+    "username": [ "yomomma" ],
+    "password": [ "Password1!" ]
+   }
+  }
+ ]
+}

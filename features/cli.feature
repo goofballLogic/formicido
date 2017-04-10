@@ -11,7 +11,6 @@ Feature: Command line interface
       | a-b-c-a-b        |
     And well-known script "all-three-paths" exists
 
-
     Scenario: Run script headless (CLI)
       Given CLI options are "--log-script-events"
        When I run the "all-three-paths" script from the CLI

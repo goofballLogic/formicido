@@ -13,7 +13,7 @@ Feature: Declare a script
 
   Scenario: Create a script from two paths and save
     When I follow the "Scripts" link
-     And I click the "Create" link and wait for URL to change
+     And I click the "Create" link and wait for the URL to change
      And I select checkboxes for "Paths"
       | Name             |
       | Find TCOTLB poem |
@@ -28,5 +28,5 @@ Feature: Declare a script
     Given well-known script "all-three-paths" exists
      When I follow the "Scripts" link
       And I follow the "All three paths" link
-      And I click the "New run..." link and wait for URL to change
+      And I click the "New run..." link and wait for the URL to change
      Then I wait for ".run-count" to equal "2"

@@ -5,7 +5,6 @@ data
 data-testing
 BrowserStackLocal
 env.sh
-README.md
 webpack.config.js
 app.js
 .*

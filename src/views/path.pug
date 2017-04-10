@@ -1,37 +1,47 @@
 extends layout-with-browser
 
 prepend content
-    h2= path.name
-    form(method="POST", class="via-ajax")
-        label
-            span(class="label-text")
-                | Name
-            input(name="path-name",value=path.name)
-        button= "Save"
 
-    ol(class="steps")
-        each step in steps
-            li
-                div(class="step-body")
-                    span(class="step-name") #{step.name}
-                    ul(class="step-args")
-                        each arg in Object.keys( step.args )
-                            li
-                                span(class="arg-name") #{arg}
-                                span(class="arg-values") #{step.args[arg]}
-                div(class="step-links")
-                    a(class="step-url", href=step.url) Edit
-                    a(class="delete-step-url", href=step.deleteUrl) Delete
+    section(class="columns")
+        div
+            h2= path.name || "Un-named path"
+            form(method="POST", class="via-ajax")
 
-    form(method="POST", action="/paths/" + path.id + "/add-step")
-        label
-            span(class="label-text")
-                | Add a new step
-            select(name="new-step")
-                option
-                each step in stepDefinitions
-                    option(value=step.slug) #{step.name}
-        button= "Configure..."
+                label
+                    span(class="label-text")
+                        | Name
+                    input(name="path-name",value=path.name)
+                button= "Save"
+
+        div
+            h3 Steps
+            ol(class="steps")
+                each step in steps
+                    li
+                        div(class="step-body")
+                            span(class="step-name") #{step.name}
+                            ul(class="step-args")
+                                each arg in Object.keys( step.args )
+                                    li
+                                        span(class="arg-name") #{arg}
+                                        span(class="arg-values") #{step.args[arg]}
+                        div(class="step-links")
+                            a(class="step-url", href=step.url) Edit
+                            a(class="delete-step-url", href=step.deleteUrl) Delete
+
+            form(method="POST", action="/paths/" + path.id + "/add-step")
+                label
+                    span(class="label-text")
+                        | Add a new step
+                    select(name="new-step")
+                        option
+                        each step in stepDefinitions
+                            option(value=step.slug) #{step.name}
+                button= "Configure..."
+
+        div(class="column-half")
+            h3 Unhappy path
+            a(href="/paths/" + path.id + "/add-compensation") Add unhappy path(s)...
 
     form(method="POST", action="/paths/" + path.id + "/run", class="via-ajax")
         button= "Run"

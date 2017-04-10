@@ -26,4 +26,10 @@ defineSupportCode( function( { Given, When, Then } ) {
 
     } );
 
+    Then( "the path's compensation paths should include {stringInDoubleQuotes}", function( pathName ) {
+
+        return this.path.expectCompensationPaths( [ pathName ] );
+
+    } );
+
 } );

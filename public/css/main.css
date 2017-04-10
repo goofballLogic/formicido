@@ -445,3 +445,20 @@ select.paths option:checked:before {
     visibility: visible;
 
 }
+.columns {
+
+    display: flex;
+    margin: 0 -10px;
+
+}
+.columns > * {
+
+    flex: 1;
+    margin: 0 10px;
+
+}
+.column-half {
+
+    flex: 0.5;
+
+}

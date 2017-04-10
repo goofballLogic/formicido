@@ -16,7 +16,6 @@ return Promise.resolve().then( function() {
 
 } ).then( function( initialState ) {
 
-
     return remote( clickBySelectorScript, 1000 ).then( function() {
 
         // while new location is empty or equal original location or document is still loading (timeout 5s)

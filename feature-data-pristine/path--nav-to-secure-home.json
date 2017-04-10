@@ -1,0 +1,15 @@
+{
+ "id": "nav-to-secure-home",
+ "name": "Navigate to a secured home page",
+ "steps": [
+  {
+   "id": "ntsh-1",
+   "step": "navigate",
+   "args": {
+    "url": [
+     "http://localhost:8124/secure/home"
+    ]
+   }
+  }
+ ]
+}
