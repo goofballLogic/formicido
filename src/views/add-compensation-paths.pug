@@ -1,0 +1,10 @@
+extends layout
+include mixins/check-box-list
+
+prepend content
+    h2= mainPath.name + " - unhappy paths"
+    form(method="POST")
+        label
+            span(class="label-text")= "Paths"
+            +checkboxlist( pathList, "path" )
+        button= "Save"

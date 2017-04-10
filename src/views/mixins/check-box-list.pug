@@ -1,0 +1,6 @@
+mixin checkboxlist( items, inputName )
+    div(class="checkbox-list")
+        each item in items
+            label
+                input(type="checkbox", value=item.value, name=inputName, checked=item.checked)
+                span(class="checkbox-label") #{item.text}

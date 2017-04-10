@@ -110,16 +110,6 @@ module.exports = function launchServer() {
 
     } );
 
-    app.get( "/scripts", ( req, res ) => {
-
-        scripts.listRecent( 100 ).then( scripts =>
-
-            res.render( "scripts", { scripts, newId: shortid() } )
-
-        ).catch( handleErrors( res ) );
-
-    } );
-
     app.get( "/paths/:pathId", ( req, res ) => {
 
         const { pathId } = req.params;
@@ -145,58 +135,6 @@ module.exports = function launchServer() {
 
     } );
 
-
-    app.get( "/scripts/:scriptId", ( req, res ) => {
-
-        const { scriptId } = req.params;
-        const newRunUrl = `/scripts/${scriptId}/run/${shortid()}/0`;
-        scripts.fetchOrDefault( scriptId ).then( script =>
-
-            paths.listRecent( 200 ).then( paths =>
-
-                res.render( "script", {
-
-                    newRunUrl,
-                    script,
-                    scriptId,
-                    paths
-
-                } )
-
-            )
-
-        ).catch( handleErrors( res ) );
-
-    } );
-
-    app.get( "/scripts/:scriptId/run/:runId/:iteration", ( req, res ) => {
-
-        const { scriptId, runId, iteration } = req.params;
-        const nextIteration = parseInt( iteration, 10 ) + 1;
-        const nextIterationURL = `/scripts/${scriptId}/run/${runId}/${nextIteration}`;
-        const pageClass = "script-run-page";
-        scripts.fetch( scriptId ).then( script =>
-
-            script.generateJS().then( pathScripts => {
-
-                res.render( "script-run", {
-
-                    iteration,
-                    nextIterationURL,
-                    pageClass,
-                    pathScripts: JSON.stringify( pathScripts ),
-                    runId,
-                    scriptId,
-                    name: script.name
-
-                } );
-
-            } )
-
-        ).catch( handleErrors( res ) );
-
-    } );
-
     app.post( "/paths/:pathId", bodyParser.json(), bodyParser.urlencoded( { extended: false } ), ( req, res ) => {
 
         const { pathId } = req.params;
@@ -212,20 +150,6 @@ module.exports = function launchServer() {
 
     } );
 
-    app.post( "/scripts/:scriptId", bodyParser.json(), bodyParser.urlencoded( { extended: false } ), ( req, res ) => {
-
-        const { scriptId } = req.params;
-        scripts.fetchOrCreate( scriptId )
-            .then( script => {
-
-                script.consume( req.body );
-                script.save();
-                res.redirect( `/scripts/${scriptId}` );
-
-            } )
-            .catch( handleErrors( res ) );
-
-    } );
 
     app.post( "/paths/:pathId/add-step", bodyParser.json(), bodyParser.urlencoded( { extended: false } ), ( req, res ) => {
 
@@ -242,6 +166,37 @@ module.exports = function launchServer() {
             res.redirect( `/paths/${pathId}/step/${stepSlug}/${stepId}` );
 
         }
+
+    } );
+
+    app.get( "/paths/:pathId/add-compensation", ( req, res ) => {
+
+        const { pathId } = req.params;
+        paths.fetchOrCreate( pathId ).then( mainPath =>
+
+            paths.listRecent( 200 ).then( paths => {
+
+                const pathList = paths.filter( path =>
+
+                    path.id !== mainPath.id
+
+                ).map( path => ( {
+
+                    value: path.id,
+                    text: path.name,
+                    checked: !!~mainPath.compensations.indexOf( path.id )
+
+                } ) );
+                res.render( "add-compensation-paths", {
+
+                    mainPath,
+                    pathList
+
+                } );
+
+            } ).catch( handleErrors( res ) )
+
+        );
 
     } );
 
@@ -314,6 +269,90 @@ module.exports = function launchServer() {
         paths.fetch( pathId )
             .then( path => path.remove( stepId ).then( () => path.save() ) )
             .then( () => res.redirect( `/paths/${pathId}` ) )
+            .catch( handleErrors( res ) );
+
+    } );
+
+    app.get( "/scripts", ( req, res ) => {
+
+        scripts.listRecent( 100 ).then( scripts =>
+
+            res.render( "scripts", { scripts, newId: shortid() } )
+
+        ).catch( handleErrors( res ) );
+
+    } );
+
+    app.get( "/scripts/:scriptId", ( req, res ) => {
+
+        const { scriptId } = req.params;
+        const newRunUrl = `/scripts/${scriptId}/run/${shortid()}/0`;
+        scripts.fetchOrDefault( scriptId ).then( script =>
+
+            paths.listRecent( 200 ).then( paths => {
+
+                const pathList = paths.map( path => ( {
+
+                    value: path.id,
+                    text: path.name,
+                    checked: !!~script.paths.indexOf( path.id )
+
+                } ) );
+                res.render( "script", {
+
+                    newRunUrl,
+                    script,
+                    scriptId,
+                    pathList,
+                    paths
+
+                } );
+
+            } )
+
+        ).catch( handleErrors( res ) );
+
+    } );
+
+    app.get( "/scripts/:scriptId/run/:runId/:iteration", ( req, res ) => {
+
+        const { scriptId, runId, iteration } = req.params;
+        const nextIteration = parseInt( iteration, 10 ) + 1;
+        const nextIterationURL = `/scripts/${scriptId}/run/${runId}/${nextIteration}`;
+        const pageClass = "script-run-page";
+        scripts.fetch( scriptId ).then( script =>
+
+            script.generateJS().then( pathScripts => {
+
+                res.render( "script-run", {
+
+                    iteration,
+                    nextIterationURL,
+                    pageClass,
+                    pathScripts: JSON.stringify( pathScripts ),
+                    runId,
+                    scriptId,
+                    name: script.name
+
+                } );
+
+            } )
+
+        ).catch( handleErrors( res ) );
+
+    } );
+
+    app.post( "/scripts/:scriptId", bodyParser.json(), bodyParser.urlencoded( { extended: false } ), ( req, res ) => {
+
+        const { scriptId } = req.params;
+        scripts.fetchOrCreate( scriptId )
+            .then( script => {
+
+                script.consume( req.body );
+                script.save();
+                res.redirect( `/scripts/${scriptId}` );
+
+            } )
             .catch( handleErrors( res ) );
 
     } );

@@ -17,6 +17,7 @@ class Path {
         this.name = singletonValue( data.name );
         const steps = this.data.steps = this.data.steps || [];
         this.steps = steps.map( x => new PathStep( x ) );
+        this.compensations = this.data.compensations = this.data.compensations || [];
 
     }
 

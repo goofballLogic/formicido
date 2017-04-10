@@ -138,7 +138,7 @@ class FormWorker{
 
         const { client } = this.world;
         const expected = expectedCheckedTable.hashes().map( x => x[ "Name" ] );
-        const selector = `//label[normalize-space()='${label}']/following-sibling::*[@class='checkbox-list']`;
+        const selector = `//span[@class='label-text' and normalize-space()='${label}']/following-sibling::*[@class='checkbox-list']`;
         return client.execute( function( selector, expected ) {
 
             var checkboxList = document.evaluate( selector, document.body ).iterateNext();
@@ -200,7 +200,7 @@ class FormWorker{
     selectLabelledDropdownOptionByText( label, optionText ) {
 
         const { client } = this.world;
-        return client.click( `//*[contains(@class, "label-text") and normalize-space()="${label}"]/parent::label//option[normalize-space()="${optionText}"]` );
+        return client.click( `//span[@class='label-text' and normalize-space()="${label}"]/parent::label//option[normalize-space()="${optionText}"]` );
 
     }
 
@@ -208,7 +208,7 @@ class FormWorker{
 
         const { client } = this.world;
         const checked = checkboxTable.hashes().map( x => x[ "Name" ] );
-        const selector = `//label[normalize-space()='${label}']/following-sibling::*[@class='checkbox-list']`;
+        const selector = `//span[@class='label-text' and normalize-space()='${label}']/following-sibling::*[@class='checkbox-list']`;
         return client.execute( function( selector, checked ) {
 
             var checkboxList = document.evaluate( selector, document.body ).iterateNext();
@@ -224,7 +224,7 @@ class FormWorker{
             } );
             if ( found.length !== checked.length ) {
 
-                throw new Error( "Some checkboxes were missing, only found: " + found.join( ", " ) );
+                throw new Error( "Some checkboxes were missing, only found: " + found.join( ", " ) + ". " + document.body.innerHTML );
 
             }
 

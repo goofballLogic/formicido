@@ -18,7 +18,7 @@ Feature: Handle unhappy path scenarios
   Scenario: Associate compensation path to existing path
     Given I click the "Add unhappy path(s)..." link and wait for the URL to change
      When I select checkboxes for "Paths"
-        | Name            |
-        | Login as needed |
+        | Name                               |
+        | Log in to secure area if necessary |
       And I click the "Save" button and wait for the URL to change
      Then the path's compensation paths should include "Login as needed"
