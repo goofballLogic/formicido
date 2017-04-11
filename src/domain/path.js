@@ -1,11 +1,13 @@
 const PathStep = require( "./path-step" );
 const paths = require( "./paths" );
 
-function singletonValue( values ) {
+const singletonValue = maybeValues => Array.isArray( maybeValues )
+    ? maybeValues[ 0 ]
+    : maybeValues;
 
-    return Array.isArray( values ) ? values[ 0 ] : values;
-
-}
+const multiValue = maybeValues => Array.isArray( maybeValues )
+    ? maybeValues
+    : [ maybeValues ];
 
 class Path {
 
@@ -56,18 +58,17 @@ class Path {
 
     consume( values ) {
 
-        [
+        const accept = {
 
-            [ "path-name", "name" ]
+            "path-name": [ singletonValue, "name" ],
+            "compensations": [ multiValue, "compensations" ]
 
-        ].filter( ( [ key ] ) =>
+        };
+        Object.keys( accept ).filter( key => key in values ).forEach( key => {
 
-            key in values
-
-        ).forEach( ( [ key, prop ] ) => {
-
-            // only allow singleton values
-            this.data[ prop ] = singletonValue( values[ key ] );
+            const [ acceptor, prop ] = accept[ key ];
+            const raw = values[ key ];
+            this.data[ prop ] = acceptor( raw );
 
         } );
 
@@ -79,15 +80,24 @@ class Path {
 
     }
 
-    generateJS() {
+    describe() {
 
         return {
 
             name: this.name,
-            id: this.id,
-            stepScripts: this.steps.map( s => s.script() )
+            id: this.id
 
         };
+
+    }
+
+    generateJS() {
+
+        return Object.assign( this.describe(), {
+
+            stepScripts: this.steps.map( s => s.script() )
+
+        } );
 
     }
 
@@ -101,6 +111,12 @@ class Path {
     stepDescriptions() {
 
         return this.steps.map( s => s.describe() );
+
+    }
+
+    compensationDescriptions() {
+
+        return paths.describe( this.data.compensations );
 
     }
 

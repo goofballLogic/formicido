@@ -8,7 +8,7 @@ Feature: Declare a path
       And I follow the "Paths" link
 
   Scenario: Create a path with a navigate and a click step
-     When I click the "Create" link and wait for URL to change
+     When I click the "Create" link and wait for the URL to change
       And I select "Navigate" from the "Add a new step" dropdown
       And I click the "Configure..." button and wait for the URL to change
       And I enter form values
@@ -26,7 +26,7 @@ Feature: Declare a path
       And all steps should have succeeded
 
   Scenario: Create a path with a navigate step and a click step, then delete the navigate step
-     When I click the "Create" link and wait for URL to change
+     When I click the "Create" link and wait for the URL to change
       And I select "Navigate" from the "Add a new step" dropdown
       And I click the "Configure..." button and wait for the URL to change
       And I enter form values
@@ -44,7 +44,7 @@ Feature: Declare a path
      Then there should be 1 steps shown
 
   Scenario: Create a path and name items
-      When I click the "Create" link and wait for URL to change
+      When I click the "Create" link and wait for the URL to change
       And I enter form values
         | label  | value       |
         | Name   | Nav'n'Click |

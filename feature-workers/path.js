@@ -55,6 +55,28 @@ class Path {
 
     }
 
+    expectCompensationPaths( expectedPathNames ) {
+
+        const { client } = this.world;
+        return client.execute( function() {
+
+            var results = [];
+            var list = document.querySelectorAll( ".unhappy-paths > li" );
+            for( var i = 0; i < list.length; i++ ) {
+
+                results.push( list[ i ].textContent );
+
+            }
+            return results;
+
+        } ).then( results => {
+
+           assert.deepEqual( expectedPathNames.sort(), results.value.sort() );
+
+        } );
+
+    }
+
     expectStepCount( expected ) {
 
         const { client } = this.world;
@@ -68,22 +90,24 @@ class Path {
         client.execute( function() {
 
             var results = [];
-            document.querySelectorAll( "#transcript li" ).forEach( li =>
+            var list = document.querySelectorAll( "#transcript li" );
+            for( var i = 0; i < list.length; i++ ) {
 
-                results.append( {
+                var li = list[ i ];
+                results.push( {
 
                     className: li.className,
                     text: li.textContent,
                     index: results.length
 
-                } )
+                } );
 
-            );
+            }
             return results;
 
         } ).then( results => {
 
-            var failed = results
+            var failed = results.value
                 .filter( x => !x.className.test( /step-success/ ) )
                 .map( x => `Step ${x.index}: ${x.text}` )
                 .join( ",\n" );

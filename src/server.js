@@ -4,7 +4,7 @@ module.exports = function launchServer() {
     const bodyParser = require( "body-parser" );
     const fs = require( "fs" );
     const shortid = require( "shortid" );
-    const stepDefinitions = require( "./domain/step-definitions" );
+    const stepDefinitions = require( "./domain/step-definitions" )();
     const paths = require( "./domain/paths" );
     const scripts = require( "./domain/scripts" );
     const metrics = require( "./domain/metrics" );
@@ -122,15 +122,20 @@ module.exports = function launchServer() {
         } );
         paths.fetchOrDefault( pathId )
             .then( path => [ path, path.stepDescriptions().map( decorateDescription ) ] )
-            .then( ( [ path, descriptions ] ) => res.render( "path", {
+            .then( ( [ path, descriptions ] ) =>
 
-                pageClass,
-                path,
-                pathId,
-                stepDefinitions,
-                steps: descriptions
+                path.compensationDescriptions().then( compensations => res.render( "path", {
 
-            } ) )
+                    compensations,
+                    pageClass,
+                    path,
+                    pathId,
+                    stepDefinitions,
+                    steps: descriptions
+
+                } ) )
+
+            )
             .catch( handleErrors( res ) );
 
     } );
@@ -197,6 +202,24 @@ module.exports = function launchServer() {
             } ).catch( handleErrors( res ) )
 
         );
+
+    } );
+
+    app.post( "/paths/:pathId/add-compensation", bodyParser.json(), bodyParser.urlencoded( { extended: false } ), ( req, res ) => {
+
+        const { pathId } = req.params;
+        const { path: compensations } = req.body;
+        paths.fetchOrCreate( pathId )
+            .then( path => {
+
+                path.consume( { compensations } );
+                return path.save();
+
+            } ).then( () =>
+
+                res.redirect( `/paths/${pathId}` )
+
+            ).catch( handleErrors( res ) );
 
     } );
 

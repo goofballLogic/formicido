@@ -21,4 +21,4 @@ Feature: Handle unhappy path scenarios
         | Name                               |
         | Log in to secure area if necessary |
       And I click the "Save" button and wait for the URL to change
-     Then the path's compensation paths should include "Login as needed"
+     Then the path's compensation paths should include "Log in to secure area if necessary"

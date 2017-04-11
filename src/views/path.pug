@@ -40,8 +40,13 @@ prepend content
                 button= "Configure..."
 
         div(class="column-half")
-            h3 Unhappy path
+            h3 Unhappy paths
             a(href="/paths/" + path.id + "/add-compensation") Add unhappy path(s)...
+            ol(class="unhappy-paths")
+                each path in compensations
+                    li
+                        a(href="/paths/"+path.id)= path.name || "un-named"
+
 
     form(method="POST", action="/paths/" + path.id + "/run", class="via-ajax")
         button= "Run"

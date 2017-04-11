@@ -96,9 +96,7 @@ function runScript( scriptId, command ) {
         headless.bus.on( "script-complete", detail => report( detail ) );
 
     }
-    headless
-        .run( scriptId, config )
-        .then( maybeResult => {
+    headless.run( scriptId, config ).then( maybeResult => {
 
         if ( maybeResult.script && !maybeResult.current ) {
 

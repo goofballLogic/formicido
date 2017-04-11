@@ -462,3 +462,20 @@ select.paths option:checked:before {
     flex: 0.5;
 
 }
+
+small {
+
+    opacity: 0.7;
+    margin: 0 10px;
+
+}
+small::before {
+
+    content: "(";
+
+}
+small::after {
+
+    content: ")";
+
+}

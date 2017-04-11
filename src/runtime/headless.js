@@ -588,8 +588,16 @@ function runner(ns) {
         };
     }
 
+    var functionScraper = /[^{]*{([\s\S]*)}$/;
+
+    function scrapeJS(maybeFunction) {
+
+        return typeof maybeFunction === "function" ? functionScraper.exec(maybeFunction.toString())[1] : maybeFunction;
+    }
+
     function remote(js, timeout) {
 
+        js = scrapeJS(js);
         var cid = uuid();
         var listener = void 0;
         return (0, _promiseTimeout2.default)(timeout || 5000, function (resolve, reject) {

@@ -9,6 +9,16 @@ const Path = require( "./path" );
 
 Object.assign( module.exports, {
 
+    describe( pathIds ) {
+
+        return Promise.all( pathIds.map( id =>
+
+            this.fetch( id ).then( path => path.describe() )
+
+        ) );
+
+    },
+
     fetch( pathId ) {
 
         return repo.fetch( pathId )
