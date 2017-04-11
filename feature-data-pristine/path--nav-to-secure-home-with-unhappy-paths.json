@@ -1,0 +1,18 @@
+{
+ "id": "nav-to-secure-home-with-unhappy-paths",
+ "name": "Navigate to a secured home page (unhappy path configured)",
+ "steps": [
+  {
+   "id": "ntsh-1",
+   "step": "navigate",
+   "args": {
+    "url": [
+     "http://localhost:8124/secure/home"
+    ]
+   }
+  }
+ ],
+ "compensations": [
+  "login-as-needed"
+ ]
+}

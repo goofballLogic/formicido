@@ -227,7 +227,8 @@ module.exports = function launchServer() {
 
         const { pathId } = req.params;
         paths.fetchOrCreate( pathId )
-            .then( path => res.send( path.generateJS() ) )
+            .then( path => path.generateJS() )
+            .then( runDef => res.send( { pathId, paths: runDef } ) )
             .catch( handleErrors( res ) );
 
     } );

@@ -113,18 +113,24 @@ export default function runner( ns ) {
 
     bus.on( "run-step", function executeStep( detail ) {
 
-        const { id, description, script, args } = detail;
+        const { id, description, script, args, constants } = detail;
         let context = detail.context || {};
         const stepId = id;
+        const parameterHash = Object.assign( { navigateTo, poll, remote }, constants, args );
+        const functionParameterNames = Object.keys( parameterHash );
+        const functionParameterValues = functionParameterNames.map( x => parameterHash[ x ] );
+        const func = Function.apply( null,  functionParameterNames.concat( script ) );
+        context.step = {
 
-        var dynamicArgs = Object.keys( args || {} );
-        var func = Function.apply( null, [ "navigateTo", "remote", "poll" ].concat( dynamicArgs ).concat( script ) );
-        var dynamicArgValues = dynamicArgs.map( x => args[ x ] );
-        context.step = { stepId, description, args, start: Date.now() };
+            args,
+            description,
+            stepId
+
+        };
         promiseTimeout( 10000, ( resolve, reject ) => {
 
-            func.apply( null, [ navigateTo, remote, poll ].concat( dynamicArgValues ) )
-                .then( resolve, reject );
+            context.step.start = Date.now();
+            func.apply( null, functionParameterValues ).then( resolve, reject );
 
         }, maybeErr => {
 

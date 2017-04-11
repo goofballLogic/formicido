@@ -392,30 +392,27 @@ exports.default = function (ns) {
     var aborted = {};
     var instance = Math.random();
 
-    bus.on("abort-run", function (detail) {
+    /*
+        runId: the id of the current run (e.g. a script run)
+        stepScripts: the steps to run for this path
+        compensations: the ids of paths to attempt to compensate for a failure (such as session timed out)
+        pathDetail: id of the path to run, and a dictionary of path definitions
+    */
+    function runPath(_ref) {
+        var runId = _ref.runId,
+            stepScripts = _ref.stepScripts,
+            compensations = _ref.compensations,
+            pathDetail = _ref.pathDetail;
+        var context = pathDetail.context,
+            continuation = pathDetail.continuation;
+        var path = context.path;
 
-        notify("path-runner " + instance + " received abort-run " + detail);
-        aborted[detail.id] = Date.now();
-        setTimeout(function () {
-            return delete aborted[detail.id];
-        }, 60000);
-    });
 
-    bus.on("run-path", function (detail) {
-        var stepScripts = detail.stepScripts,
-            id = detail.id,
-            name = detail.name;
-
-        var pathId = id;
-        var context = detail.context || {};
-
-        var _ref = context.script || {},
-            runId = _ref.runId;
-
-        context.path = { pathId: pathId, name: name };
+        var compensationAttempts = pathDetail.compensations = pathDetail.compensations || {};
 
         var bookmark = 0;
 
+        // run a single step within the current path
         function nextStep(detail) {
 
             var isAborted = runId in aborted;
@@ -425,33 +422,102 @@ exports.default = function (ns) {
             var err = detail ? detail.step.err : null;
             if (err) {
 
-                context.path.errorSteps = context.path.errorSteps || [];
+                // an error occurred - record diagnostics
+                path.errorSteps = path.errorSteps || [];
                 detail.step.errStack = err.stack;
-                context.path.errorSteps.push(detail.step);
+                path.errorSteps.push(detail.step);
             }
             if (!err && bookmark < stepScripts.length && !isAborted) {
 
+                // no error and step completed, so we can move on to the next one
                 bus.once("step-complete", nextStep);
-                context.path.step = bookmark + 1;
+                path.step = bookmark + 1;
                 var message = _extends({ context: context }, stepScripts[bookmark]);
                 bookmark++;
                 bus.emit("run-step", message);
             } else {
 
-                context.path.end = Date.now();
-                notify("Path run complete");
-                delete context.step;
-                bus.emit("path-complete", context);
+                path.end = Date.now();
+                var compensation = null;
+                if (err && compensations) {
+
+                    // can we compensate for this error?
+                    var unattempted = compensations.filter(function (x) {
+                        return !(x in compensationAttempts);
+                    });
+                    compensation = unattempted[0];
+                }
+                if (compensation) {
+
+                    notify("Attempting compensation: " + compensation);
+                    var _continuation = function _continuation(compensationContext) {
+
+                        compensationAttempts[compensation] = JSON.parse(JSON.stringify(compensationContext));
+                        bus.emit("run-path", pathDetail);
+                    };
+                    var compensationPathDetail = Object.assign({}, pathDetail, { continuation: _continuation, pathId: compensation });
+                    bus.emit("run-path", compensationPathDetail);
+                } else {
+
+                    if (continuation) {
+
+                        // this path was instructed to invoke a continuation upon completion (e.g. because it was a compensation path)
+                        notify("Path with continuation run complete");
+                        continuation(context);
+                    } else {
+
+                        notify("Path run complete");
+                        delete context.step;
+                        context.path.compensations = pathDetail.compensations;
+                        bus.emit("path-complete", context);
+                    }
+                }
             }
         }
+        path.start = Date.now();
+        nextStep();
+    }
+
+    bus.on("abort-run", function (detail) {
+
+        notify("path-runner " + instance + " received abort-run " + detail);
+        aborted[detail.id] = Date.now();
+        setTimeout(function () {
+            return delete aborted[detail.id];
+        }, 60000);
+    });
+
+    bus.on("run-path", function (pathDetail) {
+
+        console.log(JSON.parse(JSON.stringify(pathDetail)));
+
+        var pathId = pathDetail.pathId,
+            paths = pathDetail.paths;
+
+        var _ref2 = paths[pathId] || {},
+            stepScripts = _ref2.stepScripts,
+            name = _ref2.name,
+            compensations = _ref2.compensations;
 
         if (!(stepScripts && stepScripts.length)) {
 
             notify("No steps specified");
         } else {
 
-            context.path.start = Date.now();
-            nextStep();
+            var context = pathDetail.context = pathDetail.context || {};
+
+            var _ref3 = context.script || {},
+                runId = _ref3.runId;
+
+            context.path = { name: name, pathId: pathId };
+            runPath({
+
+                compensations: compensations,
+                pathDetail: pathDetail,
+                runId: runId,
+                stepScripts: stepScripts
+
+            });
         }
     });
 };
@@ -666,20 +732,28 @@ function runner(ns) {
         var id = detail.id,
             description = detail.description,
             script = detail.script,
-            args = detail.args;
+            args = detail.args,
+            constants = detail.constants;
 
         var context = detail.context || {};
         var stepId = id;
-
-        var dynamicArgs = Object.keys(args || {});
-        var func = Function.apply(null, ["navigateTo", "remote", "poll"].concat(dynamicArgs).concat(script));
-        var dynamicArgValues = dynamicArgs.map(function (x) {
-            return args[x];
+        var parameterHash = Object.assign({ navigateTo: navigateTo, poll: poll, remote: remote }, constants, args);
+        var functionParameterNames = Object.keys(parameterHash);
+        var functionParameterValues = functionParameterNames.map(function (x) {
+            return parameterHash[x];
         });
-        context.step = { stepId: stepId, description: description, args: args, start: Date.now() };
+        var func = Function.apply(null, functionParameterNames.concat(script));
+        context.step = {
+
+            args: args,
+            description: description,
+            stepId: stepId
+
+        };
         (0, _promiseTimeout2.default)(10000, function (resolve, reject) {
 
-            func.apply(null, [navigateTo, remote, poll].concat(dynamicArgValues)).then(resolve, reject);
+            context.step.start = Date.now();
+            func.apply(null, functionParameterValues).then(resolve, reject);
         }, function (maybeErr) {
 
             context.step.end = Date.now();

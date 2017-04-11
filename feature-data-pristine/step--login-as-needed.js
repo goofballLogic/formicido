@@ -17,8 +17,7 @@ class LoginAsNeeded extends StepBase {
 
     constructor() {
 
-        super( js );
-        this.args.loginToFakeLoginPage = loginToFakeLoginPage;
+        super( js, { loginToFakeLoginPage } );
 
     }
 

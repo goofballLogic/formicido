@@ -1,4 +1,6 @@
 const express = require( "express" );
+const cookieParser = require( "cookie-parser" );
+
 module.exports = function( config, appConfig ) {
 
     const app = express();
@@ -6,6 +8,9 @@ module.exports = function( config, appConfig ) {
 
     app.set( "view engine", "pug" );
     app.set( "views", __dirname + "/views" );
+
+
+    app.use( cookieParser() );
 
     app.get( "/hello-world", ( req, res ) => {
 
@@ -40,6 +45,33 @@ module.exports = function( config, appConfig ) {
     app.get( "/a/b/c", ( req, res ) => {
 
         res.render( "alphabet", { "title": "C", "target": "A", "targetUrl": "/a" } );
+
+    } );
+
+
+    app.get( "/sign-in", ( req, res ) => {
+
+        res.render( "sign-in" );
+
+    } );
+
+    app.use( "/secure", function authentication( req, res, next ) {
+
+        if ( !req.cookies.user ) {
+
+            res.redirect( "/sign-in" );
+
+        } else {
+
+            next();
+
+        }
+
+    } );
+
+    app.get( "/secure/home", ( req, res ) => {
+
+        res.render( "secure-home", { "user": req.user } );
 
     } );
 

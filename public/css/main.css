@@ -332,10 +332,31 @@ fieldset {
     margin-top: 5px;
 
 }
+.step-name {
+
+    font-size: 1.4em;
+    color: #555;
+
+}
 .step-args {
 
     padding: 0;
     list-style: none;
+}
+.step-args .arg-name {
+
+    color: #555;
+
+}
+.step-args .arg-name::after {
+
+    content: ": ";
+
+}
+.step-args .arg-values {
+
+
+
 }
 .paths, .scripts {
 
@@ -460,22 +481,5 @@ select.paths option:checked:before {
 .column-half {
 
     flex: 0.5;
-
-}
-
-small {
-
-    opacity: 0.7;
-    margin: 0 10px;
-
-}
-small::before {
-
-    content: "(";
-
-}
-small::after {
-
-    content: ")";
 
 }

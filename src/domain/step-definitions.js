@@ -1,7 +1,9 @@
 const fs = require( "fs-extra" );
 const path = require( "path" );
+const config = require( "../../config" );
 
-let stepDefinitions = [];
+let activeRepo = null;
+let stepDefinitions = null;
 
 function stepFilesFrom( root ) {
 
@@ -15,7 +17,9 @@ function stepFilesFrom( root ) {
 function findStepFiles() {
 
     const librarySteps = stepFilesFrom( __dirname + "/../step-definitions" );
-    const { repo } = require( "../../config" );
+    const { repo } = config;
+    activeRepo = repo;
+
     try {
 
         const userSteps = stepFilesFrom( path.resolve( repo, "./steps" ) );
@@ -39,7 +43,13 @@ function findStepFiles() {
 
 function ensureStepDefinitions() {
 
-    if ( stepDefinitions.length === 0 ) {
+    const { repo } = config;
+    if ( repo !== activeRepo ) {
+
+        stepDefinitions = null;
+
+    }
+    if ( !stepDefinitions ) {
 
         stepDefinitions = findStepFiles()
             .map( stepPath => require( stepPath ) )

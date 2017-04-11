@@ -1,8 +1,16 @@
+function valuesFor( key, args ) {
+
+    return Array.isArray( args[ key ] )
+        ? args[ key ].join( ", " )
+        : args[ key ] || "";
+
+}
 class StepBase {
 
-    constructor( js ) {
+    constructor( js, constants ) {
 
         this.js = js;
+        this.constants = constants || {};
         this.args = {};
 
     }
@@ -15,16 +23,15 @@ class StepBase {
 
     script() {
 
-        const valueList = key => Array.isArray( this.args[ key ] )
-            ? this.args[ key ].join( ", " )
-            : this.args[ key ] || "";
         const argsList = Object.keys( this.args )
-            .map( key => [ key, valueList( key ) ] )
+            .map( key => [ key, valuesFor( key, this.args ) ] )
             .map( ( [ key, values ] ) => `${key}: ${values}` )
             .join( ", " );
+
         return {
 
             script: this.js,
+            constants: this.constants,
             args: this.args,
             description: this.constructor.stepName + " (" + argsList + ")"
 

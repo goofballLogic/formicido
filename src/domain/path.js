@@ -9,6 +9,8 @@ const multiValue = maybeValues => Array.isArray( maybeValues )
     ? maybeValues
     : [ maybeValues ];
 
+const generationLoopSafety = { };
+
 class Path {
 
     constructor( data ) {
@@ -91,13 +93,32 @@ class Path {
 
     }
 
-    generateJS() {
+    generateJS( memo ) {
 
-        return Object.assign( this.describe(), {
+        memo = memo || {};
+        if ( this.id in memo ) {
 
-            stepScripts: this.steps.map( s => s.script() )
+            return memo;
 
-        } );
+        } else {
+
+            memo[ this.id ] = Object.assign( this.describe(), {
+
+                stepScripts: this.steps.map( s => s.script() ),
+                compensations: this.data.compensations
+
+            } );
+            return Promise.all(
+
+                this.data.compensations.filter( id => !( id in memo ) ).map( id =>
+
+                    paths.fetch( id ).then( path => path.generateJS( memo ) )
+
+                )
+
+            ).then( () => memo );
+
+        }
 
     }
 

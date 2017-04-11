@@ -23,8 +23,8 @@ prepend content
                             ul(class="step-args")
                                 each arg in Object.keys( step.args )
                                     li
-                                        span(class="arg-name") #{arg}
-                                        span(class="arg-values") #{step.args[arg]}
+                                        span(class="arg-name")= arg
+                                        span(class="arg-values")= step.args[ arg ]
                         div(class="step-links")
                             a(class="step-url", href=step.url) Edit
                             a(class="delete-step-url", href=step.deleteUrl) Delete

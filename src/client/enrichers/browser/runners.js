@@ -37,7 +37,8 @@ export default function( ns ) {
     let steps;
     bus.on( "run-path", detail => {
 
-        const { stepScripts } = detail;
+        const { pathId, paths } = detail;
+        const { stepScripts } = paths[ pathId ];
         const transcript = document.querySelector( ".path-transcript" );
         const outcome = document.querySelector( ".path-outcome" ) || {};
         outcome.innerHTML = "Running...";
