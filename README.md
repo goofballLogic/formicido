@@ -9,7 +9,7 @@ Site monitor like an ant.
 The wiki contains guides to using Formicido: https://github.com/goofballLogic/formicido/wiki
 
 ## Development
-TBD: documentation for contributors
+If you want to contribute to Formicido, see here: https://github.com/goofballLogic/formicido/wiki/Development
 
 ## Testing
 Thanks to the good people at BrowserStack, this application is being automatically tested cross-browser. This means that we can drive selenium tests running in Travis as part of our CI build. We use Browserstack selenium bindings along with Cucumber.
