@@ -38,7 +38,9 @@ module.exports = [ {
     externals: {
 
         "server-namespace": "./server-namespace",
-        "zombie": "zombie"
+        "zombie": "zombie",
+        "process": "process",
+        "events": "events"
 
     },
     output: {
