@@ -3,9 +3,8 @@ var username = "${username}";
 var password = "${password}";
 
 var fakeLogin = document.querySelector( ".login-container" );
-var isFakeLogin = fakeLogin && fakeLogin.querySelector( "#email" )
-    && fakeLogin.querySelector( "#password" )
-    && fakeLogin.querySelector( "#submit");
+var isFakeLogin = !!( fakeLogin && fakeLogin.querySelector( "#email" ) && fakeLogin.querySelector( "#password" ) && fakeLogin.querySelector( "#submit") );
+
 var result = {
 
     isFakeLogin: isFakeLogin,

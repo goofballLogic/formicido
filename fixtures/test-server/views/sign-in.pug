@@ -1,5 +1,6 @@
 extends layout
 block content
-    form
-        input(name="user", type="text")
-        input(type="submit", value="Log in" )
+    form(method="POST", class="login-container")
+        input(name="user", id="email", type="text", placeholder="Username")
+        input(name="password", id="password", type="password", placeholder="Password")
+        input(type="submit", id="submit", value="Log in" )

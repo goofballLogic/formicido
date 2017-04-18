@@ -19,6 +19,7 @@
 
         }
         var origin = `${origin}`;
+console.log( e, e.origin, origin );
         if( e.origin !== origin ){ return; }
         log( "Agent received", e );
 

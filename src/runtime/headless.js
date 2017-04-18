@@ -203,15 +203,11 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-
 exports.default = function (ns) {
     var bus = ns.bus,
         browser = ns.browser;
 
-    bus.on("navigate-to", function (_ref) {
-        var _ref2 = _slicedToArray(_ref, 1),
-            url = _ref2[0];
+    bus.on("navigate-to", function (url) {
 
         return browser.visit(url).then(function () {
             return new Promise(function (resolve) {
@@ -488,9 +484,6 @@ exports.default = function (ns) {
     });
 
     bus.on("run-path", function (pathDetail) {
-
-        console.log(JSON.parse(JSON.stringify(pathDetail)));
-
         var pathId = pathDetail.pathId,
             paths = pathDetail.paths;
 
@@ -502,23 +495,22 @@ exports.default = function (ns) {
         if (!(stepScripts && stepScripts.length)) {
 
             notify("No steps specified");
-        } else {
-
-            var context = pathDetail.context = pathDetail.context || {};
-
-            var _ref3 = context.script || {},
-                runId = _ref3.runId;
-
-            context.path = { name: name, pathId: pathId };
-            runPath({
-
-                compensations: compensations,
-                pathDetail: pathDetail,
-                runId: runId,
-                stepScripts: stepScripts
-
-            });
         }
+
+        var context = pathDetail.context = pathDetail.context || {};
+
+        var _ref3 = context.script || {},
+            runId = _ref3.runId;
+
+        context.path = { name: name, pathId: pathId };
+        runPath({
+
+            compensations: compensations,
+            pathDetail: pathDetail,
+            runId: runId,
+            stepScripts: stepScripts
+
+        });
     });
 };
 
@@ -532,8 +524,6 @@ exports.default = function (ns) {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 exports.default = function (ns) {
     var bus = ns.bus,
@@ -558,6 +548,8 @@ exports.default = function (ns) {
             nextIterationURL = script.nextIterationURL,
             runId = script.runId,
             name = script.name;
+        var pathIds = pathScripts.pathIds,
+            paths = pathScripts.paths;
 
         var scriptId = script.id;
         var context = { script: { scriptId: scriptId, name: name, nextIterationURL: nextIterationURL, runId: runId } };
@@ -568,10 +560,10 @@ exports.default = function (ns) {
             if (isAborted) {
                 bus.emit("run-script-aborted", context);
             }
-            if (bookmark < pathScripts.length && !isAborted) {
+            if (bookmark < pathIds.length && !isAborted) {
 
                 context.script.path = bookmark + 1;
-                bus.emit("run-path", _extends({ context: context }, pathScripts[bookmark]));
+                bus.emit("run-path", { context: context, pathId: pathIds[bookmark], paths: paths });
                 bookmark++;
             } else {
 
@@ -597,7 +589,7 @@ exports.default = function (ns) {
             setTimeout(nextPath, 1000);
         }
 
-        if (pathScripts.length < 1) {
+        if (pathIds.length < 1) {
 
             notify("No paths to run");
         } else {
@@ -743,6 +735,7 @@ function runner(ns) {
             return parameterHash[x];
         });
         var func = Function.apply(null, functionParameterNames.concat(script));
+
         context.step = {
 
             args: args,

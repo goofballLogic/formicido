@@ -4,6 +4,7 @@ const fs = require( "fs" );
 const js = fs.readFileSync( __dirname + "/scripts/login-as-needed.js" ).toString();
 
 const loginToFakeLoginPage = fs.readFileSync( __dirname + "/scripts/remote/login-to-fake-login-page.js" ).toString();
+const detectFakeLoginPage = fs.readFileSync( __dirname + "/scripts/remote/detect-fake-login-page.js" ).toString();
 
 class LoginAsNeeded extends StepBase {
 
@@ -17,7 +18,7 @@ class LoginAsNeeded extends StepBase {
 
     constructor() {
 
-        super( js, { loginToFakeLoginPage } );
+        super( js, { detectFakeLoginPage, loginToFakeLoginPage } );
 
     }
 

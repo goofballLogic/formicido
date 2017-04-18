@@ -61,7 +61,7 @@ export default function( ns ) {
                         compensationAttempts[ compensation ] = JSON.parse( JSON.stringify( compensationContext ) );
                         bus.emit( "run-path", pathDetail );
 
-                    }
+                    };
                     const compensationPathDetail = Object.assign( {}, pathDetail, { continuation, pathId: compensation } );
                     bus.emit( "run-path", compensationPathDetail );
 
@@ -103,29 +103,26 @@ export default function( ns ) {
 
     bus.on( "run-path", pathDetail => {
 
-console.log( JSON.parse( JSON.stringify( pathDetail ) ) );
-
         const { pathId, paths } = pathDetail;
         const { stepScripts, name, compensations } = paths[ pathId ] || {};
         if ( !( stepScripts && stepScripts.length ) ) {
 
             notify( "No steps specified" );
 
-        } else {
-
-            const context = pathDetail.context = pathDetail.context || {};
-            const { runId } = context.script || {};
-            context.path = { name, pathId };
-            runPath( {
-
-                compensations,
-                pathDetail,
-                runId,
-                stepScripts
-
-            } );
-
         }
+
+        const context = pathDetail.context = pathDetail.context || {};
+        const { runId } = context.script || {};
+        context.path = { name, pathId };
+        runPath( {
+
+            compensations,
+            pathDetail,
+            runId,
+            stepScripts
+
+        } );
+
 
     } );
 

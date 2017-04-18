@@ -7,7 +7,7 @@ class Navigate extends StepBase {
     static get stepName() { return "Navigate"; }
     static get shape() { return [
 
-        { label: "URL", name: "url", type: "url" }
+        { label: "URL", name: "url", type: "text" } // can't use URL here because relative URLs won't work
 
     ]; }
 
@@ -15,7 +15,8 @@ class Navigate extends StepBase {
 
     consume( variables ) {
 
-        this.args.url = variables.url;
+        const { url } = variables;
+        this.args.url = Array.isArray( url ) ? url[ 0 ] : url;
 
     }
 

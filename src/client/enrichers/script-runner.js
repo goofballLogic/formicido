@@ -16,6 +16,7 @@ export default function( ns ) {
 
         let bookmark = 0;
         const { pathScripts, nextIterationURL, runId, name } = script;
+        const { pathIds, paths } = pathScripts;
         const scriptId = script.id;
         const context = { script: { scriptId, name, nextIterationURL, runId } };
 
@@ -23,10 +24,10 @@ export default function( ns ) {
 
             const isAborted = runId in aborted;
             if ( isAborted ) { bus.emit( "run-script-aborted", context ); }
-            if ( bookmark < pathScripts.length && !isAborted ) {
+            if ( bookmark < pathIds.length && !isAborted ) {
 
                 context.script.path = bookmark + 1;
-                bus.emit( "run-path", { context, ...pathScripts[ bookmark ] } );
+                bus.emit( "run-path", { context, pathId: pathIds[ bookmark ], paths } );
                 bookmark++;
 
             } else {
@@ -54,7 +55,7 @@ export default function( ns ) {
 
         }
 
-        if ( pathScripts.length < 1 ) {
+        if ( pathIds.length < 1 ) {
 
             notify( "No paths to run" );
 

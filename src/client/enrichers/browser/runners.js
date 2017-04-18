@@ -1,16 +1,17 @@
 export default function( ns ) {
 
-    const { bus } = ns;
+    const { bus, error } = ns;
 
     let paths;
     bus.on( "run-script", function( script ) {
 
         const { pathScripts } = script;
         var transcript = document.querySelector( ".script-transcript" );
-        paths = pathScripts.map( x => {
+        paths = pathScripts.pathIds.map( pathId => {
 
+            const path = pathScripts.paths[ pathId ];
             var pathElement = document.createElement( "li" );
-            pathElement.innerHTML = x.name;
+            pathElement.innerHTML = path.name;
             transcript.appendChild( pathElement );
             return pathElement;
 
@@ -56,18 +57,21 @@ export default function( ns ) {
 
     bus.on( "path-complete", detail => {
 
-        const { err } = detail.path;
+        const { errorSteps } = detail.path;
         const { path } = detail.script || {};
-
+        const isError = errorSteps && errorSteps.length;
         const scriptOutcome = document.querySelector( ".script-outcome" ) || {};
         const outcome = document.querySelector( ".path-outcome" ) || {};
-        outcome.innerHTML = `Complete. ${err || ""}`;
+        const errors = ( errorSteps || [] ).map( x => x.err );
+        outcome.innerHTML = [ "Complete." ].concat( errors ).join( "<br />" );
+
+        if ( isError ) { error( errors.join( "<br />" ) ); }
         if ( path && paths && paths.length ) {
 
             const pathElement = paths[ path - 1 ];
             pathElement.classList.remove( "running" );
             scriptOutcome.innerHTML = "Complete.";
-            pathElement.classList.add( err ? "error" : "success" );
+            pathElement.classList.add( isError ? "error" : "success" );
 
         }
 

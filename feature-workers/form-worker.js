@@ -124,7 +124,7 @@ class FormWorker{
     waitForExpectedContent( selector, expected, timeout ) {
 
         const { client } = this.world;
-        timeout = timeout || 20000;
+        timeout = timeout || 60000;
         return client.waitUntil( () =>
 
             client.execute( function( selector ) { return document.querySelector( selector ).textContent; }, selector ).then( actual => actual.value === expected ),

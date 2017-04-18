@@ -120,6 +120,7 @@ export default function runner( ns ) {
         const functionParameterNames = Object.keys( parameterHash );
         const functionParameterValues = functionParameterNames.map( x => parameterHash[ x ] );
         const func = Function.apply( null,  functionParameterNames.concat( script ) );
+
         context.step = {
 
             args,

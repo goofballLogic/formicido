@@ -44,11 +44,14 @@ class Script {
 
     generateJS() {
 
-        return Promise.all( this.paths.map( x => paths.fetch( x ) ) ).then( loaded =>
+        const pathMemoisation = {};
+        const scriptPaths = this.paths.map( pathId => paths.fetch( pathId ).then( path => path.generateJS( pathMemoisation ) ) );
+        return Promise.all( scriptPaths ).then( () => ( {
 
-            loaded.map( path => path.generateJS() )
+           pathIds: this.paths,
+           paths: pathMemoisation
 
-        );
+        } ) );
 
     }
 

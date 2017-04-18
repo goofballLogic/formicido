@@ -80,7 +80,7 @@ defineSupportCode( function( { Given, When, Then } ) {
 
     } );
 
-    When( "I wait for {stringInDoubleQuotes} to equal {stringInDoubleQuotes}", function( selector, expected ) {
+    When( "I wait for {stringInDoubleQuotes} to equal {stringInDoubleQuotes}", {timeout: 30 * 1000}, function( selector, expected ) {
 
         return this.formWorker.waitForExpectedContent( selector, expected );
 

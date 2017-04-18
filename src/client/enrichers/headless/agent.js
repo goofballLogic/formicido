@@ -1,7 +1,7 @@
 export default function( ns ) {
 
     const { bus, browser } = ns;
-    bus.on( "navigate-to", ( [ url ] ) => {
+    bus.on( "navigate-to", url => {
 
         return browser.visit( url ).then( () =>
 

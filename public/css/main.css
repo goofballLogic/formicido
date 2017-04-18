@@ -9,9 +9,14 @@ html, body {
     margin: 0;
 
 }
-body {
+.main {
 
-    padding: 20px;
+    padding: 30px;
+
+}
+nav {
+
+    padding: 10px;
 
 }
 body, input, textarea, select, option {
@@ -107,7 +112,7 @@ a:active {
 }
 .infos .error {
 
-    background-color: rgba( 255, 0, 0, 0.5 );
+    background-color: rgba( 255, 0, 0, 0.8 );
     color: #550000;
 
 }

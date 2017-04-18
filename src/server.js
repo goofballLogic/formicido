@@ -26,7 +26,7 @@ module.exports = function launchServer() {
     };
 
     const app = express();
-    const configuredAgentJS = agentjs.toString().replace( /`\$\{origin\}`/g, `"${config.origin}"` );
+    let configuredAgentJS = "";
 
     app.use( function( req, res, next ) {
 
@@ -43,6 +43,8 @@ module.exports = function launchServer() {
 
     app.get( "/agent", ( req, res ) => {
 
+        const origin = config.origin || `${req.protocol}://${req.get( "host" )}`.replace( /:80$/, "" );
+        configuredAgentJS = configuredAgentJS || agentjs.toString().replace( /`\$\{origin\}`/g, `"${origin}"` );
         res.set( "cache-control", "no-cache" );
         res.type( "text/javascript" );
         res.send( configuredAgentJS );

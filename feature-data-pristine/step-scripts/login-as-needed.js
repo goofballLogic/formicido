@@ -1,11 +1,10 @@
-/*global remote, poll, loginToFakeLoginPage, username, password */
+/*global remote, poll, loginToFakeLoginPage, detectFakeLoginPage, username, password */
 
-var loginJS = loginToFakeLoginPage
-    .replace( "${username}", username ).replace( "${password}", password );
+var loginJS = loginToFakeLoginPage.replace( "${username}", username ).replace( "${password}", password );
 
 return Promise.resolve().then( function() {
 
-   return remote( loginJS, 200 );
+   return remote( loginJS, 2000 );
 
 } ).then( function( initialResult ) {
 
@@ -19,16 +18,17 @@ return Promise.resolve().then( function() {
         return Promise.reject( "Not fake login page" );
 
     }
+
     // wait for something other than the login page to be loaded
     return poll( 250, 5000, function() {
 
-        return remote( loginJS, 1000 ).then( function( postLoginResult ) {
+        return remote( detectFakeLoginPage, 1000 ).then( function( maybeFinalResult ) {
 
             // page is loaded
-            return ~[ "complete", "interactive" ].indexOf( postLoginResult.readyState )
+            return ~[ "complete", "interactive" ].indexOf( maybeFinalResult.readyState )
 
                 // and is something other than the login page
-                && !postLoginResult.isFakeLogin;
+                && !maybeFinalResult.isFakeLogin;
 
         } );
 

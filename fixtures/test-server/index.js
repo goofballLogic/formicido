@@ -1,10 +1,15 @@
 const express = require( "express" );
 const cookieParser = require( "cookie-parser" );
+const bodyParser = require( "body-parser" );
+const fs = require( "fs" );
+const path = require( "path" );
 
 module.exports = function( config, appConfig ) {
 
     const app = express();
-    const agentUrl = `http://${appConfig.host}:${appConfig.port}/agent`;
+    //app.locals.agentJS = `http://${appConfig.host}:${appConfig.port}/agent`;
+    app.locals.agentJS = fs.readFileSync( path.resolve( __dirname, "../../src/scripts/agent.js" ) )
+        .toString().replace( /`\$\{origin\}`/g, `"http://${appConfig.host}:${appConfig.port}"` );
 
     app.set( "view engine", "pug" );
     app.set( "views", __dirname + "/views" );
@@ -14,19 +19,19 @@ module.exports = function( config, appConfig ) {
 
     app.get( "/hello-world", ( req, res ) => {
 
-        res.send( "Hello world" );
+        res.render( "hello-world" );
 
     } );
 
     app.get( "/some-links", ( req, res ) => {
 
-        res.render( "some-links", { agentUrl } );
+        res.render( "some-links" );
 
     } );
 
     app.get( "/some-links/poem", ( req, res ) => {
 
-        res.render( "a-poem", { agentUrl } );
+        res.render( "a-poem" );
 
     } );
 
@@ -52,6 +57,13 @@ module.exports = function( config, appConfig ) {
     app.get( "/sign-in", ( req, res ) => {
 
         res.render( "sign-in" );
+
+    } );
+
+    app.post( "/sign-in", bodyParser.urlencoded( { extended: false } ), ( req, res ) => {
+
+        res.cookie( "user", req.body.user );
+        res.redirect( "/secure/home" );
 
     } );
 
