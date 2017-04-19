@@ -20,6 +20,7 @@ try {
     idToken1.value = username;
     idToken2.value = password;
     loginButton.click();
+    reply();
 
 } catch( e ) {
 
